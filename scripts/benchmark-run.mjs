@@ -135,12 +135,13 @@ function adapter(assistant, model, prompt) {
         "--yes",
         "--",
         ...claudeArgs,
+        "--",
         prompt,
       ];
       return { command: "ollama", args, accessPath: ollamaAccessPath(model) };
     }
     if (model !== "subscription-default") claudeArgs.push("--model", model);
-    claudeArgs.push(prompt);
+    claudeArgs.push("--", prompt);
     return { command: "claude", args: claudeArgs, accessPath: "subscription" };
   }
 
