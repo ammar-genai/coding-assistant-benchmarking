@@ -41,6 +41,26 @@
         }
       }
     },
+    "verification": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["visible_commands", "hidden_suite", "hidden_sha256"],
+      "properties": {
+        "visible_commands": {
+          "type": "array",
+          "minItems": 1,
+          "items": { "type": "string", "minLength": 1 }
+        },
+        "hidden_suite": {
+          "type": "string",
+          "pattern": "^T[0-9]+-[a-z0-9-]+$"
+        },
+        "hidden_sha256": {
+          "type": "string",
+          "pattern": "^[a-f0-9]{64}$"
+        }
+      }
+    },
     "limits": {
       "type": "object",
       "additionalProperties": false,

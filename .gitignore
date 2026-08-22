@@ -43,3 +43,5 @@ next-env.d.ts
 /work/
 /benchmark/runs/*
 !/benchmark/runs/.gitkeep
+/benchmark/private/*
+!/benchmark/private/README.md

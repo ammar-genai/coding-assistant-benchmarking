@@ -1,0 +1,43 @@
+{
+  "schema_version": "1.0",
+  "id": "T2-filter-valid-runs",
+  "version": "1.0.0",
+  "title": "Filter invalid runs from comparison reports",
+  "type": "bug-fix",
+  "mode": "workspace-write",
+  "prompt_path": "prompt.md",
+  "allowed_paths": [
+    "benchmark/fixtures/T2-run-filter/select-comparison-runs.mjs"
+  ],
+  "forbidden_actions": [
+    "Edit visible tests, task definitions, harness files, or generated evidence",
+    "Install dependencies or use the network",
+    "Commit or push changes"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "visible-tests",
+      "description": "The committed regression and contract tests pass.",
+      "command": "node --test benchmark/fixtures/T2-run-filter/select-comparison-runs.test.mjs"
+    },
+    {
+      "id": "private-tests",
+      "description": "Private eligibility edge cases pass."
+    },
+    {
+      "id": "allowed-scope",
+      "description": "Only the allowed implementation file changes."
+    }
+  ],
+  "verification": {
+    "visible_commands": [
+      "node --test benchmark/fixtures/T2-run-filter/select-comparison-runs.test.mjs"
+    ],
+    "hidden_suite": "T2-filter-valid-runs",
+    "hidden_sha256": "12d34ead3377c63ffbceb941b17506b21d51a2f2a422a3e829d823ae3129c5f4"
+  },
+  "limits": {
+    "max_wall_time_seconds": 600,
+    "max_human_interventions": 0
+  }
+}

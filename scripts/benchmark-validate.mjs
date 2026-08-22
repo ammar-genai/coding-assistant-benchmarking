@@ -1,5 +1,7 @@
 import assert from "node:assert/strict";
-import { readFileSync } from "node:fs";
+import { spawnSync } from "node:child_process";
+import { createHash } from "node:crypto";
+import { existsSync, readFileSync } from "node:fs";
 import { resolve } from "node:path";
 
 const root = resolve(import.meta.dirname, "..");
@@ -31,6 +33,41 @@ const rubric = readJson("benchmark/tasks/T1-repo-map/rubric.json");
 const points = rubric.criteria.reduce((total, criterion) => total + criterion.points, 0);
 assert.equal(points, rubric.total_points);
 assert.equal(points, 100);
+
+const writeTask = readJson("benchmark/tasks/T2-filter-valid-runs/task.json");
+assert.equal(writeTask.schema_version, "1.0");
+assert.equal(writeTask.id, "T2-filter-valid-runs");
+assert.equal(writeTask.mode, "workspace-write");
+assert.deepEqual(writeTask.allowed_paths, [
+  "benchmark/fixtures/T2-run-filter/select-comparison-runs.mjs",
+]);
+assert.ok(writeTask.verification.visible_commands.length > 0);
+assert.match(writeTask.verification.hidden_suite, /^T2-/);
+assert.match(writeTask.verification.hidden_sha256, /^[a-f0-9]{64}$/);
+assert.ok(writeTask.limits.max_wall_time_seconds > 0);
+
+const writeRubric = readJson("benchmark/tasks/T2-filter-valid-runs/rubric.json");
+const writePoints = writeRubric.criteria.reduce((total, criterion) => total + criterion.points, 0);
+assert.equal(writeRubric.task_id, writeTask.id);
+assert.equal(writeRubric.task_version, writeTask.version);
+assert.equal(writePoints, writeRubric.total_points);
+assert.equal(writePoints, 100);
+
+const privateSuite = resolve(
+  root,
+  "benchmark/private",
+  `${writeTask.verification.hidden_suite}.test.mjs`,
+);
+assert.ok(existsSync(privateSuite), `Missing local private suite: ${privateSuite}`);
+const privateDigest = createHash("sha256").update(readFileSync(privateSuite)).digest("hex");
+assert.equal(privateDigest, writeTask.verification.hidden_sha256);
+
+const seededFailure = spawnSync(
+  process.execPath,
+  ["--test", "benchmark/fixtures/T2-run-filter/select-comparison-runs.test.mjs"],
+  { cwd: root, encoding: "utf8", timeout: 30_000 },
+);
+assert.notEqual(seededFailure.status, 0, "T2 must retain its seeded failing behavior");
 
 const claudeRules = readFileSync(resolve(root, "CLAUDE.md"), "utf8");
 assert.match(claudeRules, /^@AGENTS\.md\b/);

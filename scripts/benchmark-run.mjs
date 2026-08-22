@@ -1,6 +1,6 @@
 import { spawn, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmdirSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmdirSync, statSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -57,6 +57,11 @@ function version(command) {
 function gitValue(args, workingDirectory = projectRoot) {
   const result = spawnSync("git", args, { cwd: workingDirectory, encoding: "utf8", timeout: 10_000 });
   return result.status === 0 ? result.stdout.trim() : null;
+}
+
+function gitOutput(args, workingDirectory = projectRoot) {
+  const result = spawnSync("git", args, { cwd: workingDirectory, encoding: "utf8", timeout: 10_000 });
+  return result.status === 0 ? result.stdout : null;
 }
 
 function createIsolatedWorktree(commit) {
@@ -120,7 +125,51 @@ function compareSnapshots(before, after) {
     .sort();
 }
 
-function adapter(assistant, model, prompt, targetRoot) {
+function pathIsAllowed(changedPath, allowedPaths) {
+  const normalizedPath = changedPath.replaceAll("\\", "/");
+  return allowedPaths.some((pattern) => {
+    const normalizedPattern = pattern.replaceAll("\\", "/");
+    if (normalizedPattern === "**/*" || normalizedPattern === "*") return true;
+    if (normalizedPattern.endsWith("/**")) {
+      return normalizedPath.startsWith(normalizedPattern.slice(0, -2));
+    }
+    return normalizedPath === normalizedPattern;
+  });
+}
+
+function openCodePermissions(task) {
+  const readOnly = task.mode === "read-only";
+  const editRules = { "*": "deny" };
+  const bashRules = { "*": "deny" };
+
+  if (!readOnly) {
+    for (const allowedPath of task.allowed_paths) {
+      editRules[allowedPath === "**/*" ? "*" : allowedPath] = "allow";
+    }
+    for (const command of task.verification?.visible_commands ?? []) {
+      bashRules[command] = "allow";
+    }
+  }
+
+  return {
+    permission: {
+      "*": "deny",
+      read: "allow",
+      glob: "allow",
+      grep: "allow",
+      lsp: "allow",
+      edit: editRules,
+      bash: bashRules,
+      task: "deny",
+      question: "deny",
+      webfetch: "deny",
+      websearch: "deny",
+      external_directory: "deny",
+    },
+  };
+}
+
+function adapter(assistant, model, prompt, targetRoot, task) {
   if (assistant === "codex") {
     const args = [
       "exec",
@@ -128,7 +177,7 @@ function adapter(assistant, model, prompt, targetRoot) {
       "--json",
       "--ignore-user-config",
       "--sandbox",
-      "read-only",
+      task.mode === "workspace-write" ? "workspace-write" : "read-only",
       "--cd",
       targetRoot,
     ];
@@ -140,6 +189,7 @@ function adapter(assistant, model, prompt, targetRoot) {
   }
 
   if (assistant === "claude") {
+    const writeMode = task.mode === "workspace-write";
     const claudeArgs = [
       "--print",
       "--output-format",
@@ -149,10 +199,16 @@ function adapter(assistant, model, prompt, targetRoot) {
       "--setting-sources",
       "project",
       "--permission-mode",
-      "plan",
+      writeMode ? "acceptEdits" : "plan",
       "--tools",
-      "Read,Glob,Grep",
+      writeMode ? "Read,Glob,Grep,Edit,Write,Bash" : "Read,Glob,Grep",
     ];
+    if (writeMode && task.verification?.visible_commands?.length > 0) {
+      claudeArgs.push(
+        "--allowedTools",
+        ...task.verification.visible_commands.map((command) => `Bash(${command})`),
+      );
+    }
     if (model.startsWith("ollama/")) {
       const args = [
         "launch",
@@ -173,8 +229,28 @@ function adapter(assistant, model, prompt, targetRoot) {
   }
 
   if (assistant === "opencode") {
-    const args = ["run", "--format", "json", "--agent", "plan", "--dir", targetRoot, "--model", model, prompt];
-    return { command: "opencode", args, accessPath: ollamaAccessPath(model) ?? "unknown" };
+    const args = [
+      "run",
+      "--pure",
+      "--format",
+      "json",
+      "--agent",
+      task.mode === "workspace-write" ? "build" : "plan",
+      "--dir",
+      targetRoot,
+      "--model",
+      model,
+      prompt,
+    ];
+    return {
+      command: "opencode",
+      args,
+      accessPath: ollamaAccessPath(model) ?? "unknown",
+      env: {
+        ...process.env,
+        OPENCODE_CONFIG_CONTENT: JSON.stringify(openCodePermissions(task)),
+      },
+    };
   }
 
   if (assistant === "pi") {
@@ -189,7 +265,7 @@ function adapter(assistant, model, prompt, targetRoot) {
       "--no-themes",
       "--approve",
       "--tools",
-      "read,grep,find,ls",
+      task.mode === "workspace-write" ? "read,grep,find,ls,edit,write,bash" : "read,grep,find,ls",
     ];
     if (model.startsWith("ollama/")) {
       const args = [
@@ -211,11 +287,11 @@ function adapter(assistant, model, prompt, targetRoot) {
   throw new Error(`Unsupported assistant: ${assistant}`);
 }
 
-async function execute(command, args, timeoutMs, workingDirectory) {
+async function execute(command, args, timeoutMs, workingDirectory, environment = process.env) {
   return new Promise((resolveRun) => {
     const child = spawn(command, args, {
       cwd: workingDirectory,
-      env: process.env,
+      env: environment,
       stdio: ["ignore", "pipe", "pipe"],
     });
     let stdout = "";
@@ -236,6 +312,59 @@ async function execute(command, args, timeoutMs, workingDirectory) {
       resolveRun({ exitCode, signal, timedOut, stdout, stderr });
     });
   });
+}
+
+async function runVerification(task, targetRoot) {
+  const results = [];
+  const infrastructureErrors = [];
+  const timeoutMs = task.limits.max_wall_time_seconds * 1000;
+
+  for (const [index, command] of (task.verification?.visible_commands ?? []).entries()) {
+    const startedAt = Date.now();
+    const outcome = await execute("/bin/sh", ["-lc", command], timeoutMs, targetRoot);
+    results.push({
+      id: `visible-${index + 1}`,
+      kind: "visible",
+      command,
+      elapsed_ms: Date.now() - startedAt,
+      exit_code: outcome.exitCode,
+      signal: outcome.signal,
+      timed_out: outcome.timedOut,
+      stdout: outcome.stdout,
+      stderr: outcome.stderr,
+    });
+  }
+
+  if (task.verification?.hidden_suite) {
+    const hiddenPath = resolve(projectRoot, "benchmark", "private", `${task.verification.hidden_suite}.test.mjs`);
+    if (!existsSync(hiddenPath)) {
+      infrastructureErrors.push(`Private suite is missing: ${task.verification.hidden_suite}`);
+    } else if (sha256(readFileSync(hiddenPath)) !== task.verification.hidden_sha256) {
+      infrastructureErrors.push(`Private suite hash does not match the task contract: ${task.verification.hidden_suite}`);
+    } else {
+      const startedAt = Date.now();
+      const outcome = await execute(
+        process.execPath,
+        ["--test", hiddenPath],
+        timeoutMs,
+        targetRoot,
+        { ...process.env, BENCHMARK_TARGET_ROOT: targetRoot },
+      );
+      results.push({
+        id: "private-1",
+        kind: "private",
+        command: `[private suite: ${task.verification.hidden_suite}]`,
+        elapsed_ms: Date.now() - startedAt,
+        exit_code: outcome.exitCode,
+        signal: outcome.signal,
+        timed_out: outcome.timedOut,
+        stdout: outcome.stdout,
+        stderr: outcome.stderr,
+      });
+    }
+  }
+
+  return { results, infrastructure_errors: infrastructureErrors };
 }
 
 const options = parseArgs(process.argv.slice(2));
@@ -262,7 +391,7 @@ const task = JSON.parse(readFileSync(resolve(taskDirectory, "task.json"), "utf8"
 const prompt = readFileSync(resolve(taskDirectory, task.prompt_path), "utf8");
 
 if (!options.execute) {
-  const selected = adapter(options.assistant, model, prompt, "<isolated-worktree>");
+  const selected = adapter(options.assistant, model, prompt, "<isolated-worktree>", task);
   console.log(JSON.stringify({
     mode: "preview",
     task: `${task.id}@${task.version}`,
@@ -286,7 +415,7 @@ if (trackedChanges) throw new Error("Commit or restore tracked workspace changes
 
 const isolatedWorktree = createIsolatedWorktree(gitCommit);
 const targetRoot = isolatedWorktree.checkout;
-const selected = adapter(options.assistant, model, prompt, targetRoot);
+const selected = adapter(options.assistant, model, prompt, targetRoot, task);
 const before = snapshotDirectory(targetRoot);
 const startedAt = new Date();
 const manifest = {
@@ -315,25 +444,58 @@ const manifest = {
 writeFileSync(resolve(runDirectory, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`, { flag: "wx" });
 writeFileSync(resolve(runDirectory, "prompt.md"), prompt, { flag: "wx" });
 
-const outcome = await execute(selected.command, selected.args, task.limits.max_wall_time_seconds * 1000, targetRoot);
+const outcome = await execute(
+  selected.command,
+  selected.args,
+  task.limits.max_wall_time_seconds * 1000,
+  targetRoot,
+  selected.env,
+);
 const finishedAt = new Date();
+let status = "complete";
+if (outcome.timedOut) status = "timeout";
+else if (outcome.exitCode !== 0) status = "failed";
+
+const verification = status === "complete" && task.mode === "workspace-write"
+  ? await runVerification(task, targetRoot)
+  : { results: [], infrastructure_errors: [] };
 const after = snapshotDirectory(targetRoot);
 const changedPaths = compareSnapshots(before, after);
+const outOfScopePaths = changedPaths.filter((changedPath) => !pathIsAllowed(changedPath, task.allowed_paths));
+const patch = gitOutput(["diff", "--binary", "--no-ext-diff", "HEAD"], targetRoot) ?? "";
 const cleanupError = removeIsolatedWorktree(isolatedWorktree);
 
 writeFileSync(resolve(runDirectory, "stdout.log"), outcome.stdout, { flag: "wx" });
 writeFileSync(resolve(runDirectory, "stderr.log"), outcome.stderr, { flag: "wx" });
-writeFileSync(resolve(runDirectory, "changes.json"), `${JSON.stringify({ changed_paths: changedPaths }, null, 2)}\n`, { flag: "wx" });
+writeFileSync(resolve(runDirectory, "changes.json"), `${JSON.stringify({
+  changed_paths: changedPaths,
+  out_of_scope_paths: outOfScopePaths,
+}, null, 2)}\n`, { flag: "wx" });
+writeFileSync(resolve(runDirectory, "changes.patch"), patch, { flag: "wx" });
+writeFileSync(resolve(runDirectory, "verification.json"), `${JSON.stringify(verification, null, 2)}\n`, { flag: "wx" });
 
-let status = "complete";
-if (outcome.timedOut) status = "timeout";
-else if (outcome.exitCode !== 0) status = "failed";
-const acceptanceStatus = status === "complete"
-  ? (task.mode === "read-only" && changedPaths.length > 0 ? "fail" : "pending")
-  : "not-graded";
+let acceptanceStatus = "not-graded";
+if (status === "complete" && task.mode === "read-only") {
+  acceptanceStatus = changedPaths.length > 0 ? "fail" : "pending";
+} else if (status === "complete" && task.mode === "workspace-write") {
+  if (verification.infrastructure_errors.length > 0 || !task.verification) {
+    acceptanceStatus = "invalid";
+  } else {
+    const checksPassed = verification.results.length > 0 && verification.results.every(
+      (check) => check.exit_code === 0 && !check.timed_out,
+    );
+    acceptanceStatus = changedPaths.length > 0 && outOfScopePaths.length === 0 && checksPassed
+      ? "pass"
+      : "fail";
+  }
+}
 
 const notes = [];
 if (task.mode === "read-only" && changedPaths.length > 0) notes.push("Read-only workspace change caused an automatic failure.");
+if (task.mode === "workspace-write" && changedPaths.length === 0) notes.push("The assistant did not change the workspace.");
+if (outOfScopePaths.length > 0) notes.push(`Out-of-scope changes: ${outOfScopePaths.join(", ")}`);
+if (verification.results.some((check) => check.exit_code !== 0 || check.timed_out)) notes.push("One or more verification checks failed.");
+notes.push(...verification.infrastructure_errors);
 if (cleanupError) notes.push(`Temporary worktree cleanup failed: ${cleanupError}`);
 
 const result = {
@@ -355,6 +517,8 @@ const result = {
     stdout: "stdout.log",
     stderr: "stderr.log",
     changes: "changes.json",
+    patch: "changes.patch",
+    verification: "verification.json",
   },
   notes,
 };

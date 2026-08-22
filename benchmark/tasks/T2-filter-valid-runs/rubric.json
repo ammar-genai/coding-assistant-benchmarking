@@ -1,0 +1,37 @@
+{
+  "task_id": "T2-filter-valid-runs",
+  "task_version": "1.0.0",
+  "total_points": 100,
+  "criteria": [
+    {
+      "id": "visible-tests",
+      "points": 25,
+      "description": "All committed visible tests pass."
+    },
+    {
+      "id": "hidden-tests",
+      "points": 30,
+      "description": "Private edge-case and contract tests pass."
+    },
+    {
+      "id": "root-cause",
+      "points": 15,
+      "description": "The eligibility conditions require all rules rather than accepting any one rule."
+    },
+    {
+      "id": "scope-control",
+      "points": 15,
+      "description": "Only the allowed implementation file changes."
+    },
+    {
+      "id": "implementation-quality",
+      "points": 10,
+      "description": "The fix is small, readable, and preserves order, identity, and inputs."
+    },
+    {
+      "id": "final-report",
+      "points": 5,
+      "description": "The final response states the cause, change, and verification result."
+    }
+  ]
+}

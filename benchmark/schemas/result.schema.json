@@ -40,7 +40,9 @@
         "prompt": { "type": "string" },
         "stdout": { "type": "string" },
         "stderr": { "type": "string" },
-        "changes": { "type": "string" }
+        "changes": { "type": "string" },
+        "patch": { "type": "string" },
+        "verification": { "type": "string" }
       }
     },
     "notes": { "type": "array", "items": { "type": "string" } }
