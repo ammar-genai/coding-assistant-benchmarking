@@ -113,20 +113,35 @@ function adapter(assistant, model, prompt) {
   }
 
   if (assistant === "claude") {
-    const args = [
+    const claudeArgs = [
       "--print",
       "--output-format",
       "stream-json",
       "--verbose",
       "--no-session-persistence",
+      "--setting-sources",
+      "project",
       "--permission-mode",
       "plan",
       "--tools",
       "Read,Glob,Grep",
     ];
-    if (model !== "subscription-default") args.push("--model", model);
-    args.push(prompt);
-    return { command: "claude", args, accessPath: "subscription" };
+    if (model.startsWith("ollama/")) {
+      const args = [
+        "launch",
+        "claude",
+        "--model",
+        model.slice("ollama/".length),
+        "--yes",
+        "--",
+        ...claudeArgs,
+        prompt,
+      ];
+      return { command: "ollama", args, accessPath: ollamaAccessPath(model) };
+    }
+    if (model !== "subscription-default") claudeArgs.push("--model", model);
+    claudeArgs.push(prompt);
+    return { command: "claude", args: claudeArgs, accessPath: "subscription" };
   }
 
   if (assistant === "opencode") {
@@ -135,19 +150,34 @@ function adapter(assistant, model, prompt) {
   }
 
   if (assistant === "pi") {
-    const args = [
+    const piArgs = [
       "--print",
       "--mode",
       "json",
       "--no-session",
       "--no-extensions",
+      "--no-skills",
+      "--no-prompt-templates",
+      "--no-themes",
+      "--approve",
       "--tools",
       "read,grep,find,ls",
-      "--model",
-      model,
-      prompt,
     ];
-    return { command: "pi", args, accessPath: ollamaAccessPath(model) ?? "unknown" };
+    if (model.startsWith("ollama/")) {
+      const args = [
+        "launch",
+        "pi",
+        "--model",
+        model.slice("ollama/".length),
+        "--yes",
+        "--",
+        ...piArgs,
+        prompt,
+      ];
+      return { command: "ollama", args, accessPath: ollamaAccessPath(model) };
+    }
+    piArgs.push("--model", model, prompt);
+    return { command: "pi", args: piArgs, accessPath: "unknown" };
   }
 
   throw new Error(`Unsupported assistant: ${assistant}`);
@@ -228,7 +258,7 @@ const manifest = {
   run_id: runId,
   task: { id: task.id, version: task.version },
   assistant: options.assistant,
-  assistant_version: version(selected.command),
+  assistant_version: version({ codex: "codex", claude: "claude", opencode: "opencode", pi: "pi" }[options.assistant]),
   model,
   access_path: selected.accessPath,
   repository: {

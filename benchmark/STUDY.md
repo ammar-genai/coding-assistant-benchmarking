@@ -71,6 +71,8 @@ Every recorded run must:
 
 For controlled Codex runs, use `--ignore-user-config` so a personal reasoning default, service tier, plugin, or MCP server does not change the lane. Authentication remains available, while task rules still come from this repository.
 
+For shared-model Claude Code and Pi runs, the runner uses `ollama launch` only as an inline provider wrapper. Claude loads project settings only; Pi disables extensions, skills, prompt templates, themes, and write-capable tools for T1.
+
 `status` records whether the assistant process completed. `acceptance_status` records whether the answer or patch passed the task. A completed command is not a successful benchmark result until it is graded.
 
 Run order should be randomized within a study block. Grade from saved evidence and hide assistant/model identity where practical.
