@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/coding-assistant-benchmark/result.schema.json",
+  "title": "Benchmark run result",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "status",
+    "acceptance_status",
+    "started_at",
+    "finished_at",
+    "elapsed_ms",
+    "exit_code",
+    "timed_out",
+    "workspace_changed",
+    "changed_paths",
+    "artifacts"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["complete", "failed", "blocked", "timeout"] },
+    "acceptance_status": { "enum": ["pending", "pass", "fail", "not-graded"] },
+    "started_at": { "type": "string", "format": "date-time" },
+    "finished_at": { "type": "string", "format": "date-time" },
+    "elapsed_ms": { "type": "integer", "minimum": 0 },
+    "exit_code": { "type": ["integer", "null"] },
+    "signal": { "type": ["string", "null"] },
+    "timed_out": { "type": "boolean" },
+    "workspace_changed": { "type": "boolean" },
+    "changed_paths": { "type": "array", "items": { "type": "string" } },
+    "artifacts": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["manifest", "prompt", "stdout", "stderr", "changes"],
+      "properties": {
+        "manifest": { "type": "string" },
+        "prompt": { "type": "string" },
+        "stdout": { "type": "string" },
+        "stderr": { "type": "string" },
+        "changes": { "type": "string" }
+      }
+    },
+    "notes": { "type": "array", "items": { "type": "string" } }
+  }
+}

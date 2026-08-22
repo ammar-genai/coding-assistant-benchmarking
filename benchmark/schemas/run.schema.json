@@ -1,0 +1,52 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.local/coding-assistant-benchmark/run.schema.json",
+  "title": "Recorded benchmark run",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "run_id",
+    "task",
+    "assistant",
+    "assistant_version",
+    "model",
+    "access_path",
+    "repository",
+    "prompt_sha256",
+    "command",
+    "started_at",
+    "settings"
+  ],
+  "properties": {
+    "schema_version": { "const": "1.0" },
+    "run_id": { "type": "string", "minLength": 1 },
+    "task": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "version"],
+      "properties": {
+        "id": { "type": "string" },
+        "version": { "type": "string" }
+      }
+    },
+    "assistant": { "enum": ["codex", "claude", "opencode", "pi"] },
+    "assistant_version": { "type": ["string", "null"] },
+    "model": { "type": "string", "minLength": 1 },
+    "access_path": { "enum": ["subscription", "ollama-cloud", "ollama-local", "api", "unknown"] },
+    "repository": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "git_commit"],
+      "properties": {
+        "path": { "type": "string" },
+        "git_commit": { "type": ["string", "null"] },
+        "dirty_at_start": { "type": "boolean" }
+      }
+    },
+    "prompt_sha256": { "type": "string", "pattern": "^[a-f0-9]{64}$" },
+    "command": { "type": "array", "items": { "type": "string" }, "minItems": 1 },
+    "started_at": { "type": "string", "format": "date-time" },
+    "settings": { "type": "object" }
+  }
+}

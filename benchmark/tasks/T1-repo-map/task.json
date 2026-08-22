@@ -1,0 +1,35 @@
+{
+  "schema_version": "1.0",
+  "id": "T1-repo-map",
+  "version": "1.0.0",
+  "title": "Map an unfamiliar repository",
+  "type": "analysis",
+  "mode": "read-only",
+  "prompt_path": "prompt.md",
+  "allowed_paths": ["**/*"],
+  "forbidden_actions": [
+    "edit, create, rename, or delete files",
+    "install or update dependencies",
+    "change Git state",
+    "start external services",
+    "use network access"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "read-only",
+      "description": "The workspace snapshot is unchanged after the run."
+    },
+    {
+      "id": "evidence",
+      "description": "Important claims cite concrete repository paths."
+    },
+    {
+      "id": "coverage",
+      "description": "The answer covers architecture, request flow, verification, risks, and a small change plan."
+    }
+  ],
+  "limits": {
+    "max_wall_time_seconds": 600,
+    "max_human_interventions": 0
+  }
+}

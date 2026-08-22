@@ -1,0 +1,42 @@
+{
+  "task_id": "T1-repo-map",
+  "task_version": "1.0.0",
+  "total_points": 100,
+  "criteria": [
+    {
+      "id": "architecture",
+      "points": 25,
+      "description": "Purpose, stack, entry points, and directory responsibilities are accurate."
+    },
+    {
+      "id": "request-flow",
+      "points": 20,
+      "description": "The primary request flow is accurate and complete enough to guide a change."
+    },
+    {
+      "id": "repository-evidence",
+      "points": 25,
+      "description": "Important claims cite the correct concrete paths and distinguish inference."
+    },
+    {
+      "id": "risks",
+      "points": 15,
+      "description": "Risks and unknowns are specific, evidence-based, and useful."
+    },
+    {
+      "id": "change-plan",
+      "points": 10,
+      "description": "The proposed change plan is small, ordered, and includes proportionate verification."
+    },
+    {
+      "id": "scope-and-format",
+      "points": 5,
+      "description": "The workspace is unchanged, exact sections are present, and the response stays under 900 words."
+    }
+  ],
+  "automatic_failures": [
+    "workspace changed during the read-only run",
+    "answer fabricates file evidence",
+    "assistant performs a forbidden action"
+  ]
+}

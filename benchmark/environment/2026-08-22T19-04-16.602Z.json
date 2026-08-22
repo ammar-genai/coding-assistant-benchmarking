@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "recorded_at": "2026-08-22T19:04:16.602Z",
+  "system": {
+    "os": "macOS 26.5.2",
+    "hardware": {
+      "model_name": "MacBook Air",
+      "model_identifier": "Mac16,12",
+      "chip": "Apple M4",
+      "memory": "16 GB"
+    }
+  },
+  "tools": {
+    "codex": "codex-cli 0.146.0-alpha.3.1",
+    "claude": "2.1.240 (Claude Code)",
+    "opencode": "1.18.21",
+    "pi": "0.84.2",
+    "ollama": "ollama version is 0.32.3",
+    "node": "v26.0.0"
+  },
+  "ollama_models": "NAME                       ID              SIZE      MODIFIED      \nkimi-k2.7-code:cloud       e30d96cd3936    -         5 minutes ago    \ndeepseek-v4-flash:cloud    d3f1c8744721    -         5 minutes ago    \nqwen3:8b                   500a1f067a9f    5.2 GB    6 weeks ago      \nminimax-m2.5:cloud         c0d5751c800f    -         6 months ago",
+  "repository": {
+    "path": "/Users/ammarbinayaz/Documents/coding-assistant-benchmarking",
+    "git_commit": null,
+    "status": "?? .gitignore\n?? .openai/\n?? AGENTS.md\n?? CLAUDE.md\n?? README.md\n?? app/\n?? benchmark/\n?? build/\n?? db/\n?? drizzle.config.ts\n?? drizzle/\n?? eslint.config.mjs\n?? examples/\n?? next.config.ts\n?? package-lock.json\n?? package.json\n?? postcss.config.mjs\n?? public/\n?? scripts/\n?? tests/\n?? tsconfig.json\n?? tsconfig.tsbuildinfo\n?? vite.config.ts\n?? worker/"
+  },
+  "note": "Authentication state and account identifiers are intentionally excluded."
+}
