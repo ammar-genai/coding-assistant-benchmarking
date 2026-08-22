@@ -43,5 +43,8 @@ The last command is a safe preview. Add `--execute` to create a unique evidence
 folder in `benchmark/runs/`. Generated runs are ignored by Git and never
 overwritten.
 
+The first isolated shared-model result is documented in
+`benchmark/reports/T1-shared-model-pilot.md`.
+
 Model and product details in the plan were researched on August 22, 2026. Record
 the exact assistant version and model ID again before every study block.
