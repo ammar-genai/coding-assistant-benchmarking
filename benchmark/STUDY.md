@@ -69,6 +69,8 @@ Every recorded run must:
 5. Stop at the task time limit or intervention limit.
 6. Preserve failures and partial outputs. Never replace a bad run with a better run under the same ID.
 
+For controlled Codex runs, use `--ignore-user-config` so a personal reasoning default, service tier, plugin, or MCP server does not change the lane. Authentication remains available, while task rules still come from this repository.
+
 `status` records whether the assistant process completed. `acceptance_status` records whether the answer or patch passed the task. A completed command is not a successful benchmark result until it is graded.
 
 Run order should be randomized within a study block. Grade from saved evidence and hide assistant/model identity where practical.

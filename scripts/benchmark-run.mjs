@@ -95,7 +95,16 @@ function compareSnapshots(before, after) {
 
 function adapter(assistant, model, prompt) {
   if (assistant === "codex") {
-    const args = ["exec", "--ephemeral", "--json", "--sandbox", "read-only", "--cd", projectRoot];
+    const args = [
+      "exec",
+      "--ephemeral",
+      "--json",
+      "--ignore-user-config",
+      "--sandbox",
+      "read-only",
+      "--cd",
+      projectRoot,
+    ];
     if (model.startsWith("ollama/")) {
       args.push("--oss", "--local-provider", "ollama", "--model", model.slice("ollama/".length));
     } else if (model !== "subscription-default") args.push("--model", model);
