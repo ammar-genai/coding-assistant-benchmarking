@@ -1,6 +1,7 @@
 import { spawn, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { mkdirSync, readFileSync, readdirSync, statSync, writeFileSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, readdirSync, rmdirSync, statSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
 import { dirname, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -53,9 +54,34 @@ function version(command) {
   return result.status === 0 ? (result.stdout || result.stderr).trim().split("\n")[0] : null;
 }
 
-function gitValue(args) {
-  const result = spawnSync("git", args, { cwd: projectRoot, encoding: "utf8", timeout: 10_000 });
+function gitValue(args, workingDirectory = projectRoot) {
+  const result = spawnSync("git", args, { cwd: workingDirectory, encoding: "utf8", timeout: 10_000 });
   return result.status === 0 ? result.stdout.trim() : null;
+}
+
+function createIsolatedWorktree(commit) {
+  const container = mkdtempSync(resolve(tmpdir(), "coding-assistant-benchmark-"));
+  const checkout = resolve(container, "checkout");
+  const result = spawnSync("git", ["worktree", "add", "--detach", checkout, commit], {
+    cwd: projectRoot,
+    encoding: "utf8",
+    timeout: 60_000,
+  });
+  if (result.status !== 0) {
+    rmdirSync(container);
+    throw new Error(`Could not create isolated worktree: ${result.stderr || result.stdout}`);
+  }
+  return { container, checkout };
+}
+
+function removeIsolatedWorktree({ container, checkout }) {
+  const result = spawnSync("git", ["worktree", "remove", "--force", checkout], {
+    cwd: projectRoot,
+    encoding: "utf8",
+    timeout: 60_000,
+  });
+  if (result.status === 0) rmdirSync(container);
+  return result.status === 0 ? null : (result.stderr || result.stdout || "Unknown worktree cleanup error").trim();
 }
 
 function sha256(value) {
@@ -72,6 +98,7 @@ function snapshotDirectory(root = projectRoot) {
 
   function visit(directory) {
     for (const entry of readdirSync(directory, { withFileTypes: true })) {
+      if (entry.name === ".git") continue;
       if (entry.isDirectory() && ignoredDirectories.has(entry.name)) continue;
       const absolutePath = resolve(directory, entry.name);
       const relativePath = relative(root, absolutePath);
@@ -93,7 +120,7 @@ function compareSnapshots(before, after) {
     .sort();
 }
 
-function adapter(assistant, model, prompt) {
+function adapter(assistant, model, prompt, targetRoot) {
   if (assistant === "codex") {
     const args = [
       "exec",
@@ -103,7 +130,7 @@ function adapter(assistant, model, prompt) {
       "--sandbox",
       "read-only",
       "--cd",
-      projectRoot,
+      targetRoot,
     ];
     if (model.startsWith("ollama/")) {
       args.push("--oss", "--local-provider", "ollama", "--model", model.slice("ollama/".length));
@@ -146,7 +173,7 @@ function adapter(assistant, model, prompt) {
   }
 
   if (assistant === "opencode") {
-    const args = ["run", "--format", "json", "--agent", "plan", "--dir", projectRoot, "--model", model, prompt];
+    const args = ["run", "--format", "json", "--agent", "plan", "--dir", targetRoot, "--model", model, prompt];
     return { command: "opencode", args, accessPath: ollamaAccessPath(model) ?? "unknown" };
   }
 
@@ -184,10 +211,10 @@ function adapter(assistant, model, prompt) {
   throw new Error(`Unsupported assistant: ${assistant}`);
 }
 
-async function execute(command, args, timeoutMs) {
+async function execute(command, args, timeoutMs, workingDirectory) {
   return new Promise((resolveRun) => {
     const child = spawn(command, args, {
-      cwd: projectRoot,
+      cwd: workingDirectory,
       env: process.env,
       stdio: ["ignore", "pipe", "pipe"],
     });
@@ -233,9 +260,9 @@ if (!model) throw new Error(`No default model for ${options.assistant}`);
 const taskDirectory = resolve(projectRoot, "benchmark", "tasks", options.task);
 const task = JSON.parse(readFileSync(resolve(taskDirectory, "task.json"), "utf8"));
 const prompt = readFileSync(resolve(taskDirectory, task.prompt_path), "utf8");
-const selected = adapter(options.assistant, model, prompt);
 
 if (!options.execute) {
+  const selected = adapter(options.assistant, model, prompt, "<isolated-worktree>");
   console.log(JSON.stringify({
     mode: "preview",
     task: `${task.id}@${task.version}`,
@@ -247,13 +274,21 @@ if (!options.execute) {
   process.exit(0);
 }
 
-const startedAt = new Date();
-const runId = `${startedAt.toISOString().replaceAll(":", "-")}_${options.assistant}_${task.id}`;
+const createdAt = new Date();
+const runId = `${createdAt.toISOString().replaceAll(":", "-")}_${options.assistant}_${task.id}`;
 const runDirectory = resolve(projectRoot, "benchmark", "runs", runId);
 mkdirSync(runDirectory, { recursive: false });
 
-const before = snapshotDirectory();
 const gitCommit = gitValue(["rev-parse", "--verify", "HEAD"]);
+if (!gitCommit) throw new Error("A baseline Git commit is required before executing a benchmark.");
+const trackedChanges = gitValue(["status", "--porcelain", "--untracked-files=no"]);
+if (trackedChanges) throw new Error("Commit or restore tracked workspace changes before executing a benchmark.");
+
+const isolatedWorktree = createIsolatedWorktree(gitCommit);
+const targetRoot = isolatedWorktree.checkout;
+const selected = adapter(options.assistant, model, prompt, targetRoot);
+const before = snapshotDirectory(targetRoot);
+const startedAt = new Date();
 const manifest = {
   schema_version: "1.0",
   run_id: runId,
@@ -263,9 +298,9 @@ const manifest = {
   model,
   access_path: selected.accessPath,
   repository: {
-    path: projectRoot,
+    path: targetRoot,
     git_commit: gitCommit,
-    dirty_at_start: Boolean(gitValue(["status", "--porcelain"])),
+    dirty_at_start: Boolean(gitValue(["status", "--porcelain"], targetRoot)),
   },
   prompt_sha256: sha256(prompt),
   command: [selected.command, ...selected.args.slice(0, -1), "<prompt.md>"],
@@ -280,10 +315,11 @@ const manifest = {
 writeFileSync(resolve(runDirectory, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`, { flag: "wx" });
 writeFileSync(resolve(runDirectory, "prompt.md"), prompt, { flag: "wx" });
 
-const outcome = await execute(selected.command, selected.args, task.limits.max_wall_time_seconds * 1000);
+const outcome = await execute(selected.command, selected.args, task.limits.max_wall_time_seconds * 1000, targetRoot);
 const finishedAt = new Date();
-const after = snapshotDirectory();
+const after = snapshotDirectory(targetRoot);
 const changedPaths = compareSnapshots(before, after);
+const cleanupError = removeIsolatedWorktree(isolatedWorktree);
 
 writeFileSync(resolve(runDirectory, "stdout.log"), outcome.stdout, { flag: "wx" });
 writeFileSync(resolve(runDirectory, "stderr.log"), outcome.stderr, { flag: "wx" });
@@ -295,6 +331,10 @@ else if (outcome.exitCode !== 0) status = "failed";
 const acceptanceStatus = status === "complete"
   ? (task.mode === "read-only" && changedPaths.length > 0 ? "fail" : "pending")
   : "not-graded";
+
+const notes = [];
+if (task.mode === "read-only" && changedPaths.length > 0) notes.push("Read-only workspace change caused an automatic failure.");
+if (cleanupError) notes.push(`Temporary worktree cleanup failed: ${cleanupError}`);
 
 const result = {
   schema_version: "1.0",
@@ -316,7 +356,7 @@ const result = {
     stderr: "stderr.log",
     changes: "changes.json",
   },
-  notes: task.mode === "read-only" && changedPaths.length > 0 ? ["Read-only workspace change caused an automatic failure."] : [],
+  notes,
 };
 
 writeFileSync(resolve(runDirectory, "result.json"), `${JSON.stringify(result, null, 2)}\n`, { flag: "wx" });

@@ -22,7 +22,7 @@
     "schema_version": { "const": "1.0" },
     "run_id": { "type": "string", "minLength": 1 },
     "status": { "enum": ["complete", "failed", "blocked", "timeout"] },
-    "acceptance_status": { "enum": ["pending", "pass", "fail", "not-graded"] },
+    "acceptance_status": { "enum": ["pending", "pass", "fail", "invalid", "not-graded"] },
     "started_at": { "type": "string", "format": "date-time" },
     "finished_at": { "type": "string", "format": "date-time" },
     "elapsed_ms": { "type": "integer", "minimum": 0 },

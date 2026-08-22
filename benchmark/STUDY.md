@@ -69,6 +69,8 @@ Every recorded run must:
 5. Stop at the task time limit or intervention limit.
 6. Preserve failures and partial outputs. Never replace a bad run with a better run under the same ID.
 
+The runner creates a fresh detached Git worktree for every execution and removes it only after capturing the before/after workspace snapshots. Prior run evidence is stored in the main checkout and is therefore invisible to the assistant under test.
+
 For controlled Codex runs, use `--ignore-user-config` so a personal reasoning default, service tier, plugin, or MCP server does not change the lane. Authentication remains available, while task rules still come from this repository.
 
 For shared-model Claude Code and Pi runs, the runner uses `ollama launch` only as an inline provider wrapper. Claude loads project settings only; Pi disables extensions, skills, prompt templates, themes, and write-capable tools for T1.
