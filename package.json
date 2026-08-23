@@ -18,6 +18,7 @@
     "benchmark:validate": "node scripts/benchmark-validate.mjs",
     "benchmark:run": "node scripts/benchmark-run.mjs",
     "benchmark:workflow": "node scripts/benchmark-workflow-run.mjs",
+    "benchmark:feature": "node scripts/benchmark-feature-run.mjs",
     "benchmark:mcp:test": "node --test benchmark/extensions/benchmark-audit/server.test.mjs",
     "db:generate": "drizzle-kit generate"
   },

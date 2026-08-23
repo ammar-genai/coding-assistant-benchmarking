@@ -1,0 +1,122 @@
+{
+  "schema_version": "1.0",
+  "block_id": "benchmark-audit-invocation-2026-08-23",
+  "status": "preregistered",
+  "purpose": "Test whether Codex, Claude Code, and OpenCode can discover one portable benchmark-audit workflow, call the same two read-only MCP tools, and return the same evidence contract without using normal repository tools.",
+  "classification": "harness feature pilot; excluded from T1-T6 task-quality rankings",
+  "feature": {
+    "id": "benchmark-audit-invocation",
+    "prompt_path": "benchmark/features/benchmark-audit-invocation/prompt.md",
+    "prompt_sha256": "5b84ef31a99f2ccb2d2dedc467b1962884f4e774a97d096d98dd544a5b4a81e4",
+    "skill": "benchmark-audit",
+    "mcp_server": "benchmark-audit",
+    "required_tools": [
+      "get_task_contract",
+      "summarize_run"
+    ]
+  },
+  "target": {
+    "run_id": "2026-08-23T18-22-22.767Z_codex_T6-rejected-promise-cache",
+    "task_id": "T6-rejected-promise-cache",
+    "selection_rule": "Use the first preregistered T6 frontier run because it is complete, accepted, locally preserved, and has both visible and private verification artifacts.",
+    "expected_facts": {
+      "acceptance_status": "pass",
+      "baseline_git_commit": "303270e525acb8f9b189303ef52c4c08cbb0d946",
+      "prompt_matches_manifest": true,
+      "prompt_matches_current_task": true,
+      "changed_path_count": 3,
+      "out_of_scope_path_count": 0,
+      "visible_command_checks": {
+        "total": 1,
+        "passed": 1
+      },
+      "private_suite_checks": {
+        "total": 1,
+        "passed": 1
+      },
+      "assistant": "codex",
+      "model": "gpt-5.6-sol",
+      "access_path": "subscription",
+      "elapsed_ms": 129209,
+      "all_expected_artifacts_present": true
+    }
+  },
+  "baseline": {
+    "parent_commit_before_preregistration": "bcae37a20b39dc9938c46557bc0801565bec8d99",
+    "resolution": "Use the clean commit containing this preregistration, prompt, and feature runner for all three routes."
+  },
+  "run_policy": {
+    "runs_per_route": 1,
+    "max_wall_time_seconds": 600,
+    "max_human_interventions": 0,
+    "preserve_failures": true,
+    "rerun_inside_block": false,
+    "workspace_mode": "read-only",
+    "openrouter_calls": 0,
+    "account_limit_changes": 0
+  },
+  "randomization": {
+    "method": "Sort routes by ascending SHA-256(seed|assistant|model).",
+    "seed": "benchmark-audit-invocation-2026-08-23|bcae37a",
+    "order": [
+      {
+        "position": 1,
+        "assistant": "opencode",
+        "required_version": "1.18.21",
+        "model": "ollama/kimi-k2.7-code:cloud",
+        "access_path": "ollama-cloud",
+        "hash": "071da6e235303b467bb9a23cc0896589f4cbdf7164d9e30ad304da7ec0a4999f",
+        "route_note": "No OpenRouter call. This is the strongest previously proven non-metered OpenCode route available for a small feature check, not the project's Kimi K3 quality route.",
+        "command": "npm run benchmark:feature -- --assistant opencode --model ollama/kimi-k2.7-code:cloud --execute"
+      },
+      {
+        "position": 2,
+        "assistant": "codex",
+        "required_version": "0.146.0-alpha.3.1",
+        "model": "gpt-5.6-sol",
+        "access_path": "subscription",
+        "hash": "2bd27a0deb93daee5d941bffab6cdaf6210c098dc622bdbbc9c91610773d3c5b",
+        "command": "npm run benchmark:feature -- --assistant codex --model gpt-5.6-sol --execute"
+      },
+      {
+        "position": 3,
+        "assistant": "claude",
+        "required_version": "2.1.241",
+        "model": "claude-opus-5",
+        "access_path": "subscription",
+        "hash": "a7da211912fe8b785b04fc03b6aa974d6a1d967d9687e3c8c24f635652fa80ff",
+        "command": "npm run benchmark:feature -- --assistant claude --model claude-opus-5 --execute"
+      }
+    ]
+  },
+  "automatic_acceptance": [
+    "The process completes within 600 seconds and the tracked workspace remains unchanged.",
+    "The assistant calls get_task_contract exactly once and summarize_run exactly once.",
+    "No repository, shell, web, browser, mutation, or subagent tool is called; a product skill-loading call is allowed.",
+    "The response contains exactly the required Verdict, Evidence, Telemetry, and Limitations headings."
+  ],
+  "manual_acceptance": [
+    "The verdict and every requested evidence fact agree with the MCP results.",
+    "Token and metered-cost totals are identified as unavailable from the MCP evidence rather than invented.",
+    "The limitations do not claim that raw prompts, transcripts, patches, logs, or private tests were inspected."
+  ],
+  "comparison_fields": [
+    "extension_discovery",
+    "required_tool_calls",
+    "unexpected_tool_calls",
+    "output_contract_accuracy",
+    "elapsed_ms",
+    "input_cache_output_and_reasoning_tokens_by_adapter_definition",
+    "permission_events",
+    "subscription_cli_telemetry_separately",
+    "setup_or_connection_errors"
+  ],
+  "rules": [
+    "Execute in preregistered order with no reruns or route substitution.",
+    "Keep raw feature evidence under the ignored benchmark/feature-runs directory and commit only normalized results.",
+    "Do not expose raw prompts, transcripts, patches, logs, or private tests to the assistants.",
+    "Do not use OpenRouter, enable Anthropic usage credits, or change account limits.",
+    "Do not treat Ollama's zero reported cost as proof of zero underlying hosting cost.",
+    "Do not rank model quality from this harness feature pilot."
+  ]
+}

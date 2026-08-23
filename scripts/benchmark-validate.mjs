@@ -116,4 +116,19 @@ validateWriteTask("T6-rejected-promise-cache", [
 const claudeRules = readFileSync(resolve(root, "CLAUDE.md"), "utf8");
 assert.match(claudeRules, /^@AGENTS\.md\b/);
 
+const extensionBlock = readJson("benchmark/blocks/benchmark-audit-invocation-2026-08-23.json");
+const extensionPrompt = readFileSync(
+  resolve(root, extensionBlock.feature.prompt_path),
+  "utf8",
+);
+const extensionPromptDigest = createHash("sha256").update(extensionPrompt).digest("hex");
+assert.equal(extensionBlock.status, "preregistered");
+assert.equal(extensionPromptDigest, extensionBlock.feature.prompt_sha256);
+assert.deepEqual(extensionBlock.feature.required_tools, [
+  "get_task_contract",
+  "summarize_run",
+]);
+assert.equal(extensionBlock.run_policy.openrouter_calls, 0);
+assert.equal(extensionBlock.run_policy.max_human_interventions, 0);
+
 console.log("Benchmark contracts are valid.");
