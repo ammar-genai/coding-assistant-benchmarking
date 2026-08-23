@@ -371,15 +371,27 @@ No paid API call occurred. OpenRouter spend remains `$1.3764798`, leaving
 
 ## Exact next steps
 
-1. Commit the Claude recovery result and updated reports.
-2. Add a compact final-study-results section to the HTML application so the
-   browser view shows the actual T1-T6 and extension findings, not only the
-   original plan.
-3. Run browser QA on the updated desktop and mobile result view.
-4. Decide whether a later OpenCode/Kimi T6 row is worth a new explicit budget.
+1. Decide whether a later OpenCode/Kimi T6 row is worth a new explicit budget.
    Do not increase a provider limit automatically.
-5. Run repeated randomized trials only where they can change a decision; one
+2. Run repeated randomized trials only where they can change a decision; one
    task is not a general winner.
+3. Publish the HTML dashboard only if the user explicitly requests deployment.
+
+## HTML results dashboard
+
+The local HTML application now leads with the actual recorded findings through
+T6, including the assistant role recommendation, top-native T4 and T6 results,
+distributed-workflow tradeoff, portable extension result, small-model lesson,
+and metered spend. It also includes a generated social preview image and dynamic
+Open Graph metadata.
+
+Desktop and 390-pixel mobile browser QA passed. The page has no horizontal
+overflow, the comparison table scrolls inside its own focusable container, the
+progress control updates and resets correctly, and the browser console has no
+warnings or errors. Full evidence:
+[`benchmark/reports/results-site-browser-qa.md`](benchmark/reports/results-site-browser-qa.md).
+
+The dashboard remains local. No publish or deployment action was taken.
 
 ## Verification commands
 

@@ -431,6 +431,164 @@ main {
   align-items: end;
 }
 
+.results-section {
+  position: relative;
+}
+
+.verdict-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.verdict-card {
+  display: flex;
+  min-height: 280px;
+  flex-direction: column;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: var(--white);
+  padding: 24px;
+}
+
+.verdict-card > span,
+.evidence-summary-grid article > span {
+  color: var(--muted);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.verdict-card h3 {
+  margin: 34px 0 12px;
+  font-size: clamp(30px, 3.2vw, 45px);
+  font-weight: 570;
+  letter-spacing: -0.055em;
+  line-height: 1;
+}
+
+.verdict-card p {
+  margin: auto 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.verdict-primary {
+  border-color: var(--blue);
+  background: var(--blue);
+  color: white;
+}
+
+.verdict-primary > span,
+.verdict-primary p {
+  color: #dbe4ff;
+}
+
+.verdict-open {
+  border-color: #93cbb8;
+  background: var(--green-soft);
+}
+
+.result-metrics {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 14px 0;
+  overflow: hidden;
+  border: 1px solid var(--ink);
+  border-radius: 14px;
+  background: var(--ink);
+  color: white;
+}
+
+.result-metrics > div {
+  min-height: 126px;
+  border-right: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 19px;
+}
+
+.result-metrics > div:last-child {
+  border-right: 0;
+}
+
+.result-metrics strong {
+  display: block;
+  color: #ffffff;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(27px, 3vw, 42px);
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.result-metrics span {
+  display: block;
+  margin-top: 13px;
+  color: #bdc9c5;
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.results-table-wrap td:nth-child(3),
+.results-table-wrap td:nth-child(4) {
+  white-space: nowrap;
+}
+
+.result-score {
+  display: inline-flex;
+  min-width: 36px;
+  height: 36px;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: var(--blue-soft);
+  color: var(--blue-dark);
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 10px;
+  font-weight: 750;
+}
+
+.evidence-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 14px;
+}
+
+.evidence-summary-grid article {
+  border-top: 3px solid var(--orange);
+  border-radius: 0 0 13px 13px;
+  background: var(--paper-deep);
+  padding: 20px;
+}
+
+.evidence-summary-grid article:nth-child(2) {
+  border-color: var(--blue);
+}
+
+.evidence-summary-grid article:nth-child(3) {
+  border-color: var(--green);
+}
+
+.evidence-summary-grid h3 {
+  margin: 16px 0 9px;
+  font-size: 19px;
+  font-weight: 590;
+  letter-spacing: -0.035em;
+  line-height: 1.16;
+}
+
+.evidence-summary-grid p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+}
+
+.result-caveat {
+  border-left: 4px solid var(--blue) !important;
+}
+
 .assistant-grid {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -1502,6 +1660,18 @@ footer p {
   .ecosystem-notes {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .result-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .result-metrics > div:nth-child(2) {
+    border-right: 0;
+  }
+
+  .result-metrics > div:nth-child(n + 3) {
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+  }
 }
 
 @media (max-width: 800px) {
@@ -1561,6 +1731,8 @@ footer p {
   }
 
   .assistant-grid,
+  .verdict-grid,
+  .evidence-summary-grid,
   .task-grid,
   .model-rule-grid,
   .evidence-grid,
@@ -1571,6 +1743,7 @@ footer p {
   }
 
   .assistant-card,
+  .verdict-card,
   .task-card {
     min-height: 300px;
   }
@@ -1684,6 +1857,21 @@ footer p {
   .hero-brief dl div {
     grid-template-columns: 1fr;
     gap: 3px;
+  }
+
+  .result-metrics {
+    grid-template-columns: 1fr;
+  }
+
+  .result-metrics > div,
+  .result-metrics > div:nth-child(2) {
+    min-height: auto;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    border-right: 0;
+  }
+
+  .result-metrics > div:first-child {
+    border-top: 0;
   }
 
   .method-strip,

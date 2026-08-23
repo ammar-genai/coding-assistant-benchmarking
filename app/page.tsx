@@ -5,26 +5,26 @@ import { useEffect, useMemo, useState } from "react";
 const assistantCards = [
   {
     name: "Codex",
-    role: "Primary assistant",
+    role: "Lead / integrator",
     mark: "CX",
     summary:
-      "Use it for the strongest OpenAI-native workflow: planning, implementation, parallel subagents, review, browser checks, and long-running work.",
+      "The best default lead in this study. It combined strong accepted results with the cleanest integration behavior and the fastest T6 frontier run.",
     test: "App and CLI flow, worktrees, custom agents, skills, plugins, MCP, hooks, approvals, structured non-interactive output.",
   },
   {
     name: "Claude Code",
-    role: "Primary assistant",
+    role: "Reviewer / alternate lead",
     mark: "CC",
     summary:
-      "Use it for Anthropic-native coding, long tasks, careful planning, and its mature set of subagents, teams, hooks, MCP, and plugins.",
+      "The strongest independent reviewer observed. It found useful plan gaps and wrote careful evidence, though narrow permissions needed more setup.",
     test: "Plan mode, subagents, agent view, agent teams, worktrees, plugin marketplace, hooks, MCP, permissions, print/JSON mode.",
   },
   {
     name: "OpenCode",
-    role: "Primary assistant",
+    role: "Open-model worker",
     mark: "OC",
     summary:
-      "Use it as the provider-flexible assistant. It is the cleanest place to compare local, cloud, and paid models without changing your daily interface.",
+      "Worth keeping as a strong secondary tool. Its provider flexibility is real, and Kimi delivered accepted work without frontier repair.",
     test: "Provider switching, Ollama discovery, agents, skills, MCP, plugins, permissions, session handling, run/server modes.",
   },
   {
@@ -34,6 +34,51 @@ const assistantCards = [
     summary:
       "Use Pi to compare models inside one minimal harness. It supports your OpenAI and Anthropic subscriptions plus custom local providers.",
     test: "Model portability, extensions, skills, packages, JSON/RPC/SDK modes, session branching, and the cost of adding missing controls.",
+  },
+];
+
+const resultRows = [
+  {
+    task: "T4 interface",
+    route: "OpenCode + Kimi K3",
+    score: "100",
+    time: "221.644 s",
+    note: "Fastest accepted top-native route",
+  },
+  {
+    task: "T4 interface",
+    route: "Codex + GPT-5.6 Sol",
+    score: "100",
+    time: "350.694 s",
+    note: "Fewest tool calls among the successful routes",
+  },
+  {
+    task: "T4 interface",
+    route: "Claude Code + Opus 5",
+    score: "100",
+    time: "483.388 s",
+    note: "Largest test suite and strongest final evidence",
+  },
+  {
+    task: "T4 interface",
+    route: "OpenCode + Qwen3.8-27B",
+    score: "87",
+    time: "20 min cap",
+    note: "Working interface, but the run timed out incomplete",
+  },
+  {
+    task: "T6 incident",
+    route: "Codex + GPT-5.6 Sol",
+    score: "99",
+    time: "129.209 s",
+    note: "Faster, smaller, more disciplined tool trace",
+  },
+  {
+    task: "T6 incident",
+    route: "Claude Code + Opus 5",
+    score: "97",
+    time: "228.453 s",
+    note: "Broader tests, with ten permission denials",
   },
 ];
 
@@ -372,6 +417,7 @@ const sources = [
 ];
 
 const navItems = [
+  ["results", "Current findings"],
   ["scope", "Scope"],
   ["models", "Models"],
   ["design", "Study design"],
@@ -476,27 +522,28 @@ export default function Home() {
             ))}
           </nav>
           <div className="side-note">
-            <p>Study size</p>
-            <strong>94 core runs</strong>
-            <span>plus one distributed project</span>
+            <p>Evidence status</p>
+            <strong>Through T6</strong>
+            <span>plus one distributed workflow</span>
           </div>
         </aside>
 
         <main id="main-content">
           <section className="hero" aria-labelledby="hero-title">
             <div className="hero-copy">
-              <p className="kicker">A practical six-week benchmark</p>
+              <p className="kicker">A live, reproducible benchmark</p>
               <h1 id="hero-title">
                 Find the right <em>assistant</em>, the right <em>model</em>, and the
                 right way to combine them.
               </h1>
               <p className="hero-lede">
-                A repeatable study of Codex, Claude Code, and OpenCode—with Pi as
-                a neutral model lab, and Ollama for local and hosted open models.
+                A repeatable study of Codex, Claude Code, and OpenCode—with
+                frontier models in the lead and hosted open models as practical
+                workers. The plan and the evidence now live together.
               </p>
               <div className="hero-actions">
-                <a className="primary-button" href="#start">
-                  Begin with Day 1
+                <a className="primary-button" href="#results">
+                  See the findings
                 </a>
                 <a className="secondary-button" href="#design">
                   See the study design
@@ -504,27 +551,147 @@ export default function Home() {
               </div>
             </div>
             <div className="hero-brief" aria-label="Key recommendation">
-              <p className="eyebrow">My recommendation</p>
-              <p className="brief-big">Do not run every model in every assistant.</p>
+              <p className="eyebrow">Current recommendation</p>
+              <p className="brief-big">Use a small team with clear roles.</p>
               <p>
-                First hold the model fixed to measure the assistant. Then hold the
-                assistant fixed to measure the model. Finally test each native
-                pairing as a complete product.
+                Codex leads and integrates. Claude challenges plans and reviews.
+                OpenCode routes bounded work to the best hosted open model.
               </p>
               <dl>
                 <div>
-                  <dt>Lead model</dt>
-                  <dd>GPT-5.6 Sol, then Opus 5</dd>
+                  <dt>Default lead</dt>
+                  <dd>Codex + GPT-5.6 Sol</dd>
                 </div>
                 <div>
-                  <dt>Shared baseline</dt>
-                  <dd>DeepSeek V4 Flash Cloud</dd>
+                  <dt>Reviewer</dt>
+                  <dd>Claude Code + Opus 5</dd>
                 </div>
                 <div>
-                  <dt>Neutral harness</dt>
-                  <dd>Pi</dd>
+                  <dt>Open worker</dt>
+                  <dd>OpenCode + selected Kimi route</dd>
                 </div>
               </dl>
+            </div>
+          </section>
+
+          <section className="section-block results-section" id="results" aria-labelledby="results-title">
+            <div className="section-heading split-heading">
+              <div>
+                <p className="section-number">Results / Current</p>
+                <h2 id="results-title">What the recorded runs actually showed.</h2>
+              </div>
+              <p>
+                These are one-run pilot findings, not universal rankings. Every
+                failure, timeout, permission denial, and grader correction remains
+                part of the evidence.
+              </p>
+            </div>
+
+            <div className="verdict-grid">
+              <article className="verdict-card verdict-primary">
+                <span>Recommended lead</span>
+                <h3>Codex</h3>
+                <p>
+                  Best default for controlled implementation and integration. It
+                  won the T6 frontier comparison on speed and tool discipline.
+                </p>
+              </article>
+              <article className="verdict-card">
+                <span>Independent reviewer</span>
+                <h3>Claude Code</h3>
+                <p>
+                  Strong planning challenge and careful final evidence. Explicit
+                  tool authorization matters in narrow automated sessions.
+                </p>
+              </article>
+              <article className="verdict-card verdict-open">
+                <span>Open-model route</span>
+                <h3>OpenCode</h3>
+                <p>
+                  A strong secondary tool, not a novelty. Kimi completed the T5
+                  implementation with zero Codex repair.
+                </p>
+              </article>
+            </div>
+
+            <div className="result-metrics" aria-label="Headline benchmark findings">
+              <div>
+                <strong>3 × 100</strong>
+                <span>Sol, Opus, and Kimi K3 on corrected T4</span>
+              </div>
+              <div>
+                <strong>3.57×</strong>
+                <span>Distributed T5 latency versus solo Codex</span>
+              </div>
+              <div>
+                <strong>0 edits</strong>
+                <span>Frontier repairs needed for Kimi&apos;s T5 patch</span>
+              </div>
+              <div>
+                <strong>$1.3765</strong>
+                <span>Metered OpenRouter spend; subscriptions separate</span>
+              </div>
+            </div>
+
+            <div className="table-wrap results-table-wrap" tabIndex={0} aria-label="Top native benchmark results">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Task</th>
+                    <th>Assistant + model</th>
+                    <th>Score</th>
+                    <th>Time</th>
+                    <th>What mattered</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {resultRows.map((row) => (
+                    <tr key={`${row.task}-${row.route}`}>
+                      <td>{row.task}</td>
+                      <td><strong>{row.route}</strong></td>
+                      <td><span className="result-score">{row.score}</span></td>
+                      <td>{row.time}</td>
+                      <td>{row.note}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="evidence-summary-grid">
+              <article>
+                <span>Distributed workflow</span>
+                <h3>Useful for review-heavy work, not every task.</h3>
+                <p>
+                  Distributed T5 and solo Codex both scored 100. The multi-tool
+                  route took 536.704 seconds versus 150.206 seconds, but created a
+                  clearer plan challenge, ownership trail, and independent review.
+                </p>
+              </article>
+              <article>
+                <span>Portable extensions</span>
+                <h3>One skill and MCP server worked across all three.</h3>
+                <p>
+                  Codex and OpenCode passed immediately. Claude first exposed a
+                  permission setup trap, then passed a frozen recovery after only
+                  the two read-only tools were preauthorized.
+                </p>
+              </article>
+              <article>
+                <span>Small-model lesson</span>
+                <h3>Model choice can dominate the harness.</h3>
+                <p>
+                  Kimi K3 earned a full T4 result in OpenCode. Qwen3.8-27B produced
+                  a working interface but timed out before completing the contract.
+                </p>
+              </article>
+            </div>
+
+            <div className="callout plain result-caveat">
+              <strong>Decision now:</strong> Codex is the primary lead, Claude Code
+              is the primary independent reviewer and alternate lead, and OpenCode
+              is a strong secondary tool for hosted open-model work. More repeats
+              are needed before claiming a general winner.
             </div>
           </section>
 
