@@ -1,0 +1,47 @@
+{
+  "schema_version": "1.0",
+  "id": "T5-review-queue",
+  "version": "1.0.0",
+  "title": "Build a cross-layer benchmark run review queue",
+  "type": "feature",
+  "mode": "workspace-write",
+  "prompt_path": "prompt.md",
+  "allowed_paths": [
+    "benchmark/fixtures/T5-review-queue/review-store.mjs",
+    "benchmark/fixtures/T5-review-queue/review-api.mjs",
+    "benchmark/fixtures/T5-review-queue/review-page.mjs",
+    "benchmark/fixtures/T5-review-queue/student-tests.mjs",
+    "benchmark/fixtures/T5-review-queue/README.md"
+  ],
+  "forbidden_actions": [
+    "Edit the committed visible test, task definitions, harness files, or generated evidence",
+    "Install dependencies or use the network",
+    "Commit, push, or start an external service"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "visible-tests",
+      "description": "The committed contract tests and assistant-authored tests pass.",
+      "command": "node --test benchmark/fixtures/T5-review-queue/review-queue.test.mjs benchmark/fixtures/T5-review-queue/student-tests.mjs"
+    },
+    {
+      "id": "private-tests",
+      "description": "Private store-isolation, validation, API-error, safe-rendering, test-quality, and documentation checks pass."
+    },
+    {
+      "id": "allowed-scope",
+      "description": "Only the five allowed implementation, test, and documentation files change."
+    }
+  ],
+  "verification": {
+    "visible_commands": [
+      "node --test benchmark/fixtures/T5-review-queue/review-queue.test.mjs benchmark/fixtures/T5-review-queue/student-tests.mjs"
+    ],
+    "hidden_suite": "T5-review-queue",
+    "hidden_sha256": "9da9154bfe7a7a96f2dfb68b374bbb712773803d577c6f2e990dce63ff374fb1"
+  },
+  "limits": {
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0
+  }
+}
