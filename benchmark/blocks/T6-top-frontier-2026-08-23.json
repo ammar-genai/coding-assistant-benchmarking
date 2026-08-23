@@ -1,0 +1,99 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T6-top-frontier-2026-08-23",
+  "status": "preregistered",
+  "purpose": "Compare the strongest accessible OpenAI and Anthropic subscription products on a maintenance incident that rewards root-cause proof, narrow repair, concurrency safety, regression tests, and incident communication.",
+  "task": {
+    "id": "T6-rejected-promise-cache",
+    "version": "1.0.0",
+    "prompt_sha256": "9717e7ec3248b0901eb2ad8f3eeaa701e323342da75c7b1e01753fd9ae24e3a1",
+    "private_suite": "T6-rejected-promise-cache",
+    "private_sha256": "637a6db66e712abfece7df0fd0b28f51e3a2f8d22f07ed0204af6d7fbfe81b94"
+  },
+  "route_resolution": {
+    "openai_route": "gpt-5.6-sol",
+    "openai_access": "Codex subscription",
+    "requested_anthropic_route": "claude-fable-5",
+    "requested_anthropic_status": "access-limited before this block because usage credits are disabled",
+    "anthropic_route": "claude-opus-5",
+    "anthropic_access": "Claude Pro subscription",
+    "anthropic_label": "best accessible Claude route; not a Fable 5 substitute"
+  },
+  "baseline": {
+    "parent_commit_before_preregistration": "97c69a138b308cbddfa184699bc3305f5ad06fee",
+    "resolution": "Use the clean Git commit containing this preregistration file for both runs. Capture the exact commit independently in each manifest."
+  },
+  "run_policy": {
+    "runs_per_route": 1,
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0,
+    "preserve_failures": true,
+    "rerun_inside_block": false,
+    "paid_api_calls": 0
+  },
+  "randomization": {
+    "method": "Sort routes by ascending SHA-256(seed|assistant|model).",
+    "seed": "T6-top-frontier-2026-08-23|97c69a138b308cbddfa184699bc3305f5ad06fee",
+    "order": [
+      {
+        "position": 1,
+        "assistant": "codex",
+        "required_version": "0.146.0-alpha.3.1",
+        "model": "gpt-5.6-sol",
+        "access_path": "subscription",
+        "hash": "137b9745551bd1cf812a6321d80c640f022d9df85929265e40f0ff59b24edb15",
+        "command": "npm run benchmark:run -- --assistant codex --task T6-rejected-promise-cache --model gpt-5.6-sol --execute"
+      },
+      {
+        "position": 2,
+        "assistant": "claude",
+        "required_version": "2.1.241",
+        "model": "claude-opus-5",
+        "access_path": "subscription",
+        "hash": "6ee721ec52963bd4820a57b1dd91b1c75c609d88eee44575a3fe7a6053ad5710",
+        "command": "npm run benchmark:run -- --assistant claude --task T6-rejected-promise-cache --model claude-opus-5 --execute"
+      }
+    ]
+  },
+  "acceptance": {
+    "allowed_changed_paths": [
+      "benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs",
+      "benchmark/fixtures/T6-rejected-promise-cache/config-api.mjs",
+      "benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs",
+      "benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md"
+    ],
+    "visible_command": "node --test benchmark/fixtures/T6-rejected-promise-cache/config-cache.test.mjs benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs",
+    "private_suite": "T6-rejected-promise-cache",
+    "pass_rule": "All visible and private checks pass, the incident note contains all requested sections with a correct diagnosis, and every changed path is allowed."
+  },
+  "comparison_fields": [
+    "rubric_score",
+    "acceptance_status",
+    "elapsed_ms",
+    "time_to_first_edit_ms",
+    "visible_and_private_tests",
+    "root_cause_accuracy",
+    "replacement_race_behavior",
+    "changed_and_out_of_scope_paths",
+    "tool_calls_by_type",
+    "failed_or_repeated_commands",
+    "input_tokens",
+    "cached_input_tokens",
+    "output_tokens",
+    "reasoning_tokens",
+    "subscription_telemetry_separately",
+    "incident_report_quality",
+    "human_interventions",
+    "final_evidence_quality"
+  ],
+  "rules": [
+    "Execute in the preregistered order without substituting a route.",
+    "Use a fresh isolated worktree and non-persistent session for each run.",
+    "Preserve failures, partial patches, permission errors, quota errors, and timeouts as results.",
+    "Do not rerun a route inside this block and do not repair one assistant's patch with the other assistant.",
+    "Do not show private checks or the removed maintainer reference to either assistant.",
+    "Do not use OpenRouter, enable Anthropic usage credits, or increase any account limit in this block.",
+    "Keep subscription usage and CLI cost estimates separate from metered API spend.",
+    "Do not claim a general winner from one run per route."
+  ]
+}

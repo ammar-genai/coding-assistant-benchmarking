@@ -322,11 +322,17 @@ design report are under `benchmark/tasks/T6-rejected-promise-cache`,
 [`benchmark/reports/T6-task-design.md`](benchmark/reports/T6-task-design.md).
 No assistant under test has seen the task.
 
+The subscription-only top-frontier block is preregistered in
+[`benchmark/blocks/T6-top-frontier-2026-08-23.json`](benchmark/blocks/T6-top-frontier-2026-08-23.json).
+Hash randomization set the order to Codex/GPT-5.6 Sol first and Claude
+Code/Opus 5 second. It permits no reruns, substitutions, human intervention,
+OpenRouter calls, usage-credit enablement, or account-limit changes.
+
 ## Exact next steps
 
-1. Commit the frozen T6 task baseline, then preregister a subscription-only
-   Codex/GPT-5.6 Sol versus Claude Code/Opus 5 pilot in randomized order.
-2. Run one fresh isolated attempt per route with no reruns or intervention.
+1. Commit the T6 top-frontier preregistration, then run Codex/GPT-5.6 Sol and
+   Claude Code/Opus 5 in the frozen order.
+2. Grade both saved patches and write the T6 comparison report without reruns.
 3. Decide whether a later OpenCode/Kimi row is worth a new explicit budget. Do not
    increase a provider limit automatically.
 4. Run repeated randomized trials only where they can change a decision; one
