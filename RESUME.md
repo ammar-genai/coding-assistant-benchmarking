@@ -231,6 +231,27 @@ raw pass/fail signal. Full evidence:
 The preliminary OpenCode verdict is now **worth exploring / useful secondary
 tool**, not yet primary-tool adoption.
 
+### T4 top-native comparison
+
+The corrected `T4-run-explorer-v2@1.0.1` block ran on baseline `d72825c` with no
+reruns or human interventions. Codex + GPT-5.6 Sol, OpenCode + Kimi K3, and
+Claude Code + Opus 5 each scored 100 and passed automated plus browser checks.
+Kimi was fastest at 221.644 seconds and cost `$0.5790162`; Codex took 350.694
+seconds; Opus took 483.388 seconds.
+
+OpenCode + Qwen3.8-27B hit the fixed 20-minute timeout. Its saved three-file UI
+worked in the browser, but it never added student tests or a final report and
+received a post-timeout score of 87. Total OpenRouter access-check and counted
+spend was `$0.758898` of the approved `$1.50` ceiling.
+
+Fable 5 remains an explicit access limitation because usage credits are
+disabled. Opus 5 is labeled as the best accessible Claude route, not Fable.
+
+The OpenCode verdict is now **strong secondary tool and serious pilot
+candidate**. Kimi shows that it can deliver a top result; Qwen shows that model
+choice remains decisive. Full evidence:
+[`benchmark/reports/T4-top-native-comparison.md`](benchmark/reports/T4-top-native-comparison.md).
+
 ## Selected distributed workflow
 
 The evidence from T3 supports the following first controlled distributed test:
@@ -255,28 +276,21 @@ block comparing Kimi and Qwen workers under the same frontier plan.
 
 ## Exact next steps
 
-1. Review and deliberately commit the T2 result JSON, comparison report,
-   frontier-first decision, three-harness program, and updated handoff.
-2. Make one minimal access request to each exact model ID, `gpt-5.6-sol` and
-   `claude-fable-5`, immediately before the recorded headline block. If Fable
-   requires usage credits, obtain explicit budget approval; otherwise use the
-   declared Opus 5 fallback and record why.
-3. Confirm the current OpenRouter price and provider route for Kimi K3 before
-   adding `openrouter/moonshotai/kimi-k3` to the project configuration. Obtain
-   approval before increasing the existing OpenRouter spending limit.
-4. Review and deliberately commit the completed T4 shared-harness result JSON,
-   report, and updated handoff.
-5. Freeze and run the corrected four-route headline block: Codex + GPT-5.6 Sol,
-   Claude Code + Opus 5, OpenCode + Kimi K3, and OpenCode + Qwen3.8-27B.
-6. Preserve Fable 5 as an access limitation: the exact route was recognized but
-   required disabled usage credits. Do not silently label Opus 5 as Fable.
-7. Use `T4-run-explorer-v2@1.0.1`, whose separately hash-checked private suite
-   removes the accidental `.outcome` class-name requirement without altering
-   the original frozen task or result.
-8. Run the two mirrored distributed workflows with the frontier lead and
-   reviewer roles reversed.
-9. Do not make cost or winner claims until there are repeated randomized runs
-   and normalized telemetry.
+1. Review and deliberately commit the completed top-native result JSON, report,
+   and updated handoff.
+2. Design a new unseen T5 task and preregister one all-assistant workflow:
+   Codex + GPT-5.6 Sol plans, OpenCode + Kimi K3 implements, Claude Code + Opus
+   5 reviews, and Kimi receives at most one bounded repair pass.
+3. Add a solo frontier-model control on the same T5 task and freeze both routes
+   before any selected model sees the prompt.
+4. Obtain a new explicit API ceiling before the distributed Kimi calls. Do not
+   increase an account spending limit.
+5. Run the distributed route and solo control, then grade both with the same
+   private suite and compare quality, wall time, frontier time, API cost, tool
+   calls, scope, and repair count.
+6. Evaluate plugins, MCP integration, sessions, configuration effort, and
+   repository-scale behavior before considering OpenCode a primary tool.
+7. Run repeated randomized trials before making a general winner claim.
 
 ## Verification commands
 

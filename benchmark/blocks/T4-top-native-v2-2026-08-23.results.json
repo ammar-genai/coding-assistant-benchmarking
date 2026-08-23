@@ -1,0 +1,299 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T4-top-native-v2-2026-08-23",
+  "status": "complete-with-timeout",
+  "protocol": "benchmark/blocks/T4-top-native-v2-2026-08-23.json",
+  "baseline_commit": "d72825c3870ae326de20ade957ed9ddccc282404",
+  "task": "T4-run-explorer-v2@1.0.1",
+  "completed_in_preregistered_order": true,
+  "reruns_inside_block": 0,
+  "human_interventions": 0,
+  "requested_claude_route": {
+    "model": "claude-fable-5",
+    "status": "access-limited-before-block",
+    "reason": "The exact route was recognized but returned HTTP 429 before inference because usage credits were disabled.",
+    "spend_usd": 0,
+    "executed_fallback": "claude-opus-5",
+    "fallback_label": "best accessible Claude route; not presented as Fable 5"
+  },
+  "budget": {
+    "openrouter_ceiling_usd": 1.5,
+    "openrouter_access_checks_usd": 0.0280782,
+    "openrouter_counted_runs_usd": 0.7308198,
+    "openrouter_total_usd": 0.758898,
+    "openrouter_remaining_usd": 0.741102,
+    "account_limits_increased": false,
+    "claude_usage_credits_enabled": false
+  },
+  "runs": [
+    {
+      "position": 1,
+      "run_id": "2026-08-23T16-41-43.963Z_codex_T4-run-explorer-v2",
+      "assistant": "codex",
+      "assistant_version": "0.146.0-alpha.3.1",
+      "model": "gpt-5.6-sol",
+      "access_path": "subscription",
+      "status": "complete",
+      "acceptance_status": "pass",
+      "elapsed_ms": 350694,
+      "time_to_first_edit_ms": null,
+      "rubric_score": 100,
+      "score_breakdown": {
+        "functional_and_private_tests": 40,
+        "ui_behavior": 15,
+        "responsive_accessible_ui": 15,
+        "scope_control": 10,
+        "implementation_quality": 10,
+        "assistant_tests": 5,
+        "final_report": 5
+      },
+      "visible_tests": { "passed": 8, "failed": 0, "assistant_authored": 4 },
+      "private_tests": { "passed": 7, "failed": 0 },
+      "browser_qa": {
+        "status": "pass",
+        "desktop_result_columns": 1,
+        "desktop_layout": "wide evidence rows",
+        "mobile_width_px": 390,
+        "mobile_result_columns": 1,
+        "horizontal_overflow": false,
+        "interaction_failures": 0,
+        "visible_outcome_labels": 6,
+        "focus_outline_px": 3,
+        "console_warnings_or_errors": 0
+      },
+      "changed_paths": [
+        "benchmark/fixtures/T4-run-explorer/index.html",
+        "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
+        "benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+        "benchmark/fixtures/T4-run-explorer/styles.css"
+      ],
+      "out_of_scope_paths": [],
+      "patch_sha256": "76061b34fe402679c82c4b561b021abb571e4a9e6461a73a74d9bc9446fe041d",
+      "patch_additions": 830,
+      "patch_deletions": 15,
+      "tool_calls": 11,
+      "tool_calls_by_type": { "command_execution": 9, "file_change": 2 },
+      "failed_or_denied_tool_calls": 2,
+      "tokens": {
+        "input": 598240,
+        "cached_input_subset": 541696,
+        "output": 14423,
+        "reasoning_output_subset": 2155,
+        "input_plus_output": 612663
+      },
+      "reported_cost_usd": null,
+      "operational_notes": [
+        "Codex used the fewest tool calls of the three successful routes.",
+        "One optional lint command and one local-server attempt failed; the required test passed.",
+        "Its final report accurately disclosed that it could not complete browser verification inside the counted sandbox."
+      ]
+    },
+    {
+      "position": 2,
+      "run_id": "2026-08-23T16-47-43.749Z_opencode_T4-run-explorer-v2",
+      "assistant": "opencode",
+      "assistant_version": "1.18.21",
+      "model": "openrouter/moonshotai/kimi-k3",
+      "access_path": "api",
+      "status": "complete",
+      "acceptance_status": "pass",
+      "elapsed_ms": 221644,
+      "time_to_first_edit_ms": 183171,
+      "rubric_score": 100,
+      "score_breakdown": {
+        "functional_and_private_tests": 40,
+        "ui_behavior": 15,
+        "responsive_accessible_ui": 15,
+        "scope_control": 10,
+        "implementation_quality": 10,
+        "assistant_tests": 5,
+        "final_report": 5
+      },
+      "visible_tests": { "passed": 12, "failed": 0, "assistant_authored": 8 },
+      "private_tests": { "passed": 7, "failed": 0 },
+      "browser_qa": {
+        "status": "pass",
+        "desktop_result_columns": 3,
+        "mobile_width_px": 390,
+        "mobile_result_columns": 1,
+        "horizontal_overflow": false,
+        "interaction_failures": 0,
+        "visible_outcome_labels": 6,
+        "focus_outline_px": 3,
+        "console_warnings_or_errors": 0
+      },
+      "changed_paths": [
+        "benchmark/fixtures/T4-run-explorer/index.html",
+        "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
+        "benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+        "benchmark/fixtures/T4-run-explorer/styles.css"
+      ],
+      "out_of_scope_paths": [],
+      "patch_sha256": "40f86932fb1ed78f90e3c7f1e16b33570446931a999a10ec2d412b12d545e9f7",
+      "patch_additions": 789,
+      "patch_deletions": 16,
+      "tool_calls": 20,
+      "tool_calls_by_type": { "bash": 3, "read": 10, "glob": 3, "write": 4 },
+      "failed_or_denied_tool_calls": 2,
+      "tokens": {
+        "input": 17543,
+        "cache_read": 290624,
+        "output": 9819,
+        "reasoning": 19461,
+        "total": 337447
+      },
+      "reported_cost_usd": 0.5790162,
+      "operational_notes": [
+        "OpenCode denied two broad shell-discovery calls; Kimi recovered using read and glob tools.",
+        "The first write occurred 183.171 seconds after runner start.",
+        "The required test passed, and the final report accurately summarized the implementation and checks."
+      ]
+    },
+    {
+      "position": 3,
+      "run_id": "2026-08-23T16-51-42.667Z_claude_T4-run-explorer-v2",
+      "assistant": "claude",
+      "assistant_version": "2.1.241",
+      "model": "claude-opus-5",
+      "access_path": "subscription",
+      "status": "complete",
+      "acceptance_status": "pass",
+      "elapsed_ms": 483388,
+      "time_to_first_edit_ms": 108372,
+      "rubric_score": 100,
+      "score_breakdown": {
+        "functional_and_private_tests": 40,
+        "ui_behavior": 15,
+        "responsive_accessible_ui": 15,
+        "scope_control": 10,
+        "implementation_quality": 10,
+        "assistant_tests": 5,
+        "final_report": 5
+      },
+      "visible_tests": { "passed": 14, "failed": 0, "assistant_authored": 10 },
+      "private_tests": { "passed": 7, "failed": 0 },
+      "browser_qa": {
+        "status": "pass",
+        "desktop_result_columns": 4,
+        "mobile_width_px": 390,
+        "mobile_result_columns": 1,
+        "horizontal_overflow": false,
+        "interaction_failures": 0,
+        "visible_outcome_labels": 6,
+        "focus_outline_px": 3,
+        "console_warnings_or_errors": 0
+      },
+      "changed_paths": [
+        "benchmark/fixtures/T4-run-explorer/index.html",
+        "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
+        "benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+        "benchmark/fixtures/T4-run-explorer/styles.css"
+      ],
+      "out_of_scope_paths": [],
+      "patch_sha256": "7410b33713827d6d431ae30b0ac368af3dc18af6922724deb3bfcb810a6de505",
+      "patch_additions": 1025,
+      "patch_deletions": 16,
+      "tool_calls": 44,
+      "tool_calls_by_type": { "Bash": 19, "Read": 9, "Write": 6, "Edit": 10 },
+      "failed_or_denied_tool_calls": 7,
+      "tokens": {
+        "uncached_input": 80,
+        "cache_creation_input": 61437,
+        "cache_read_input": 1600980,
+        "output": 42243,
+        "thinking_output_subset": 12368,
+        "processed_input_plus_output": 1704740
+      },
+      "reported_cost_usd": 2.473437,
+      "cost_interpretation": "Claude CLI telemetry for the subscription session; the rate-limit record says overage was disabled and not in use, so this is not treated as metered spend.",
+      "auxiliary_model_usage": {
+        "model": "claude-haiku-4-5",
+        "reported_cost_usd": 0.002102
+      },
+      "operational_notes": [
+        "Claude authored the largest test suite and the most detailed final evidence.",
+        "Seven extra scratch, lint, or non-allowed commands were denied; the model recovered and passed the required command.",
+        "Its 44 tool calls were the highest among the successful routes."
+      ]
+    },
+    {
+      "position": 4,
+      "run_id": "2026-08-23T16-59-56.093Z_opencode_T4-run-explorer-v2",
+      "assistant": "opencode",
+      "assistant_version": "1.18.21",
+      "model": "openrouter/qwen/qwen3.8-27b",
+      "access_path": "api",
+      "status": "timeout",
+      "acceptance_status": "not-graded",
+      "elapsed_ms": 1200289,
+      "time_to_first_edit_ms": 1047243,
+      "post_timeout_rubric_score": 87,
+      "score_breakdown": {
+        "functional_and_private_tests": 38,
+        "ui_behavior": 15,
+        "responsive_accessible_ui": 15,
+        "scope_control": 10,
+        "implementation_quality": 9,
+        "assistant_tests": 0,
+        "final_report": 0
+      },
+      "visible_tests_post_timeout": {
+        "node_reported_passed": 5,
+        "failed": 0,
+        "committed_feature_tests_passed": 4,
+        "declared_assistant_tests": 0,
+        "note": "Node counted the unchanged empty student-test module as a passing file-level subtest."
+      },
+      "private_tests_post_timeout": { "passed": 6, "failed": 1 },
+      "browser_qa": {
+        "status": "pass-for-saved-partial-patch",
+        "desktop_result_columns": 3,
+        "mobile_width_px": 390,
+        "mobile_result_columns": 1,
+        "horizontal_overflow": false,
+        "interaction_failures": 0,
+        "visible_outcome_labels": 6,
+        "focus_outline_px": 3,
+        "console_warnings_or_errors": 0
+      },
+      "changed_paths": [
+        "benchmark/fixtures/T4-run-explorer/index.html",
+        "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
+        "benchmark/fixtures/T4-run-explorer/styles.css"
+      ],
+      "missing_required_change": "benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+      "out_of_scope_paths": [],
+      "patch_sha256": "f3f46654b236a5fc870e7058883903ab793de29af29eba181f4b8f958db2d327",
+      "patch_additions": 702,
+      "patch_deletions": 16,
+      "tool_calls": 15,
+      "tool_calls_by_type": { "bash": 1, "glob": 2, "read": 9, "write": 3 },
+      "failed_or_denied_tool_calls": 1,
+      "tokens": {
+        "input": 81500,
+        "cache_read": 147392,
+        "output": 15214,
+        "reasoning": 22064,
+        "total": 266170
+      },
+      "reported_cost_usd": 0.1518036,
+      "operational_notes": [
+        "Qwen spent 1,047.243 seconds before its first write and timed out during the next step.",
+        "The saved logic and UI pass browser checks, but the required student tests and final report were never completed.",
+        "The model was not rerun, repaired, or manually prompted after timeout."
+      ]
+    }
+  ],
+  "interpretation": {
+    "successful_contract_scores": "Codex + GPT-5.6 Sol, OpenCode + Kimi K3, and Claude Code + Opus 5 each scored 100.",
+    "fastest_successful_route": "OpenCode + Kimi K3",
+    "fastest_successful_elapsed_ms": 221644,
+    "lowest_successful_tool_calls": "Codex + GPT-5.6 Sol",
+    "most_assistant_authored_tests": "Claude Code + Opus 5",
+    "qwen_result": "Browser-correct partial implementation, but not an accepted completion because it timed out before adding required tests or a final report.",
+    "costs_directly_comparable": false,
+    "preliminary_opencode_verdict": "worth exploring and strong enough for a serious secondary-tool pilot; model choice materially changes the result",
+    "general_winner_claimed": false,
+    "reason": "This block has one run per route, subscription and API cost telemetry differ, and assistant and model effects are mixed."
+  }
+}
