@@ -1,0 +1,42 @@
+{
+  "task_id": "T4-run-explorer",
+  "task_version": "1.0.0",
+  "total_points": 100,
+  "criteria": [
+    {
+      "id": "functional-and-private-tests",
+      "points": 40,
+      "description": "Visible and private filtering, sorting, summary, empty-state, and immutability checks pass."
+    },
+    {
+      "id": "ui-behavior",
+      "points": 15,
+      "description": "Filters, sorting, reset, summaries, result rendering, and empty state work in a browser."
+    },
+    {
+      "id": "responsive-accessible-ui",
+      "points": 15,
+      "description": "Desktop and narrow layouts are usable with labels, focus states, live status, visible outcome text, and reduced-motion support."
+    },
+    {
+      "id": "scope-control",
+      "points": 10,
+      "description": "Only the four allowed implementation and student-test files change."
+    },
+    {
+      "id": "implementation-quality",
+      "points": 10,
+      "description": "Pure functions and DOM code are readable, maintainable, deterministic, safe, and do not mutate inputs."
+    },
+    {
+      "id": "assistant-tests",
+      "points": 5,
+      "description": "At least two meaningful passing tests are added without skips, todos, or placeholders."
+    },
+    {
+      "id": "final-report",
+      "points": 5,
+      "description": "The final response accurately reports implementation, tests, browser verification, and remaining gaps."
+    }
+  ]
+}

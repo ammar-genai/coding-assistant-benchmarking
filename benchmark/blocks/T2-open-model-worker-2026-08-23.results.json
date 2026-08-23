@@ -1,0 +1,101 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T2-open-model-worker-2026-08-23",
+  "status": "complete",
+  "protocol": "benchmark/blocks/T2-open-model-worker-2026-08-23.json",
+  "baseline_commit": "67d434e5889c23853c1afbf126b721a1f320de88",
+  "task": "T2-filter-valid-runs@1.0.0",
+  "harness": "opencode@1.18.21",
+  "completed_in_preregistered_order": true,
+  "runs": [
+    {
+      "position": 1,
+      "run_id": "2026-08-23T13-14-49.762Z_opencode_T2-filter-valid-runs",
+      "model": "openrouter/qwen/qwen3.8-27b",
+      "access_path": "api",
+      "score": 100,
+      "acceptance_status": "pass",
+      "elapsed_ms": 37815,
+      "visible_tests": { "passed": 2, "failed": 0 },
+      "private_tests": { "passed": 5, "failed": 0 },
+      "changed_paths": [
+        "benchmark/fixtures/T2-run-filter/select-comparison-runs.mjs"
+      ],
+      "out_of_scope_paths": [],
+      "patch_sha256": "65e7817388ad10c7133b05ed38721f3f3753e8adb2a31e1430965de5869e4946",
+      "tool_calls": 4,
+      "tokens": {
+        "input": 15365,
+        "cache_read": 13328,
+        "cache_write": 0,
+        "output": 551,
+        "reasoning": 186,
+        "total": 29430
+      },
+      "reported_cost_usd": 0.0090234,
+      "human_interventions": 0
+    },
+    {
+      "position": 2,
+      "run_id": "2026-08-23T13-15-35.249Z_opencode_T2-filter-valid-runs",
+      "model": "ollama/deepseek-v4-flash:cloud",
+      "access_path": "ollama-cloud",
+      "score": 100,
+      "acceptance_status": "pass",
+      "elapsed_ms": 7528,
+      "visible_tests": { "passed": 2, "failed": 0 },
+      "private_tests": { "passed": 5, "failed": 0 },
+      "changed_paths": [
+        "benchmark/fixtures/T2-run-filter/select-comparison-runs.mjs"
+      ],
+      "out_of_scope_paths": [],
+      "patch_sha256": "65e7817388ad10c7133b05ed38721f3f3753e8adb2a31e1430965de5869e4946",
+      "tool_calls": 3,
+      "tokens": {
+        "input": 24980,
+        "cache_read": 0,
+        "cache_write": 0,
+        "output": 490,
+        "reasoning": 0,
+        "total": 25470
+      },
+      "reported_cost_usd": 0,
+      "human_interventions": 0
+    },
+    {
+      "position": 3,
+      "run_id": "2026-08-23T13-15-50.087Z_opencode_T2-filter-valid-runs",
+      "model": "ollama/kimi-k2.7-code:cloud",
+      "access_path": "ollama-cloud",
+      "score": 100,
+      "acceptance_status": "pass",
+      "elapsed_ms": 7092,
+      "visible_tests": { "passed": 2, "failed": 0 },
+      "private_tests": { "passed": 5, "failed": 0 },
+      "changed_paths": [
+        "benchmark/fixtures/T2-run-filter/select-comparison-runs.mjs"
+      ],
+      "out_of_scope_paths": [],
+      "patch_sha256": "65e7817388ad10c7133b05ed38721f3f3753e8adb2a31e1430965de5869e4946",
+      "tool_calls": 4,
+      "tokens": {
+        "input": 24026,
+        "cache_read": 0,
+        "cache_write": 0,
+        "output": 576,
+        "reasoning": 0,
+        "total": 24602
+      },
+      "reported_cost_usd": 0,
+      "human_interventions": 0
+    }
+  ],
+  "common_patch_sha256": "65e7817388ad10c7133b05ed38721f3f3753e8adb2a31e1430965de5869e4946",
+  "interpretation": {
+    "functional_result": "three-way tie",
+    "fastest_run": "ollama/kimi-k2.7-code:cloud",
+    "qwen_advance_to_t3": true,
+    "costs_directly_comparable": false,
+    "reason": "Every model earned full credit with the same patch. Qwen was slower but its paid T2 charge remained below one cent, so a moderate write-task test is justified."
+  }
+}

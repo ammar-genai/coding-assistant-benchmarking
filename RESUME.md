@@ -25,10 +25,44 @@ The research rules and comparison lanes are defined in
 model effects, and do not modify a frozen task or rubric after recorded runs
 have started.
 
+## Active focus: frontier models first
+
+On 2026-08-23, the user clarified that the project must focus primarily on the
+top OpenAI and Anthropic models, not become a broad open-model survey. The core
+new-task lineup is:
+
+1. Codex + GPT-5.6 Sol;
+2. Claude Code + Claude Fable 5, subject to account access and credit approval;
+3. OpenCode + Kimi K3 as the main top open-model challenger; and
+4. OpenCode + Qwen3.8-27B as the smaller efficiency control.
+
+Claude Opus 5 is the declared Anthropic fallback if Fable 5 is unavailable.
+DeepSeek V4 Pro is the declared open-model alternate. Do not silently
+substitute either one. Existing DeepSeek V4 Flash and Kimi K2.7 results remain
+valid lower-cost worker evidence but are no longer the headline comparison.
+
+This decision is recorded in
+[`benchmark/decisions/2026-08-23-frontier-first-focus.md`](benchmark/decisions/2026-08-23-frontier-first-focus.md).
+
+### Three-harness clarification
+
+Codex, Claude Code, and OpenCode are all primary harnesses being evaluated. The
+study must compare the tool around the model, not only model quality. OpenCode
+requires an explicit adoption verdict: primary tool, useful secondary tool, or
+not worth the setup yet.
+
+Use both a shared-model block across all three harnesses and a top-native-model
+block. The shared-model block isolates harness behavior; the native block shows
+the strongest real product experience. The complete current program is in
+[`benchmark/PROGRAM.md`](benchmark/PROGRAM.md).
+
 ## Setup completed
 
 - Codex is installed and authenticated through the user's subscription.
-- Claude Code is installed and its subscription login has been completed.
+- Claude Code `2.1.241` is installed and authenticated through the user's Pro
+  subscription. Its CLI accepts the planned `claude-fable-5` route, but exact
+  account entitlement remains untested because that requires an inference call
+  which may consume usage credits.
 - OpenCode, Pi, and Ollama are installed.
 - Ollama Cloud access works with `deepseek-v4-flash:cloud`.
 - `kimi-k2.7-code:cloud` is configured as a second hosted open-weight model.
@@ -42,6 +76,9 @@ have started.
 - The benchmark runner creates isolated detached Git worktrees, captures the
   evidence, and removes the temporary worktrees afterward.
 - No API keys or account credentials are stored in this repository.
+
+The latest non-billing access check is recorded in
+[`benchmark/access/2026-08-23-top-model-access.md`](benchmark/access/2026-08-23-top-model-access.md).
 
 The machine is an Apple M4 MacBook Air with 16 GB memory. Large local models are
 therefore outside the main study; hosted inference is the default for them.
@@ -146,6 +183,34 @@ dirty checkout from a stale resume instruction even though the recorded
 baseline was clean. See
 [`benchmark/reports/T1-qwen-openrouter-pilot.md`](benchmark/reports/T1-qwen-openrouter-pilot.md).
 
+### Same-baseline T2 worker comparison
+
+On 2026-08-23, OpenCode `1.18.21` ran Qwen3.8-27B, DeepSeek V4 Flash,
+and Kimi K2.7 Code once each on frozen T2 from commit `67d434e`. The run order
+was preregistered as Qwen, DeepSeek, then Kimi. All three scored 100/100,
+produced the same minimal patch, passed 2/2 visible and 5/5 private tests, stayed
+within the one-file scope, and required no intervention.
+
+Kimi was fastest at 7.092 seconds, DeepSeek took 7.528 seconds, and Qwen took
+37.815 seconds. Qwen cost $0.0090234 according to OpenCode; the Ollama routes
+reported zero, which is not treated as proof of zero underlying hosting cost.
+The decision is to advance Qwen to one same-baseline T3 comparison without yet
+selecting a winning worker. See
+[`benchmark/reports/T2-open-model-worker-comparison.md`](benchmark/reports/T2-open-model-worker-comparison.md).
+
+### T4: responsive run explorer task pack
+
+The first new complex task is now designed and maintainer-validated as
+`T4-run-explorer@1.0.0`. It is a dependency-free HTML, CSS, and JavaScript UI
+task with four editable files, one committed visible suite, a hash-locked local
+private suite, strict scope, and external browser QA.
+
+A temporary reference solution passed 6/6 visible checks, 7/7 private checks,
+desktop and 390 px mobile layouts, filtering, sorting, reset, empty state,
+keyboard focus, overflow, and console checks. The reference answer was then
+removed, and the intentionally failing starter was restored. See
+[`benchmark/reports/T4-task-design.md`](benchmark/reports/T4-task-design.md).
+
 ## Selected distributed workflow
 
 The evidence from T3 supports the following first controlled distributed test:
@@ -170,22 +235,24 @@ block comparing Kimi and Qwen workers under the same frontier plan.
 
 ## Exact next steps
 
-1. Review and deliberately commit the Qwen T1 report, updated handoff, and
-   preregistered T2 model-block protocol.
-2. Create a new same-baseline OpenCode model block for frozen T2 with DeepSeek,
-   Kimi, and Qwen in randomized order, one run each.
-3. Compare correctness, time, tool calls, token categories, reported cost,
-   scope, and intervention count. Do not combine the block with older T2 runs.
-4. Advance Qwen to T3 only if its T2 result justifies the additional cost.
-5. Run the existing verification commands to confirm the saved baseline is
-   healthy.
-6. Design and manually solve T4 as a small UI task with desktop and mobile
-   checks, accessibility checks, strict file ownership, visible tests, and
-   private acceptance checks.
-7. Freeze and commit the T4 contract before any model sees it.
-8. Run the Claude single-agent control.
-9. Run the Claude-plan, Kimi-implementation, Claude-review workflow.
-10. Do not make cost or winner claims until there are repeated randomized runs
+1. Review and deliberately commit the T2 result JSON, comparison report,
+   frontier-first decision, three-harness program, and updated handoff.
+2. Make one minimal access request to each exact model ID, `gpt-5.6-sol` and
+   `claude-fable-5`, immediately before the recorded headline block. If Fable
+   requires usage credits, obtain explicit budget approval; otherwise use the
+   declared Opus 5 fallback and record why.
+3. Confirm the current OpenRouter price and provider route for Kimi K3 before
+   adding `openrouter/moonshotai/kimi-k3` to the project configuration. Obtain
+   approval before increasing the existing OpenRouter spending limit.
+4. Review the completed T4 contract and deliberately commit it to freeze the
+   clean baseline before any selected model sees the task.
+5. Preregister and run the four-route headline block: Codex + GPT-5.6 Sol,
+   Claude Code + Fable 5, OpenCode + Kimi K3, and OpenCode + Qwen3.8-27B.
+6. Run the controlled three-harness block on T4 with the same Kimi K2.7 Code
+   Ollama Cloud route through Codex, Claude Code, and OpenCode.
+7. Run the two mirrored distributed workflows with the frontier lead and
+   reviewer roles reversed.
+8. Do not make cost or winner claims until there are repeated randomized runs
    and normalized telemetry.
 
 ## Verification commands

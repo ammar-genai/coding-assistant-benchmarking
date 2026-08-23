@@ -1,0 +1,14 @@
+:root {
+  color-scheme: light;
+  font-family: system-ui, sans-serif;
+}
+
+body {
+  margin: 0;
+}
+
+main {
+  padding: 2rem;
+}
+
+/* Implement the responsive run-explorer design. */

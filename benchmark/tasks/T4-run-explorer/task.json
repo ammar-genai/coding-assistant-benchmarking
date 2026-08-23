@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "T4-run-explorer",
+  "version": "1.0.0",
+  "title": "Build a responsive benchmark run explorer",
+  "type": "ui",
+  "mode": "workspace-write",
+  "prompt_path": "prompt.md",
+  "allowed_paths": [
+    "benchmark/fixtures/T4-run-explorer/index.html",
+    "benchmark/fixtures/T4-run-explorer/styles.css",
+    "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
+    "benchmark/fixtures/T4-run-explorer/student-tests.mjs"
+  ],
+  "forbidden_actions": [
+    "Edit the committed visible test, task definitions, harness files, or generated evidence",
+    "Install dependencies or use the network",
+    "Commit or push changes"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "visible-tests",
+      "description": "The committed feature tests and assistant-authored tests pass.",
+      "command": "node --test benchmark/fixtures/T4-run-explorer/run-explorer.test.mjs benchmark/fixtures/T4-run-explorer/student-tests.mjs"
+    },
+    {
+      "id": "private-tests",
+      "description": "Private logic, immutability, safe rendering, accessibility, and student-test checks pass."
+    },
+    {
+      "id": "browser-check",
+      "description": "Filters, sorting, reset, empty state, keyboard focus, and desktop/mobile layouts pass external browser QA."
+    },
+    {
+      "id": "allowed-scope",
+      "description": "Only the four allowed files change."
+    }
+  ],
+  "verification": {
+    "visible_commands": [
+      "node --test benchmark/fixtures/T4-run-explorer/run-explorer.test.mjs benchmark/fixtures/T4-run-explorer/student-tests.mjs"
+    ],
+    "hidden_suite": "T4-run-explorer",
+    "hidden_sha256": "cf2c53ac5793dd29a6e0ad13445a3a1a224a48eded89a467512bebac13e61b96"
+  },
+  "limits": {
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0
+  }
+}
