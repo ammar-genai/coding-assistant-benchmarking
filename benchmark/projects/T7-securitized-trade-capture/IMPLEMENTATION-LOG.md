@@ -31,3 +31,12 @@ The integrator reproduced the worker-owned source patch with `apply_patch`.
 No domain source repair was required. In the primary workspace, the expanded
 domain suite, typecheck, and lint all passed. This integrated state is B2 for
 the remaining independent workers.
+
+## Harness correction after Terra
+
+Before any later implementation run, the isolated-worktree setup was corrected
+to reuse the repository's existing `node_modules` through a worktree-local
+symlink. The standard typecheck command was also made non-incremental so it
+does not create an unapproved `tsconfig.tsbuildinfo` artifact. The original
+Terra result remains unchanged and failed; this correction applies only to
+later stages.

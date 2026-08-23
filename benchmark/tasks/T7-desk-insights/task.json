@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "id": "T7-desk-insights",
+  "version": "1.0.0",
+  "title": "Build the trade desk insights panel",
+  "type": "ui",
+  "mode": "workspace-write",
+  "prompt_path": "prompt.md",
+  "allowed_paths": [
+    "app/trade-capture/components/desk-insights.tsx"
+  ],
+  "forbidden_actions": [
+    "Edit domain, state, styles, other components, route, configuration, task definitions, or generated evidence",
+    "Read benchmark/private or benchmark/runs",
+    "Install dependencies or use the network",
+    "Run a build, commit, push, deploy, or start an external service"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "typecheck",
+      "description": "The component matches the frozen TypeScript contract.",
+      "command": "npm run typecheck"
+    },
+    {
+      "id": "summary-contract",
+      "description": "Private metric coverage, formatting, semantics, and ownership checks pass."
+    },
+    {
+      "id": "scope",
+      "description": "Only the owned insights component changes."
+    }
+  ],
+  "verification": {
+    "visible_commands": [
+      "npm run typecheck",
+      "npm run lint"
+    ],
+    "hidden_suite": "T7-desk-insights",
+    "hidden_sha256": "8cca7acf81eb8cff235d1ed36c943ca07f0c5311b32c1c28d029aa855d8b8bbd"
+  },
+  "limits": {
+    "max_wall_time_seconds": 900,
+    "max_human_interventions": 0
+  }
+}

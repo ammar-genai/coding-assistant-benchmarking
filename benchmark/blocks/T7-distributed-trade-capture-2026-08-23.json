@@ -17,7 +17,9 @@
   },
   "baseline": {
     "parent_commit_before_preregistration": "d911c5f4822c06b218043ef3ca089d6827753294",
-    "resolution": "Use the clean commit containing this block, product brief, and planning task as the planning baseline. Freeze a second named baseline after the reviewed architecture and worker contracts are committed."
+    "worker_baseline_b1": "3c450d0f3b4b34b2e45f72aaad0a8acbe22ec610",
+    "integrated_domain_b2": "5862ff9",
+    "resolution": "Planning used the preregistered clean commit. Terra used B1. The remaining implementation workers use the same clean descendant containing B2, their frozen tasks, and the post-Terra harness repair."
   },
   "workflow": [
     {
@@ -54,7 +56,8 @@
       "model": "claude-sonnet-5",
       "access_path": "subscription",
       "mode": "workspace-write",
-      "ownership": "accessible trade-ticket component"
+      "ownership": "accessible trade-ticket component",
+      "task": "T7-trade-ticket"
     },
     {
       "position": 5,
@@ -63,7 +66,8 @@
       "model": "openrouter/qwen/qwen3.8-27b",
       "access_path": "metered-api",
       "mode": "workspace-write",
-      "ownership": "bounded desk-insights component"
+      "ownership": "bounded desk-insights component",
+      "task": "T7-desk-insights"
     },
     {
       "position": 6,
@@ -72,7 +76,8 @@
       "model": "openrouter/moonshotai/kimi-k3",
       "access_path": "metered-api",
       "mode": "workspace-write",
-      "ownership": "application state, blotter, selected-trade review, and visual system"
+      "ownership": "application state, blotter, selected-trade review, and visual system",
+      "task": "T7-trade-workspace"
     },
     {
       "position": 7,

@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "T7-trade-workspace",
+  "version": "1.0.0",
+  "title": "Build the interactive trade capture workspace",
+  "type": "ui",
+  "mode": "workspace-write",
+  "prompt_path": "prompt.md",
+  "allowed_paths": [
+    "app/trade-capture/trade-capture-app.tsx",
+    "app/trade-capture/components/trade-blotter.tsx",
+    "app/trade-capture/components/trade-review.tsx",
+    "app/trade-capture/state/reducer.ts",
+    "app/trade-capture/state/selectors.ts",
+    "app/trade-capture/trade-capture.css"
+  ],
+  "forbidden_actions": [
+    "Edit domain, ticket, insights, route, configuration, tests, task definitions, or generated evidence",
+    "Read benchmark/private or benchmark/runs",
+    "Install dependencies or use the network",
+    "Run a build, commit, push, deploy, or start an external service"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "typecheck",
+      "description": "The workspace matches all frozen component and state contracts.",
+      "command": "npm run typecheck"
+    },
+    {
+      "id": "behavior",
+      "description": "Private reducer, selector, lifecycle, blotter, review, application, and CSS checks pass."
+    },
+    {
+      "id": "scope",
+      "description": "Only the six owned workspace files change."
+    }
+  ],
+  "verification": {
+    "visible_commands": [
+      "npm run typecheck",
+      "npm run lint"
+    ],
+    "hidden_suite": "T7-trade-workspace",
+    "hidden_sha256": "206a2e36ab0bfbc1a17ce1914d053995b0a40698a063d65c7e05dcd23316f42f"
+  },
+  "limits": {
+    "max_wall_time_seconds": 1800,
+    "max_human_interventions": 0
+  }
+}

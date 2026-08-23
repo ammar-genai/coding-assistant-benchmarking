@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "id": "T7-trade-ticket",
+  "version": "1.0.0",
+  "title": "Build the accessible securitized-product trade ticket",
+  "type": "ui",
+  "mode": "workspace-write",
+  "prompt_path": "prompt.md",
+  "allowed_paths": [
+    "app/trade-capture/components/trade-ticket.tsx"
+  ],
+  "forbidden_actions": [
+    "Edit domain, state, styles, route, configuration, task definitions, or generated evidence",
+    "Read benchmark/private or benchmark/runs",
+    "Install dependencies or use the network",
+    "Run a build, commit, push, deploy, or start an external service"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "typecheck",
+      "description": "The component matches the frozen TypeScript contract.",
+      "command": "npm run typecheck"
+    },
+    {
+      "id": "accessibility",
+      "description": "Private semantic-field, linked-error, action, and ownership checks pass."
+    },
+    {
+      "id": "scope",
+      "description": "Only the owned ticket component changes."
+    }
+  ],
+  "verification": {
+    "visible_commands": [
+      "npm run typecheck",
+      "npm run lint"
+    ],
+    "hidden_suite": "T7-trade-ticket",
+    "hidden_sha256": "bf3bb3d9db5de51700da32feb23f4131952864085bbe4c08c5766b191d5548bb"
+  },
+  "limits": {
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0
+  }
+}

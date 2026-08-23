@@ -1,6 +1,6 @@
 import { spawn, spawnSync } from "node:child_process";
 import { createHash } from "node:crypto";
-import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmdirSync, statSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, readdirSync, rmdirSync, statSync, symlinkSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { dirname, relative, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -75,6 +75,10 @@ function createIsolatedWorktree(commit) {
   if (result.status !== 0) {
     rmdirSync(container);
     throw new Error(`Could not create isolated worktree: ${result.stderr || result.stdout}`);
+  }
+  const dependencies = resolve(projectRoot, "node_modules");
+  if (existsSync(dependencies)) {
+    symlinkSync(dependencies, resolve(checkout, "node_modules"), "dir");
   }
   return { container, checkout };
 }

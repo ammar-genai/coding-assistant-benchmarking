@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "task_id": "T7-trade-ticket",
+  "task_version": "1.0.0",
+  "total_points": 100,
+  "criteria": [
+    { "id": "field-coverage", "points": 30, "description": "All editable frozen fields and enum choices are represented correctly." },
+    { "id": "accessibility", "points": 30, "description": "Labels, groups, error associations, and invalid state are semantic and linked." },
+    { "id": "actions", "points": 20, "description": "All actions are wired and booking is blocked only by errors with a visible reason." },
+    { "id": "data-handling", "points": 15, "description": "Text and numeric updates preserve the draft contract without domain duplication." },
+    { "id": "scope-quality", "points": 5, "description": "The change is maintainable and limited to the owned component." }
+  ]
+}

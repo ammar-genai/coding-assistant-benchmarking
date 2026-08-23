@@ -1,0 +1,13 @@
+{
+  "schema_version": "1.0",
+  "task_id": "T7-desk-insights",
+  "task_version": "1.0.0",
+  "total_points": 100,
+  "criteria": [
+    { "id": "metric-coverage", "points": 40, "description": "All seven supplied metrics are rendered with accurate labels." },
+    { "id": "formatting", "points": 25, "description": "Counts and signed USD values are formatted clearly without changing meaning." },
+    { "id": "semantics", "points": 20, "description": "The panel is a labelled, understandable summary landmark." },
+    { "id": "ownership", "points": 10, "description": "The component does not derive domain totals or import state/domain behavior." },
+    { "id": "scope-quality", "points": 5, "description": "The change is maintainable and limited to the owned component." }
+  ]
+}
