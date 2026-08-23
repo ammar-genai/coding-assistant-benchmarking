@@ -1,0 +1,134 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T7-distributed-trade-capture-2026-08-23",
+  "status": "planning-preregistered",
+  "purpose": "Build a realistic local securitized-product trade capture mock while measuring frontier planning and review, bounded mid-level and open-model implementation, integration repair, elapsed time, token telemetry, and metered cost.",
+  "product": {
+    "brief": "benchmark/projects/T7-securitized-trade-capture/PRODUCT.md",
+    "version": "1.0.0-draft",
+    "sha256": "d395e19e689e3715b39ebb9dbb4c2af308a461bb91550b7eb63f6aec79c0b01e",
+    "route": "/trade-capture",
+    "data_boundary": "synthetic local state only"
+  },
+  "planning_task": {
+    "id": "T7-trade-capture-plan",
+    "version": "1.0.0",
+    "prompt_sha256": "7c90d0c4505216addc624430a1d58897d3b89093ff73a483e8c2d3e5978495cf"
+  },
+  "baseline": {
+    "parent_commit_before_preregistration": "d911c5f4822c06b218043ef3ca089d6827753294",
+    "resolution": "Use the clean commit containing this block, product brief, and planning task as the planning baseline. Freeze a second named baseline after the reviewed architecture and worker contracts are committed."
+  },
+  "workflow": [
+    {
+      "position": 1,
+      "stage": "architecture-plan",
+      "assistant": "codex",
+      "model": "gpt-5.6-sol",
+      "access_path": "subscription",
+      "mode": "read-only",
+      "task": "T7-trade-capture-plan"
+    },
+    {
+      "position": 2,
+      "stage": "architecture-review",
+      "assistant": "claude",
+      "model": "claude-opus-5",
+      "access_path": "subscription",
+      "mode": "read-only",
+      "task": "created only after the saved Sol plan is committed"
+    },
+    {
+      "position": 3,
+      "stage": "domain-implementation",
+      "assistant": "codex",
+      "model": "gpt-5.6-terra",
+      "access_path": "subscription",
+      "mode": "workspace-write",
+      "ownership": "domain types, calculations, validation, seed data, and domain tests"
+    },
+    {
+      "position": 4,
+      "stage": "ticket-implementation",
+      "assistant": "claude",
+      "model": "claude-sonnet-5",
+      "access_path": "subscription",
+      "mode": "workspace-write",
+      "ownership": "accessible trade-ticket component"
+    },
+    {
+      "position": 5,
+      "stage": "insights-implementation",
+      "assistant": "opencode",
+      "model": "openrouter/qwen/qwen3.8-27b",
+      "access_path": "metered-api",
+      "mode": "workspace-write",
+      "ownership": "bounded desk-insights component"
+    },
+    {
+      "position": 6,
+      "stage": "application-implementation",
+      "assistant": "opencode",
+      "model": "openrouter/moonshotai/kimi-k3",
+      "access_path": "metered-api",
+      "mode": "workspace-write",
+      "ownership": "application state, blotter, selected-trade review, and visual system"
+    },
+    {
+      "position": 7,
+      "stage": "integration",
+      "assistant": "codex",
+      "model": "gpt-5.6-sol",
+      "access_path": "subscription",
+      "mode": "workspace-write",
+      "ownership": "route composition, worker patch integration, and verified repairs only"
+    },
+    {
+      "position": 8,
+      "stage": "independent-final-review",
+      "assistant": "claude",
+      "model": "claude-opus-5",
+      "access_path": "subscription",
+      "mode": "read-only",
+      "ownership": "review completed source and visible evidence without private checks"
+    }
+  ],
+  "run_policy": {
+    "max_human_interventions_per_stage": 0,
+    "preserve_failures": true,
+    "rerun_failed_worker": false,
+    "worker_file_ownership_must_not_overlap": true,
+    "frontier_repairs_must_be_counted": true,
+    "openrouter_project_ceiling_usd": null,
+    "openrouter_ceiling_status": "awaiting explicit user approval; recommended 4.00 USD",
+    "paid_calls_before_approval": 0,
+    "anthropic_usage_credits": false,
+    "deploy": false
+  },
+  "comparison_fields": [
+    "stage_acceptance",
+    "elapsed_ms",
+    "time_to_first_edit_ms",
+    "changed_and_out_of_scope_paths",
+    "verification_results",
+    "tool_calls_and_denials",
+    "input_cached_output_and_reasoning_tokens_when_exposed",
+    "metered_cost_or_subscription_telemetry_label",
+    "frontier_repairs_by_worker",
+    "review_findings_by_severity",
+    "end_to_end_time",
+    "human_interventions"
+  ],
+  "rules": [
+    "Commit the product brief and each frozen contract before the corresponding model sees it.",
+    "Use a new isolated worktree and non-persistent session for every model stage.",
+    "Do not expose benchmark/private, earlier model transcripts, or another worker's hidden reasoning.",
+    "Workers may read shared contracts but may change only their owned files.",
+    "Preserve failed runs, partial patches, denied tools, provider errors, and timeouts.",
+    "Do not rerun a failed worker inside this block.",
+    "Do not make an OpenRouter call until a fresh dollar ceiling is explicitly approved.",
+    "Do not increase provider limits, enable Anthropic usage credits, push, deploy, or use real trade data.",
+    "Do not compare token totals across adapters unless their definitions match.",
+    "Do not claim production, booking, settlement, pricing, or regulatory readiness."
+  ]
+}

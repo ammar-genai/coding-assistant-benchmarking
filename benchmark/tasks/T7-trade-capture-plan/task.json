@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "id": "T7-trade-capture-plan",
+  "version": "1.0.0",
+  "title": "Plan a distributed securitized-product trade capture mock",
+  "type": "analysis",
+  "mode": "read-only",
+  "prompt_path": "prompt.md",
+  "allowed_paths": ["**/*"],
+  "forbidden_actions": [
+    "Edit, create, rename, or delete files",
+    "Install dependencies or use the network",
+    "Change Git state",
+    "Start an external service",
+    "Read benchmark/private or benchmark/runs"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "read-only",
+      "description": "The workspace snapshot is unchanged after the run."
+    },
+    {
+      "id": "domain",
+      "description": "The plan respects the frozen product types, calculations, validation rules, state model, and synthetic-data boundary."
+    },
+    {
+      "id": "ownership",
+      "description": "The plan defines non-overlapping file ownership for Terra, Sonnet, Qwen, and Kimi workers."
+    },
+    {
+      "id": "integration",
+      "description": "The plan provides stable component contracts, an integration sequence, and verification that can expose worker failures."
+    }
+  ],
+  "limits": {
+    "max_wall_time_seconds": 900,
+    "max_human_interventions": 0
+  }
+}
