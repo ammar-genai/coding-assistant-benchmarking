@@ -17,6 +17,7 @@ function usage() {
 
 Options:
   --model <id>      Exact model ID. Defaults to the preregistered route.
+  --regrade <id>    Recompute acceptance from one saved raw feature run.
   --execute         Execute and save the raw feature run. Otherwise preview it.
   --help            Show this message.`);
 }
@@ -27,7 +28,7 @@ function parseArgs(argv) {
     const value = argv[index];
     if (value === "--execute") options.execute = true;
     else if (value === "--help") options.help = true;
-    else if (value === "--assistant" || value === "--model") {
+    else if (value === "--assistant" || value === "--model" || value === "--regrade") {
       const next = argv[index + 1];
       if (!next) throw new Error(`${value} requires a value`);
       options[value.slice(2)] = next;
@@ -240,6 +241,7 @@ function normalizeToolName(value) {
 
 function summarizeEvents(assistant, events) {
   const toolCalls = [];
+  const toolFailures = [];
   let finalResponse = "";
   let usage = null;
   let subscriptionTelemetryUsd = null;
@@ -247,7 +249,11 @@ function summarizeEvents(assistant, events) {
   if (assistant === "codex") {
     for (const event of events) {
       if (event.type === "item.completed" && event.item?.type === "mcp_tool_call") {
-        toolCalls.push(normalizeToolName(event.item.tool ?? event.item.name));
+        const name = normalizeToolName(event.item.tool ?? event.item.name);
+        toolCalls.push(name);
+        if (event.item.status && event.item.status !== "completed") {
+          toolFailures.push({ name, status: event.item.status });
+        }
       }
       if (event.type === "item.completed" && event.item?.type === "agent_message") {
         finalResponse = event.item.text ?? "";
@@ -255,9 +261,20 @@ function summarizeEvents(assistant, events) {
       if (event.type === "turn.completed") usage = event.usage ?? null;
     }
   } else if (assistant === "claude") {
+    const namesById = new Map();
     for (const event of events) {
       for (const content of event.message?.content ?? []) {
-        if (content.type === "tool_use") toolCalls.push(normalizeToolName(content.name));
+        if (content.type === "tool_use") {
+          const name = normalizeToolName(content.name);
+          toolCalls.push(name);
+          namesById.set(content.id, name);
+        }
+        if (content.type === "tool_result" && content.is_error) {
+          toolFailures.push({
+            name: namesById.get(content.tool_use_id) ?? "unknown",
+            status: "error",
+          });
+        }
       }
       if (event.type === "result") {
         finalResponse = event.result ?? finalResponse;
@@ -268,7 +285,13 @@ function summarizeEvents(assistant, events) {
   } else if (assistant === "opencode") {
     const stepUsage = [];
     for (const event of events) {
-      if (event.type === "tool_use") toolCalls.push(normalizeToolName(event.part?.tool));
+      if (event.type === "tool_use") {
+        const name = normalizeToolName(event.part?.tool);
+        toolCalls.push(name);
+        if (event.part?.state?.status && event.part.state.status !== "completed") {
+          toolFailures.push({ name, status: event.part.state.status });
+        }
+      }
       if (event.type === "text") finalResponse += event.part?.text ?? "";
       if (event.type === "step_finish" && event.part?.tokens) {
         stepUsage.push({ tokens: event.part.tokens, cost: event.part.cost ?? null });
@@ -281,6 +304,9 @@ function summarizeEvents(assistant, events) {
     get_task_contract: toolCalls.filter((name) => name.includes("get_task_contract")).length,
     summarize_run: toolCalls.filter((name) => name.includes("summarize_run")).length,
   };
+  const requiredToolFailures = toolFailures.filter(({ name }) => (
+    name.includes("get_task_contract") || name.includes("summarize_run")
+  ));
   const allowedCalls = toolCalls.filter((name) => (
     name.includes("get_task_contract")
     || name.includes("summarize_run")
@@ -292,7 +318,9 @@ function summarizeEvents(assistant, events) {
 
   return {
     tool_calls: toolCalls,
+    tool_failures: toolFailures,
     required_tool_call_counts: requiredCalls,
+    required_tool_calls_succeeded: requiredToolFailures.length === 0,
     unexpected_tool_calls: toolCalls.filter((name) => !allowedCalls.includes(name)),
     final_response: finalResponse,
     required_headings_present: headings,
@@ -301,9 +329,44 @@ function summarizeEvents(assistant, events) {
   };
 }
 
+function automaticChecks(status, workspaceUnchanged, summary) {
+  return {
+    process_complete: status === "complete",
+    workspace_unchanged: workspaceUnchanged,
+    get_task_contract_once: summary.required_tool_call_counts.get_task_contract === 1,
+    summarize_run_once: summary.required_tool_call_counts.summarize_run === 1,
+    required_tool_calls_succeeded: summary.required_tool_calls_succeeded,
+    no_unexpected_tools: summary.unexpected_tool_calls.length === 0,
+    four_required_headings: summary.required_headings_present.length === 4,
+  };
+}
+
 const options = parseArgs(process.argv.slice(2));
 if (options.help) {
   usage();
+  process.exit(0);
+}
+if (options.regrade) {
+  if (!/^[A-Za-z0-9][A-Za-z0-9._:-]{0,199}$/.test(options.regrade)) {
+    throw new Error("--regrade run ID is invalid");
+  }
+  const runDirectory = resolve(projectRoot, "benchmark", "feature-runs", options.regrade);
+  const manifest = JSON.parse(readFileSync(resolve(runDirectory, "manifest.json"), "utf8"));
+  const savedResult = JSON.parse(readFileSync(resolve(runDirectory, "result.json"), "utf8"));
+  const events = parseEvents(readFileSync(resolve(runDirectory, "stdout.log"), "utf8"));
+  const summary = summarizeEvents(manifest.assistant, events);
+  const checks = automaticChecks(
+    savedResult.status,
+    savedResult.automatic_checks?.workspace_unchanged === true,
+    summary,
+  );
+  console.log(JSON.stringify({
+    run_id: options.regrade,
+    original_acceptance_status: savedResult.acceptance_status,
+    recomputed_acceptance_status: Object.values(checks).every(Boolean) ? "pass" : "fail",
+    automatic_checks: checks,
+    tool_failures: summary.tool_failures,
+  }, null, 2));
   process.exit(0);
 }
 if (!options.assistant) {
@@ -373,26 +436,19 @@ const statusAfter = commandOutput("git", ["status", "--porcelain"]);
 const events = parseEvents(outcome.stdout);
 const summary = summarizeEvents(options.assistant, events);
 const status = outcome.timedOut ? "timeout" : outcome.exitCode === 0 ? "complete" : "failed";
-const automaticChecks = {
-  process_complete: status === "complete",
-  workspace_unchanged: !statusAfter,
-  get_task_contract_once: summary.required_tool_call_counts.get_task_contract === 1,
-  summarize_run_once: summary.required_tool_call_counts.summarize_run === 1,
-  no_unexpected_tools: summary.unexpected_tool_calls.length === 0,
-  four_required_headings: summary.required_headings_present.length === 4,
-};
+const checks = automaticChecks(status, !statusAfter, summary);
 const result = {
   schema_version: "1.0",
   run_id: runId,
   status,
-  acceptance_status: Object.values(automaticChecks).every(Boolean) ? "pass" : "fail",
+  acceptance_status: Object.values(checks).every(Boolean) ? "pass" : "fail",
   started_at: createdAt.toISOString(),
   finished_at: finishedAt.toISOString(),
   elapsed_ms: finishedAt.getTime() - createdAt.getTime(),
   exit_code: outcome.exitCode,
   signal: outcome.signal,
   timed_out: outcome.timedOut,
-  automatic_checks: automaticChecks,
+  automatic_checks: checks,
   ...summary,
 };
 writeFileSync(resolve(runDirectory, "stdout.log"), outcome.stdout);

@@ -1,0 +1,160 @@
+{
+  "schema_version": "1.0",
+  "block_id": "benchmark-audit-invocation-2026-08-23",
+  "status": "complete",
+  "baseline_git_commit": "8c940aee4fdbb7d07b1b7d31b59dcb34fe4c3084",
+  "prompt_sha256": "5b84ef31a99f2ccb2d2dedc467b1962884f4e774a97d096d98dd544a5b4a81e4",
+  "target_run_id": "2026-08-23T18-22-22.767Z_codex_T6-rejected-promise-cache",
+  "runs": [
+    {
+      "position": 1,
+      "assistant": "opencode",
+      "assistant_version": "1.18.21",
+      "model": "ollama/kimi-k2.7-code:cloud",
+      "access_path": "ollama-cloud",
+      "run_id": "2026-08-23T18-45-56.752Z_opencode_benchmark-audit-invocation",
+      "status": "complete",
+      "acceptance_status": "pass",
+      "elapsed_ms": 6938,
+      "workspace_unchanged": true,
+      "skill": {
+        "discovery_observed": true,
+        "invocation_observed": true,
+        "calls": 1
+      },
+      "mcp": {
+        "get_task_contract_attempts": 1,
+        "get_task_contract_successes": 1,
+        "summarize_run_attempts": 1,
+        "summarize_run_successes": 1,
+        "unexpected_tools": [],
+        "permission_denials": 0
+      },
+      "output_contract": {
+        "required_headings": "4/4",
+        "fact_accuracy": "pass",
+        "unsupported_claims": 0
+      },
+      "usage": {
+        "definition": "Sum of three OpenCode step-finish records; provider fields are not normalized to the other clients.",
+        "input_tokens": 13049,
+        "output_tokens": 662,
+        "reasoning_tokens": 0,
+        "cache_read_tokens": 0,
+        "reported_cost_usd": 0,
+        "cost_interpretation": "Ollama/OpenCode telemetry; not proof of zero underlying hosted inference cost."
+      }
+    },
+    {
+      "position": 2,
+      "assistant": "codex",
+      "assistant_version": "codex-cli 0.146.0-alpha.3.1",
+      "model": "gpt-5.6-sol",
+      "access_path": "subscription",
+      "run_id": "2026-08-23T18-46-16.129Z_codex_benchmark-audit-invocation",
+      "status": "complete",
+      "acceptance_status": "pass",
+      "elapsed_ms": 20762,
+      "workspace_unchanged": true,
+      "skill": {
+        "discovery_observed": null,
+        "invocation_observed": null,
+        "note": "Codex successfully followed the prompt and used the MCP server, but its JSON event stream did not expose a separate skill-loading event."
+      },
+      "mcp": {
+        "get_task_contract_attempts": 1,
+        "get_task_contract_successes": 1,
+        "summarize_run_attempts": 1,
+        "summarize_run_successes": 1,
+        "unexpected_tools": [],
+        "permission_denials": 0
+      },
+      "output_contract": {
+        "required_headings": "4/4",
+        "fact_accuracy": "pass",
+        "unsupported_claims": 0
+      },
+      "usage": {
+        "definition": "Codex turn-completed fields; cached and reasoning values are reported subsets and are not normalized to other clients.",
+        "input_tokens": 44534,
+        "cached_input_tokens": 26112,
+        "output_tokens": 781,
+        "reasoning_output_tokens": 317,
+        "subscription_cost_exposed": false
+      }
+    },
+    {
+      "position": 3,
+      "assistant": "claude",
+      "assistant_version": "2.1.241 (Claude Code)",
+      "model": "claude-opus-5",
+      "access_path": "subscription",
+      "run_id": "2026-08-23T18-46-49.768Z_claude_benchmark-audit-invocation",
+      "status": "complete",
+      "acceptance_status": "fail",
+      "elapsed_ms": 22921,
+      "workspace_unchanged": true,
+      "skill": {
+        "discovery_observed": true,
+        "invocation_observed": true,
+        "calls": 1
+      },
+      "mcp": {
+        "server_status": "connected",
+        "get_task_contract_attempts": 1,
+        "get_task_contract_successes": 0,
+        "summarize_run_attempts": 1,
+        "summarize_run_successes": 0,
+        "unexpected_tools": [],
+        "permission_denials": 2,
+        "failure": "Both read-only MCP calls were visible but auto-denied because the runner exposed them with --tools under dontAsk mode without separately preauthorizing them."
+      },
+      "output_contract": {
+        "required_headings": "4/4",
+        "fact_accuracy": "pass for the available evidence",
+        "verdict": "insufficient evidence",
+        "unsupported_claims": 0,
+        "note": "Claude handled the denial honestly and did not use a forbidden fallback tool, but it could not complete the requested audit."
+      },
+      "usage": {
+        "definition": "Claude result-event fields; cache creation, cache read, and thinking are separate and are not normalized to other clients.",
+        "input_tokens": 6,
+        "cache_creation_input_tokens": 9731,
+        "cache_read_input_tokens": 17336,
+        "output_tokens": 1464,
+        "thinking_tokens": 206,
+        "subscription_cli_telemetry_usd": 0.143868,
+        "cost_interpretation": "Claude CLI subscription telemetry, not metered API spend."
+      },
+      "grading_correction": {
+        "original_runner_status": "pass",
+        "corrected_status": "fail",
+        "reason": "The first runner version counted attempted calls but did not inspect error tool results. The raw result and a local grading-correction artifact are preserved; no rerun occurred."
+      }
+    }
+  ],
+  "comparison": {
+    "successful_routes": [
+      "OpenCode + Kimi K2.7 Code via Ollama Cloud",
+      "Codex + GPT-5.6 Sol"
+    ],
+    "failed_route": "Claude Code + Opus 5",
+    "fastest_successful_route": "OpenCode + Kimi K2.7 Code via Ollama Cloud",
+    "fastest_successful_elapsed_ms": 6938,
+    "interpretation": "The portable MCP server worked end to end in Codex and OpenCode. Claude discovered the skill and connected the server but demonstrated that tool visibility and MCP connection do not imply permission to execute a tool under dontAsk mode.",
+    "model_quality_ranking_allowed": false
+  },
+  "cost": {
+    "openrouter_spend_before_usd": 1.3764798,
+    "openrouter_spend_after_usd": 1.3764798,
+    "new_metered_api_spend_usd": 0,
+    "remaining_approved_openrouter_ceiling_usd": 0.1235202
+  },
+  "limitations": [
+    "One run per route measures configuration behavior, not general reliability.",
+    "The routes use different models and access paths, so latency and token fields are descriptive rather than a normalized model comparison.",
+    "Only OpenCode and Claude emitted explicit skill invocation events; Codex skill loading is not separately observable in its saved event stream.",
+    "Claude's failure is specific to the frozen dontAsk configuration and does not establish that Claude Code cannot use this MCP server.",
+    "OpenCode's reported zero cost is not interpreted as proof of zero underlying Ollama hosting cost."
+  ]
+}

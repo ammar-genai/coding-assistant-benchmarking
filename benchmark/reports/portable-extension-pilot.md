@@ -78,11 +78,15 @@ The safest pattern for this project is therefore:
 - The MCP server trusts the configured repository root and should still run
   under each client's filesystem and command restrictions.
 
-The next feature block should freeze one read-only audit prompt, select one
-saved public run, and execute exactly one subscription-backed trial per
-assistant with no workspace writes. Compare the returned fields, omissions,
-tool calls, elapsed time, token overhead, and permission events. Keep those
-feature results separate from T1-T6 task-quality scores.
+That feature block is now complete. OpenCode and Codex invoked both tools
+successfully; Claude Code discovered the skill and connected the server, but
+its frozen `dontAsk` policy denied both calls. The preserved comparison and
+grader correction are documented in
+[`benchmark-audit-invocation-pilot.md`](benchmark-audit-invocation-pilot.md).
+
+The next narrow recovery check should preauthorize only Claude's two MCP tools
+while retaining `dontAsk` and the same read-only surface. Keep that result
+separate from T1-T6 task-quality scores and from the original failed lane.
 
 ## Files
 

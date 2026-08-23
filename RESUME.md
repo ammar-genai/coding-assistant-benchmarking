@@ -315,6 +315,20 @@ parsed and enabled the example configuration, and OpenCode discovered the
 skill. No user configuration or paid inference was used. Full evidence:
 [`benchmark/reports/portable-extension-pilot.md`](benchmark/reports/portable-extension-pilot.md).
 
+The frozen model-invocation pilot is also complete. OpenCode/Kimi K2.7 Cloud
+and Codex/GPT-5.6 Sol each called both MCP tools exactly once, used no fallback
+repository tool, preserved the workspace, and returned every requested fact.
+OpenCode took 6.938 seconds and Codex took 20.762 seconds.
+
+Claude Code/Opus 5 discovered and invoked the shared skill and connected the
+MCP server, but `dontAsk` denied both calls because the runner made the tools
+available without separately preauthorizing them. Claude correctly returned
+`insufficient evidence` and used no forbidden fallback, but the lane is a
+failure. The original runner incorrectly counted attempted calls as a pass;
+the normalized result corrects the grade and the runner now checks tool errors.
+No rerun occurred. Full evidence:
+[`benchmark/reports/benchmark-audit-invocation-pilot.md`](benchmark/reports/benchmark-audit-invocation-pilot.md).
+
 ### T6 incident/debugging task
 
 `T6-rejected-promise-cache@1.0.0` is designed and maintainer-validated. It
@@ -348,14 +362,16 @@ No paid API call occurred. OpenRouter spend remains `$1.3764798`, leaving
 
 ## Exact next steps
 
-1. Preregister the read-only extension-invocation pilot using one public saved
-   run and one frozen audit prompt; keep it separate from task-quality scores.
-2. Run the pilot once through each subscription-backed assistant, measuring
-   invocation reliability, returned fields, elapsed time, tokens, and
-   permission events. Do not use OpenRouter for this block.
-3. Decide whether a later OpenCode/Kimi T6 row is worth a new explicit budget.
+1. Commit the extension-invocation results, grader correction, report, and
+   updated runner.
+2. Preregister a Claude-only recovery block that changes only the permission
+   configuration by adding the two MCP names to `--allowedTools`; keep
+   `dontAsk`, the prompt, target run, model, and read-only surface unchanged.
+3. Run that recovery once without OpenRouter, preserve its result, and decide
+   whether the portable extension is ready for ordinary project use.
+4. Decide whether a later OpenCode/Kimi T6 row is worth a new explicit budget.
    Do not increase a provider limit automatically.
-4. Run repeated randomized trials only where they can change a decision; one
+5. Run repeated randomized trials only where they can change a decision; one
    task is not a general winner.
 
 ## Verification commands
