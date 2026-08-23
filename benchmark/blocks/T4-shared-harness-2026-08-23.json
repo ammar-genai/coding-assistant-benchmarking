@@ -1,0 +1,112 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T4-shared-harness-2026-08-23",
+  "status": "preregistered",
+  "purpose": "Compare Codex, Claude Code, and OpenCode as harnesses while holding the hosted model and task constant.",
+  "task": {
+    "id": "T4-run-explorer",
+    "version": "1.0.0",
+    "prompt_sha256": "29ead71f698afec910207d63c9b09057990e9a3aaf1807f164ff7cc9694d3653"
+  },
+  "shared_model": {
+    "model": "ollama/kimi-k2.7-code:cloud",
+    "access_path": "ollama-cloud",
+    "reason": "This is the strongest identical hosted route already verified through all three harness adapters."
+  },
+  "baseline": {
+    "parent_commit_before_preregistration": "c8c8ecb912251339185765a42707bd8ee3cc5ea6",
+    "resolution": "Use the clean Git commit containing this preregistration file for every run. The exact commit is captured independently in each run manifest."
+  },
+  "run_policy": {
+    "runs_per_harness": 1,
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0,
+    "preserve_failures": true,
+    "rerun_inside_block": false
+  },
+  "randomization": {
+    "method": "Sort routes by ascending SHA-256(seed|assistant|model).",
+    "seed": "T4-shared-harness-2026-08-23|c8c8ecb912251339185765a42707bd8ee3cc5ea6",
+    "order": [
+      {
+        "position": 1,
+        "assistant": "codex",
+        "required_version": "0.146.0-alpha.3.1",
+        "model": "ollama/kimi-k2.7-code:cloud",
+        "hash": "58876a7358f9490f0c4dc8a385639247f63ec7485f6ae73f43cc6eae27d96db9"
+      },
+      {
+        "position": 2,
+        "assistant": "claude",
+        "required_version": "2.1.241",
+        "model": "ollama/kimi-k2.7-code:cloud",
+        "hash": "5eb3bb69a49ef28f388ae68fe9d05f723c73543220823a62368e4b9c3b3cea69"
+      },
+      {
+        "position": 3,
+        "assistant": "opencode",
+        "required_version": "1.18.21",
+        "model": "ollama/kimi-k2.7-code:cloud",
+        "hash": "ebb0529624ce66341fe32477b695fc7f6f4ef574f2567cd7f5c28d963dade1d1"
+      }
+    ]
+  },
+  "acceptance": {
+    "allowed_changed_paths": [
+      "benchmark/fixtures/T4-run-explorer/index.html",
+      "benchmark/fixtures/T4-run-explorer/styles.css",
+      "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
+      "benchmark/fixtures/T4-run-explorer/student-tests.mjs"
+    ],
+    "visible_command": "node --test benchmark/fixtures/T4-run-explorer/run-explorer.test.mjs benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+    "private_suite": "T4-run-explorer",
+    "private_sha256": "cf2c53ac5793dd29a6e0ad13445a3a1a224a48eded89a467512bebac13e61b96",
+    "external_browser_qa": [
+      "initial render and summaries",
+      "assistant and outcome filters",
+      "all three sort orders",
+      "reset and empty state",
+      "keyboard focus and visible focus style",
+      "desktop and 390 px layouts without horizontal page overflow",
+      "browser console warnings and errors"
+    ]
+  },
+  "harness_features_to_observe": [
+    "planning behavior before editing",
+    "repository search and file-reading choices",
+    "permission and command behavior",
+    "edit strategy and scope control",
+    "test selection and recovery from failures",
+    "session and context handling",
+    "transcript clarity and final evidence"
+  ],
+  "comparison_fields": [
+    "rubric_score",
+    "acceptance_status",
+    "elapsed_ms",
+    "time_to_first_edit_ms",
+    "visible_tests",
+    "private_tests",
+    "browser_qa",
+    "changed_paths",
+    "out_of_scope_paths",
+    "tool_calls_by_type",
+    "failed_or_repeated_commands",
+    "input_tokens",
+    "cached_input_tokens",
+    "output_tokens",
+    "reasoning_tokens",
+    "human_interventions",
+    "final_evidence_quality"
+  ],
+  "rules": [
+    "Execute in the preregistered order without substituting a harness or model.",
+    "Use a fresh isolated worktree and session for every run.",
+    "Preserve failures, partial outputs, provider errors, and access limitations as results.",
+    "Do not rerun a failed harness inside this pilot block.",
+    "Run the same external browser-QA checklist against every reconstructed patch.",
+    "Do not treat provider-reported zero cost as proof of zero underlying hosting cost.",
+    "Use this block for harness conclusions and the top-native block for product-pairing conclusions.",
+    "Do not claim a general winner from one run per harness."
+  ]
+}

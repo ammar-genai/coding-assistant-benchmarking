@@ -1,0 +1,116 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T4-top-native-2026-08-23",
+  "status": "preregistered",
+  "purpose": "Compare the strongest planned real-world pairing for Codex, Claude Code, and OpenCode, with Qwen3.8-27B retained as the smaller open-model efficiency control.",
+  "task": {
+    "id": "T4-run-explorer",
+    "version": "1.0.0",
+    "prompt_sha256": "29ead71f698afec910207d63c9b09057990e9a3aaf1807f164ff7cc9694d3653"
+  },
+  "baseline": {
+    "parent_commit_before_preregistration": "c8c8ecb912251339185765a42707bd8ee3cc5ea6",
+    "resolution": "Use the clean Git commit containing this preregistration file for every run. The exact commit is captured independently in each run manifest."
+  },
+  "run_policy": {
+    "runs_per_route": 1,
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0,
+    "preserve_failures": true,
+    "rerun_inside_block": false
+  },
+  "randomization": {
+    "method": "Sort routes by ascending SHA-256(seed|assistant|model).",
+    "seed": "T4-top-native-2026-08-23|c8c8ecb912251339185765a42707bd8ee3cc5ea6",
+    "order": [
+      {
+        "position": 1,
+        "assistant": "codex",
+        "required_version": "0.146.0-alpha.3.1",
+        "model": "gpt-5.6-sol",
+        "access_path": "subscription",
+        "hash": "17190eca1a9ddc8d5142c3909a8e541eb261d61cac4355e7f33de2ad0d7747fa"
+      },
+      {
+        "position": 2,
+        "assistant": "claude",
+        "required_version": "2.1.241",
+        "model": "claude-fable-5",
+        "access_path": "subscription-or-usage-credits",
+        "hash": "4ba86ee4fcea634fb68707aedb661ee2656c1c62331aff00b5fe23436f85374e"
+      },
+      {
+        "position": 3,
+        "assistant": "opencode",
+        "required_version": "1.18.21",
+        "model": "openrouter/moonshotai/kimi-k3",
+        "access_path": "api",
+        "hash": "72ded15f5c1dc92672f6139b73dc282a022dc5be2cdd90989d00c78d81f2d24d"
+      },
+      {
+        "position": 4,
+        "assistant": "opencode",
+        "required_version": "1.18.21",
+        "model": "openrouter/qwen/qwen3.8-27b",
+        "access_path": "api",
+        "hash": "b4d75af66cf62aeca8390d96504b693ff87e4c0efb3044f2d438d206bc2ea1bd"
+      }
+    ]
+  },
+  "access_preconditions": [
+    "Run one minimal non-counted access check for gpt-5.6-sol immediately before the block.",
+    "Do not call claude-fable-5 if the account requests usage credits until the user explicitly approves that spend.",
+    "Confirm the current OpenRouter price, provider route, and spending-limit headroom for Kimi K3 before its access check.",
+    "Do not increase an API spending limit without explicit user approval.",
+    "If an exact route is unavailable, record an access limitation and do not silently substitute another model inside this block."
+  ],
+  "acceptance": {
+    "allowed_changed_paths": [
+      "benchmark/fixtures/T4-run-explorer/index.html",
+      "benchmark/fixtures/T4-run-explorer/styles.css",
+      "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
+      "benchmark/fixtures/T4-run-explorer/student-tests.mjs"
+    ],
+    "visible_command": "node --test benchmark/fixtures/T4-run-explorer/run-explorer.test.mjs benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+    "private_suite": "T4-run-explorer",
+    "private_sha256": "cf2c53ac5793dd29a6e0ad13445a3a1a224a48eded89a467512bebac13e61b96",
+    "external_browser_qa": [
+      "initial render and summaries",
+      "assistant and outcome filters",
+      "all three sort orders",
+      "reset and empty state",
+      "keyboard focus and visible focus style",
+      "desktop and 390 px layouts without horizontal page overflow",
+      "browser console warnings and errors"
+    ]
+  },
+  "comparison_fields": [
+    "rubric_score",
+    "acceptance_status",
+    "elapsed_ms",
+    "time_to_first_edit_ms",
+    "visible_tests",
+    "private_tests",
+    "browser_qa",
+    "changed_paths",
+    "out_of_scope_paths",
+    "tool_calls_by_type",
+    "failed_or_repeated_commands",
+    "input_tokens",
+    "cached_input_tokens",
+    "output_tokens",
+    "reasoning_tokens",
+    "reported_cost_usd",
+    "human_interventions",
+    "final_evidence_quality"
+  ],
+  "rules": [
+    "Execute in the preregistered order without substituting a route.",
+    "Use a fresh isolated worktree and session for every run.",
+    "Preserve failures, partial outputs, provider errors, and access limitations as results.",
+    "Do not rerun a failed route inside this pilot block.",
+    "Run the same external browser-QA checklist against every reconstructed patch.",
+    "Keep subscription access separate from metered API cost.",
+    "Do not claim a general winner from one run per route."
+  ]
+}
