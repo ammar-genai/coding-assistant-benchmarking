@@ -1,0 +1,129 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T4-top-native-v2-2026-08-23",
+  "status": "preregistered",
+  "purpose": "Compare the strongest currently accessible real-world pairing for Codex, Claude Code, and OpenCode, with Qwen3.8-27B retained as the smaller open-model efficiency control and Fable 5 preserved as an explicit access limitation.",
+  "supersedes": {
+    "protocol": "benchmark/blocks/T4-top-native-2026-08-23.json",
+    "executed_runs": 0,
+    "reason": "The first shared-harness block exposed a naming-dependent private CSS assertion before the top-native block began. This protocol uses a separately versioned task and behavior-focused browser QA while preserving the original protocol and raw results."
+  },
+  "task": {
+    "id": "T4-run-explorer-v2",
+    "version": "1.0.1",
+    "prompt_sha256": "29ead71f698afec910207d63c9b09057990e9a3aaf1807f164ff7cc9694d3653"
+  },
+  "route_resolution": {
+    "requested_claude_route": "claude-fable-5",
+    "requested_route_status": "access-limited-before-freeze",
+    "requested_route_result": "Recognized by Claude Code but returned HTTP 429 before inference because usage credits are not enabled.",
+    "executable_claude_route": "claude-opus-5",
+    "label": "best accessible Claude route; not a Fable substitute",
+    "future_fable_policy": "If usage credits are enabled later, run Fable 5 only in a separately preregistered addendum."
+  },
+  "baseline": {
+    "parent_commit_before_preregistration": "73d1ed51cf96a99266df386c456d3022589cfe66",
+    "resolution": "Use the clean Git commit containing this preregistration file for every run. The exact commit is captured independently in each run manifest."
+  },
+  "run_policy": {
+    "runs_per_route": 1,
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0,
+    "preserve_failures": true,
+    "rerun_inside_block": false
+  },
+  "randomization": {
+    "method": "Sort routes by ascending SHA-256(seed|assistant|model).",
+    "seed": "T4-top-native-v2-2026-08-23|73d1ed51cf96a99266df386c456d3022589cfe66",
+    "order": [
+      {
+        "position": 1,
+        "assistant": "codex",
+        "required_version": "0.146.0-alpha.3.1",
+        "model": "gpt-5.6-sol",
+        "access_path": "subscription",
+        "hash": "2900ad1c0cebc49fcfa431db73fb552de6cb00fa555e56e38252755ad7a5b08b"
+      },
+      {
+        "position": 2,
+        "assistant": "opencode",
+        "required_version": "1.18.21",
+        "model": "openrouter/moonshotai/kimi-k3",
+        "access_path": "api",
+        "hash": "47f69292c1aa1cb9d636d221ed5293e6fe53002ed4ba21a5ce0b179f408ae654"
+      },
+      {
+        "position": 3,
+        "assistant": "claude",
+        "required_version": "2.1.241",
+        "model": "claude-opus-5",
+        "access_path": "subscription",
+        "hash": "6b83621d0452dade3aca511a6859c16e17107a842b3117cb289118fe2169a0a1"
+      },
+      {
+        "position": 4,
+        "assistant": "opencode",
+        "required_version": "1.18.21",
+        "model": "openrouter/qwen/qwen3.8-27b",
+        "access_path": "api",
+        "hash": "de865800c873a7387402d99f9de7a79512dfa4809becbbd61ee6e227e6869c8a"
+      }
+    ]
+  },
+  "access_preconditions": [
+    "Use the completed tiny generic access checks recorded in benchmark/access/T4-top-native-v2-access-checks.json; no checked model saw the benchmark task.",
+    "Keep the combined Kimi K3 and Qwen3.8-27B access-check and counted-run spend at or below the user-approved $1.50 OpenRouter ceiling.",
+    "Do not call Fable 5 again in this block because the pre-freeze check established that usage credits are disabled.",
+    "Do not increase an account or API spending limit.",
+    "If an exact route is unavailable, record an access limitation and do not silently substitute another model inside this block."
+  ],
+  "acceptance": {
+    "allowed_changed_paths": [
+      "benchmark/fixtures/T4-run-explorer/index.html",
+      "benchmark/fixtures/T4-run-explorer/styles.css",
+      "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
+      "benchmark/fixtures/T4-run-explorer/student-tests.mjs"
+    ],
+    "visible_command": "node --test benchmark/fixtures/T4-run-explorer/run-explorer.test.mjs benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+    "private_suite": "T4-run-explorer-v2",
+    "private_sha256": "47da3888ebd6fd535829f17bb72f46d52544b5a00171b9a7a3f0527064fd2a67",
+    "external_browser_qa": [
+      "initial render, visible outcome text, and summaries",
+      "assistant and outcome filters",
+      "all three sort orders",
+      "reset and empty state",
+      "keyboard focus and visible focus style",
+      "desktop and 390 px layouts without horizontal page overflow",
+      "browser console warnings and errors"
+    ]
+  },
+  "comparison_fields": [
+    "rubric_score",
+    "acceptance_status",
+    "elapsed_ms",
+    "time_to_first_edit_ms",
+    "visible_tests",
+    "private_tests",
+    "browser_qa",
+    "changed_paths",
+    "out_of_scope_paths",
+    "tool_calls_by_type",
+    "failed_or_repeated_commands",
+    "input_tokens",
+    "cached_input_tokens",
+    "output_tokens",
+    "reasoning_tokens",
+    "reported_cost_usd",
+    "human_interventions",
+    "final_evidence_quality"
+  ],
+  "rules": [
+    "Execute in the preregistered order without substituting a route.",
+    "Use a fresh isolated worktree and session for every run.",
+    "Preserve failures, partial outputs, provider errors, and access limitations as results.",
+    "Do not rerun a failed route inside this pilot block.",
+    "Run the same external browser-QA checklist against every reconstructed patch.",
+    "Keep subscription access separate from metered API cost.",
+    "Do not claim a general winner from one run per route."
+  ]
+}

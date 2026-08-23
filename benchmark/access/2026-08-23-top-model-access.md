@@ -100,3 +100,30 @@ accounting may differ. Require a separate user-approved ceiling before the
 minimal access check and counted run.
 
 Source: <https://platform.claude.com/docs/en/about-claude/models/overview>
+
+## Exact-route access checks
+
+The non-counted checks used a generic `ACCESS_OK` prompt and did not disclose
+the benchmark task:
+
+- Codex + `gpt-5.6-sol`: available through the subscription.
+- OpenCode + `openrouter/moonshotai/kimi-k3`: available; reported cost
+  `$0.0244644`.
+- OpenCode + `openrouter/qwen/qwen3.8-27b`: available; reported cost
+  `$0.0036138`.
+- Claude Code + `claude-fable-5`: recognized, but inference did not start. The
+  CLI returned HTTP 429 and said usage credits must be enabled. It reported zero
+  tokens and `$0` cost.
+- Claude Code + `claude-opus-5`: available through the current login; the CLI
+  reported `$0.064167` in usage telemetry, which is not assumed to be an amount
+  billed outside the subscription.
+
+The two OpenRouter checks used `$0.0280782`, leaving `$1.4719218` of the
+approved combined ceiling for their counted T4 runs. No spending limit was
+increased. The top-native v2 protocol therefore uses Opus 5 as the separately
+labeled best accessible Claude route and preserves Fable 5 as an access
+limitation. Fable can be tested later in a distinct preregistered addendum if
+the account setting changes.
+
+Structured evidence:
+[`T4-top-native-v2-access-checks.json`](T4-top-native-v2-access-checks.json).

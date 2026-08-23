@@ -86,6 +86,12 @@ validateWriteTask("T4-run-explorer", [
   "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
   "benchmark/fixtures/T4-run-explorer/student-tests.mjs",
 ]);
+validateWriteTask("T4-run-explorer-v2", [
+  "benchmark/fixtures/T4-run-explorer/index.html",
+  "benchmark/fixtures/T4-run-explorer/styles.css",
+  "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
+  "benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+]);
 
 const claudeRules = readFileSync(resolve(root, "CLAUDE.md"), "utf8");
 assert.match(claudeRules, /^@AGENTS\.md\b/);

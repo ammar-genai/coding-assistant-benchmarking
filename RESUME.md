@@ -266,12 +266,13 @@ block comparing Kimi and Qwen workers under the same frontier plan.
    approval before increasing the existing OpenRouter spending limit.
 4. Review and deliberately commit the completed T4 shared-harness result JSON,
    report, and updated handoff.
-5. Run the four-route headline block: Codex + GPT-5.6 Sol,
-   Claude Code + Fable 5, OpenCode + Kimi K3, and OpenCode + Qwen3.8-27B.
-6. Before that block, perform the declared exact-route access and price checks;
-   obtain approval for any Fable usage-credit spend or OpenRouter limit change.
-7. Create a new T4 task version before any repeat so the behavior-based private
-   check replaces the accidental `.outcome` class-name requirement.
+5. Freeze and run the corrected four-route headline block: Codex + GPT-5.6 Sol,
+   Claude Code + Opus 5, OpenCode + Kimi K3, and OpenCode + Qwen3.8-27B.
+6. Preserve Fable 5 as an access limitation: the exact route was recognized but
+   required disabled usage credits. Do not silently label Opus 5 as Fable.
+7. Use `T4-run-explorer-v2@1.0.1`, whose separately hash-checked private suite
+   removes the accidental `.outcome` class-name requirement without altering
+   the original frozen task or result.
 8. Run the two mirrored distributed workflows with the frontier lead and
    reviewer roles reversed.
 9. Do not make cost or winner claims until there are repeated randomized runs

@@ -1,0 +1,90 @@
+{
+  "schema_version": "1.0",
+  "checked_on": "2026-08-23",
+  "prompt": "Do not use tools. Reply with exactly ACCESS_OK and nothing else.",
+  "benchmark_task_disclosed": false,
+  "routes": [
+    {
+      "assistant": "codex",
+      "model": "gpt-5.6-sol",
+      "access_path": "subscription",
+      "status": "available",
+      "response": "ACCESS_OK",
+      "tokens": {
+        "input": 13262,
+        "cached_input": 9984,
+        "output": 6,
+        "total": 13268
+      },
+      "reported_cost_usd": null
+    },
+    {
+      "assistant": "opencode",
+      "model": "openrouter/moonshotai/kimi-k3",
+      "access_path": "api",
+      "status": "available",
+      "response": "ACCESS_OK",
+      "tokens": {
+        "input": 7742,
+        "cache_read": 128,
+        "output": 14,
+        "reasoning": 66,
+        "total": 7950
+      },
+      "reported_cost_usd": 0.0244644
+    },
+    {
+      "assistant": "opencode",
+      "model": "openrouter/qwen/qwen3.8-27b",
+      "access_path": "api",
+      "status": "available",
+      "response": "ACCESS_OK",
+      "tokens": {
+        "input": 8577,
+        "cache_read": 0,
+        "output": 0,
+        "reasoning": 61,
+        "total": 8636
+      },
+      "reported_cost_usd": 0.0036138,
+      "telemetry_note": "OpenCode emitted visible response text while reporting zero output tokens; preserve this as a telemetry limitation."
+    },
+    {
+      "assistant": "claude",
+      "model": "claude-fable-5",
+      "access_path": "subscription-or-usage-credits",
+      "status": "access-limited",
+      "response": null,
+      "http_status": 429,
+      "tokens": {
+        "input": 0,
+        "output": 0,
+        "total": 0
+      },
+      "reported_cost_usd": 0,
+      "reason": "Fable 5 requires usage credits, and usage credits are not enabled on the account."
+    },
+    {
+      "assistant": "claude",
+      "model": "claude-opus-5",
+      "access_path": "subscription",
+      "status": "available",
+      "response": "ACCESS_OK",
+      "tokens": {
+        "input": 2,
+        "cache_creation_input": 6295,
+        "output": 10
+      },
+      "reported_cost_usd": 0.064167,
+      "telemetry_note": "Claude CLI cost telemetry is recorded but is not assumed to be an amount billed outside the subscription."
+    }
+  ],
+  "approved_ceiling_usd": {
+    "openrouter_kimi_and_qwen_combined": 1.5,
+    "claude_fable_usage_credits_if_enabled": 3.0
+  },
+  "observed_openrouter_access_check_spend_usd": 0.0280782,
+  "remaining_openrouter_block_ceiling_usd": 1.4719218,
+  "observed_fable_spend_usd": 0,
+  "account_limits_increased": false
+}
