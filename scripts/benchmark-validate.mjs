@@ -131,4 +131,11 @@ assert.deepEqual(extensionBlock.feature.required_tools, [
 assert.equal(extensionBlock.run_policy.openrouter_calls, 0);
 assert.equal(extensionBlock.run_policy.max_human_interventions, 0);
 
+const recoveryBlock = readJson("benchmark/blocks/benchmark-audit-claude-recovery-2026-08-23.json");
+assert.equal(recoveryBlock.status, "preregistered");
+assert.equal(recoveryBlock.feature.prompt_sha256, extensionPromptDigest);
+assert.equal(recoveryBlock.route.runs, 1);
+assert.match(recoveryBlock.route.command, /--claude-preauthorize-mcp/);
+assert.doesNotMatch(recoveryBlock.route.command, /openrouter/i);
+
 console.log("Benchmark contracts are valid.");

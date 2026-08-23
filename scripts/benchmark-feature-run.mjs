@@ -17,6 +17,8 @@ function usage() {
 
 Options:
   --model <id>      Exact model ID. Defaults to the preregistered route.
+  --claude-preauthorize-mcp
+                    Preauthorize only the two benchmark-audit MCP tools.
   --regrade <id>    Recompute acceptance from one saved raw feature run.
   --execute         Execute and save the raw feature run. Otherwise preview it.
   --help            Show this message.`);
@@ -27,6 +29,7 @@ function parseArgs(argv) {
   for (let index = 0; index < argv.length; index += 1) {
     const value = argv[index];
     if (value === "--execute") options.execute = true;
+    else if (value === "--claude-preauthorize-mcp") options.claudePreauthorizeMcp = true;
     else if (value === "--help") options.help = true;
     else if (value === "--assistant" || value === "--model" || value === "--regrade") {
       const next = argv[index + 1];
@@ -95,7 +98,7 @@ function openCodeConfig() {
   };
 }
 
-function adapter(assistant, model, prompt) {
+function adapter(assistant, model, prompt, options = {}) {
   if (assistant === "codex") {
     const mcpArgs = JSON.stringify([serverPath, "--root", projectRoot]);
     return {
@@ -136,28 +139,32 @@ function adapter(assistant, model, prompt) {
         },
       },
     });
+    const args = [
+      "--print",
+      "--output-format",
+      "stream-json",
+      "--verbose",
+      "--no-session-persistence",
+      "--setting-sources",
+      "project",
+      "--permission-mode",
+      "dontAsk",
+      "--strict-mcp-config",
+      "--mcp-config",
+      config,
+      "--tools",
+      "Skill,mcp__benchmark-audit__get_task_contract,mcp__benchmark-audit__summarize_run",
+    ];
+    if (options.claudePreauthorizeMcp) {
+      args.push(
+        "--allowedTools",
+        "mcp__benchmark-audit__get_task_contract,mcp__benchmark-audit__summarize_run",
+      );
+    }
+    args.push("--model", model, "--", prompt);
     return {
       command: "claude",
-      args: [
-        "--print",
-        "--output-format",
-        "stream-json",
-        "--verbose",
-        "--no-session-persistence",
-        "--setting-sources",
-        "project",
-        "--permission-mode",
-        "dontAsk",
-        "--strict-mcp-config",
-        "--mcp-config",
-        config,
-        "--tools",
-        "Skill,mcp__benchmark-audit__get_task_contract,mcp__benchmark-audit__summarize_run",
-        "--model",
-        model,
-        "--",
-        prompt,
-      ],
+      args,
       accessPath: "subscription",
       environment: process.env,
     };
@@ -373,6 +380,9 @@ if (!options.assistant) {
   usage();
   throw new Error("--assistant is required");
 }
+if (options.claudePreauthorizeMcp && options.assistant !== "claude") {
+  throw new Error("--claude-preauthorize-mcp is valid only with --assistant claude");
+}
 
 const defaults = {
   codex: "gpt-5.6-sol",
@@ -382,7 +392,7 @@ const defaults = {
 const model = options.model ?? defaults[options.assistant];
 if (!model) throw new Error(`No default model for ${options.assistant}`);
 const prompt = readFileSync(promptPath, "utf8");
-const selected = adapter(options.assistant, model, prompt);
+const selected = adapter(options.assistant, model, prompt, options);
 
 if (!options.execute) {
   console.log(JSON.stringify({
@@ -393,6 +403,7 @@ if (!options.execute) {
     access_path: selected.accessPath,
     prompt_sha256: sha256(prompt),
     target_run_id: targetRunId,
+    claude_mcp_preauthorized: Boolean(options.claudePreauthorizeMcp),
     command: [selected.command, ...selected.args.slice(0, -1), "<prompt.md>"],
   }, null, 2));
   process.exit(0);
@@ -425,6 +436,7 @@ const manifest = {
   target_task_id: taskId,
   max_wall_time_seconds: 600,
   max_human_interventions: 0,
+  claude_mcp_preauthorized: Boolean(options.claudePreauthorizeMcp),
   started_at: createdAt.toISOString(),
 };
 writeFileSync(resolve(runDirectory, "manifest.json"), `${JSON.stringify(manifest, null, 2)}\n`);

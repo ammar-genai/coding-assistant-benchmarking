@@ -1,0 +1,63 @@
+{
+  "schema_version": "1.0",
+  "block_id": "benchmark-audit-claude-recovery-2026-08-23",
+  "status": "preregistered",
+  "purpose": "Test the narrow configuration correction for the preserved Claude extension-invocation failure without changing the task, model, evidence source, or tool surface.",
+  "classification": "harness configuration recovery; not a rerun inside the original block and excluded from T1-T6 quality rankings",
+  "prior_result": {
+    "block_id": "benchmark-audit-invocation-2026-08-23",
+    "run_id": "2026-08-23T18-46-49.768Z_claude_benchmark-audit-invocation",
+    "status": "fail",
+    "failure": "Both MCP tools connected and were visible, but dontAsk denied them because --tools controls availability rather than preauthorization."
+  },
+  "controlled_change": {
+    "only_change": "Add exactly mcp__benchmark-audit__get_task_contract and mcp__benchmark-audit__summarize_run to Claude Code --allowedTools.",
+    "unchanged": [
+      "Claude Code 2.1.241",
+      "claude-opus-5",
+      "subscription access",
+      "dontAsk permission mode",
+      "strict isolated MCP configuration",
+      "Skill plus the same two MCP tools as the complete available tool surface",
+      "prompt and prompt hash",
+      "target run and task",
+      "600-second wall-time limit",
+      "zero human interventions",
+      "zero OpenRouter calls"
+    ]
+  },
+  "feature": {
+    "id": "benchmark-audit-invocation",
+    "prompt_path": "benchmark/features/benchmark-audit-invocation/prompt.md",
+    "prompt_sha256": "5b84ef31a99f2ccb2d2dedc467b1962884f4e774a97d096d98dd544a5b4a81e4",
+    "target_run_id": "2026-08-23T18-22-22.767Z_codex_T6-rejected-promise-cache",
+    "task_id": "T6-rejected-promise-cache"
+  },
+  "baseline": {
+    "parent_commit_before_preregistration": "2eef126f3b1ef57cfb569211f5a996ab8ac91b4e",
+    "resolution": "Use the clean commit containing this recovery preregistration and runner option."
+  },
+  "route": {
+    "assistant": "claude",
+    "required_version": "2.1.241",
+    "model": "claude-opus-5",
+    "access_path": "subscription",
+    "runs": 1,
+    "command": "npm run benchmark:feature -- --assistant claude --model claude-opus-5 --claude-preauthorize-mcp --execute"
+  },
+  "acceptance": [
+    "The process completes within 600 seconds and the tracked workspace remains unchanged.",
+    "The skill is available and invoked once.",
+    "Each required MCP tool is attempted exactly once and succeeds exactly once.",
+    "No other tool is called and no permission denial occurs.",
+    "The four required headings and every expected audit fact are accurate.",
+    "The result distinguishes subscription CLI telemetry from metered API spend."
+  ],
+  "rules": [
+    "Run once and preserve failure or timeout without another recovery attempt.",
+    "Do not alter the original block's raw or normalized result.",
+    "Do not enable additional tools, use a more permissive permission mode, or fall back to repository reads.",
+    "Do not use OpenRouter, enable usage credits, or change an account limit.",
+    "Do not use the recovery result to erase the setup cost or failure observed in the original configuration."
+  ]
+}
