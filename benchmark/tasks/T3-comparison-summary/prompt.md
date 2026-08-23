@@ -34,8 +34,11 @@ Do not edit the committed `comparison-summary.test.mjs` suite.
 
 ## `renderComparisonTable(summaries)` contract
 
-1. Throw `TypeError` when `summaries` is not an array or a summary does not have
-   the required output fields and value types from the contract above.
+1. Throw `TypeError` when `summaries` is not an array or a summary has invalid
+   fields. `assistant` and `best_run_id` must be non-empty strings; `run_count`
+   must be a positive integer; `best_score` must be a finite number from 0
+   through 100; and `median_elapsed_ms` must be a finite number greater than or
+   equal to zero.
 2. Preserve the supplied summary order.
 3. Return this exact Markdown header:
 
