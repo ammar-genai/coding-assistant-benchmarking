@@ -292,19 +292,29 @@ Cumulative OpenRouter spend is now `$1.3764798` of the approved `$1.50`
 ceiling, leaving `$0.1235202`. Do not make another paid model call or increase a
 provider limit without a new explicit approval.
 
+### Harness feature and extension matrix
+
+The common Codex, Claude Code, and OpenCode feature matrix is complete in
+[`benchmark/reports/harness-feature-matrix.md`](benchmark/reports/harness-feature-matrix.md).
+It separates tested behavior from installed CLI switches and documented-only
+capabilities. It also defines the portable integration design: common
+`AGENTS.md` rules, ordinary task/result files, isolated worktrees, a shared
+read-only MCP boundary, and thin tool-specific skill/plugin wrappers.
+
+The current roles are Codex as primary lead/integrator, Claude Code as primary
+independent reviewer and alternate lead, and OpenCode as a strong secondary
+tool/open-model worker. Native subagents, resume behavior, portable skills,
+shared MCP, and native browser behavior remain feature pilots rather than
+counted evidence.
+
 ## Exact next steps
 
-1. Commit the verified T5 corrected grader, result JSON, comparison report, and
-   updated handoff.
-2. Build the common harness-feature checklist for Codex, Claude Code, and
-   OpenCode: permissions, planning, resume/recovery, plugins/skills/hooks/MCP,
-   browser support, telemetry, configuration, and error handling.
-3. Design and freeze T6, the incident/debugging task, before another model sees
+1. Design and freeze T6, the incident/debugging task, before another model sees
    it. Use subscription routes first because only `$0.1235202` remains under
    the OpenRouter ceiling.
-4. Decide whether the next paid block is worth a new explicit budget. Do not
+2. Decide whether the next paid block is worth a new explicit budget. Do not
    increase a provider limit automatically.
-5. Run repeated randomized trials only where they can change a decision; one
+3. Run repeated randomized trials only where they can change a decision; one
    task is not a general winner.
 
 ## Verification commands
