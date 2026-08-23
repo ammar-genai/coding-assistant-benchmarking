@@ -1,0 +1,50 @@
+{
+  "schema_version": "1.0",
+  "id": "T7-trade-domain",
+  "version": "1.0.0",
+  "title": "Implement the securitized-product trade domain",
+  "type": "feature",
+  "mode": "workspace-write",
+  "prompt_path": "prompt.md",
+  "allowed_paths": [
+    "app/trade-capture/domain/calculations.ts",
+    "app/trade-capture/domain/validation.ts",
+    "app/trade-capture/domain/lifecycle.ts",
+    "app/trade-capture/domain/seed.ts",
+    "tests/trade-domain.test.mjs"
+  ],
+  "forbidden_actions": [
+    "Edit stable types, barrel exports, UI, state, route, configuration, task definitions, or generated evidence",
+    "Read benchmark/private or benchmark/runs",
+    "Install dependencies or use the network",
+    "Run a build, commit, push, deploy, or start an external service"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "domain-tests",
+      "description": "Visible calculation, validation, lifecycle, seed, and summary tests pass.",
+      "command": "node --test tests/trade-domain.test.mjs"
+    },
+    {
+      "id": "private-contract",
+      "description": "Private boundary, lifecycle, audit, summary, and seed-coverage checks pass."
+    },
+    {
+      "id": "scope",
+      "description": "Only the five owned files change."
+    }
+  ],
+  "verification": {
+    "visible_commands": [
+      "node --test tests/trade-domain.test.mjs",
+      "npm run typecheck",
+      "npm run lint"
+    ],
+    "hidden_suite": "T7-trade-domain",
+    "hidden_sha256": "56bd264eaf88003d96f6ec107926a384fb0a91cee46b77186a6642e90ec52986"
+  },
+  "limits": {
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0
+  }
+}

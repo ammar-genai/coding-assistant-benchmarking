@@ -1,0 +1,14 @@
+{
+  "schema_version": "1.0",
+  "task_id": "T7-trade-domain",
+  "task_version": "1.0.0",
+  "total_points": 100,
+  "criteria": [
+    { "id": "calculation-summary", "points": 20, "description": "Calculations and signed desk summaries match the frozen contract." },
+    { "id": "validation", "points": 25, "description": "All product, identifier, date, numeric, modifier, and allocation rules are implemented." },
+    { "id": "lifecycle", "points": 25, "description": "Transitions preserve identity and immutable audit history and reject unsafe actions." },
+    { "id": "seeds", "points": 15, "description": "Six deterministic synthetic fixtures cover every product and required statuses." },
+    { "id": "tests-quality", "points": 10, "description": "Worker-authored tests add meaningful boundary and transition evidence." },
+    { "id": "scope-quality", "points": 5, "description": "The implementation is dependency-free, pure, maintainable, and in scope." }
+  ]
+}

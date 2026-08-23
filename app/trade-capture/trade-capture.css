@@ -1,0 +1,92 @@
+.tc-shell {
+  min-height: 100vh;
+  padding: 32px;
+  background: #f3f6f2;
+  color: #15211d;
+}
+
+.tc-hero {
+  display: flex;
+  justify-content: space-between;
+  gap: 32px;
+  max-width: 1440px;
+  margin: 0 auto 24px;
+}
+
+.tc-hero h1,
+.tc-panel h2,
+.tc-eyebrow,
+.tc-synthetic-notice {
+  margin: 0;
+}
+
+.tc-panel {
+  border: 1px solid #d5ddd7;
+  border-radius: 16px;
+  background: #ffffff;
+  padding: 20px;
+}
+
+.tc-insights,
+.tc-blotter,
+.tc-validation,
+.tc-workspace {
+  max-width: 1440px;
+  margin: 0 auto 20px;
+}
+
+.tc-workspace {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(280px, 1fr);
+  gap: 20px;
+}
+
+.tc-field,
+.tc-review-body {
+  display: grid;
+  gap: 6px;
+}
+
+.tc-ticket-actions,
+.tc-filter-bar,
+.tc-metric-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.tc-table-region {
+  overflow-x: auto;
+}
+
+.tc-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tc-table th,
+.tc-table td {
+  border-bottom: 1px solid #d5ddd7;
+  padding: 10px;
+  text-align: left;
+}
+
+.tc-eyebrow {
+  color: #48635a;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.tc-validation {
+  border-left: 4px solid #ad7a15;
+  padding: 10px 14px;
+  background: #fff5d6;
+}
+
+@media (max-width: 760px) {
+  .tc-shell { padding: 20px; }
+  .tc-hero { display: grid; }
+  .tc-workspace { grid-template-columns: 1fr; }
+}
