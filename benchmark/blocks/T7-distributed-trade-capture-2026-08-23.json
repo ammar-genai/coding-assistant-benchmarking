@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "block_id": "T7-distributed-trade-capture-2026-08-23",
-  "status": "planning-preregistered",
+  "status": "execution-in-progress",
   "purpose": "Build a realistic local securitized-product trade capture mock while measuring frontier planning and review, bounded mid-level and open-model implementation, integration repair, elapsed time, token telemetry, and metered cost.",
   "product": {
     "brief": "benchmark/projects/T7-securitized-trade-capture/PRODUCT.md",
@@ -91,6 +91,43 @@
       "access_path": "subscription",
       "mode": "read-only",
       "ownership": "review completed source and visible evidence without private checks"
+    }
+  ],
+  "stage_results": [
+    {
+      "stage": "architecture-plan",
+      "run_id": "2026-08-23T21-56-20.470Z_codex_T7-trade-capture-plan",
+      "status": "complete",
+      "acceptance": "manual-pass-read-only",
+      "elapsed_ms": 203673,
+      "access_path": "subscription"
+    },
+    {
+      "stage": "architecture-review",
+      "run_id": "2026-08-23T22-01-06.339Z_claude_T7-trade-capture-plan-review",
+      "status": "complete",
+      "acceptance": "approve-with-required-changes",
+      "elapsed_ms": 319008,
+      "access_path": "subscription"
+    },
+    {
+      "stage": "domain-implementation",
+      "run_id": "2026-08-23T22-12-10.984Z_codex_T7-trade-domain",
+      "status": "complete",
+      "automatic_acceptance": "fail",
+      "behavioral_acceptance": "pass-after-integrator-verification",
+      "elapsed_ms": 161146,
+      "access_path": "subscription",
+      "input_tokens": 263111,
+      "cached_input_tokens": 238848,
+      "output_tokens": 8144,
+      "reasoning_output_tokens": 1438,
+      "metered_cost_usd": null,
+      "notes": [
+        "Visible domain tests and the private domain suite passed in the isolated run.",
+        "Automatic acceptance failed because the allowed typecheck generated an out-of-scope tsconfig.tsbuildinfo file and the isolated worktree did not contain node_modules for typecheck and lint.",
+        "The integrator reproduced the owned patch with apply_patch; local domain tests, typecheck, and lint passed without source repair."
+      ]
     }
   ],
   "run_policy": {
