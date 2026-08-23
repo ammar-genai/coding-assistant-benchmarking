@@ -1,5 +1,8 @@
 # Coding Assistant Study Plan
 
+Current status and the exact continuation point are recorded in
+[`RESUME.md`](RESUME.md).
+
 An interactive six-week playbook for comparing:
 
 - Codex, Claude Code, and OpenCode as coding assistants

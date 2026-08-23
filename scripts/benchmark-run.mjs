@@ -93,9 +93,12 @@ function sha256(value) {
   return createHash("sha256").update(value).digest("hex");
 }
 
-function ollamaAccessPath(model) {
-  if (!model.startsWith("ollama/")) return null;
-  return model.endsWith(":cloud") ? "ollama-cloud" : "ollama-local";
+function modelAccessPath(model) {
+  if (model.startsWith("ollama/")) {
+    return model.endsWith(":cloud") ? "ollama-cloud" : "ollama-local";
+  }
+  if (model.startsWith("openrouter/")) return "api";
+  return null;
 }
 
 function snapshotDirectory(root = projectRoot) {
@@ -185,7 +188,7 @@ function adapter(assistant, model, prompt, targetRoot, task) {
       args.push("--oss", "--local-provider", "ollama", "--model", model.slice("ollama/".length));
     } else if (model !== "subscription-default") args.push("--model", model);
     args.push(prompt);
-    return { command: "codex", args, accessPath: ollamaAccessPath(model) ?? "subscription" };
+    return { command: "codex", args, accessPath: modelAccessPath(model) ?? "subscription" };
   }
 
   if (assistant === "claude") {
@@ -221,7 +224,7 @@ function adapter(assistant, model, prompt, targetRoot, task) {
         "--",
         prompt,
       ];
-      return { command: "ollama", args, accessPath: ollamaAccessPath(model) };
+      return { command: "ollama", args, accessPath: modelAccessPath(model) };
     }
     if (model !== "subscription-default") claudeArgs.push("--model", model);
     claudeArgs.push("--", prompt);
@@ -245,7 +248,7 @@ function adapter(assistant, model, prompt, targetRoot, task) {
     return {
       command: "opencode",
       args,
-      accessPath: ollamaAccessPath(model) ?? "unknown",
+      accessPath: modelAccessPath(model) ?? "unknown",
       env: {
         ...process.env,
         OPENCODE_CONFIG_CONTENT: JSON.stringify(openCodePermissions(task)),
@@ -278,7 +281,7 @@ function adapter(assistant, model, prompt, targetRoot, task) {
         ...piArgs,
         prompt,
       ];
-      return { command: "ollama", args, accessPath: ollamaAccessPath(model) };
+      return { command: "ollama", args, accessPath: modelAccessPath(model) };
     }
     piArgs.push("--model", model, prompt);
     return { command: "pi", args: piArgs, accessPath: "unknown" };

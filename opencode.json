@@ -18,6 +18,18 @@
           "name": "Kimi K2.7 Code (Ollama Cloud)"
         }
       }
+    },
+    "openrouter": {
+      "name": "OpenRouter",
+      "models": {
+        "qwen/qwen3.8-27b": {
+          "name": "Qwen3.8 27B (OpenRouter)",
+          "limit": {
+            "context": 262144,
+            "output": 131072
+          }
+        }
+      }
     }
   }
 }
