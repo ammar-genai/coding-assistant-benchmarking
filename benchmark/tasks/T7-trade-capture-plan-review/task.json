@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "id": "T7-trade-capture-plan-review",
+  "version": "1.0.0",
+  "title": "Challenge the securitized trade capture architecture",
+  "type": "analysis",
+  "mode": "read-only",
+  "prompt_path": "prompt.md",
+  "allowed_paths": ["**/*"],
+  "forbidden_actions": [
+    "Edit, create, rename, or delete files",
+    "Install dependencies or use the network",
+    "Change Git state",
+    "Start an external service",
+    "Read benchmark/private or benchmark/runs"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "read-only",
+      "description": "The workspace snapshot is unchanged after the run."
+    },
+    {
+      "id": "contract-review",
+      "description": "The review checks domain and component contracts for ambiguity, incompatibility, and missing lifecycle behavior."
+    },
+    {
+      "id": "worker-isolation",
+      "description": "The review checks that non-overlapping workers can build from the same frozen baseline."
+    },
+    {
+      "id": "acceptance-review",
+      "description": "The review identifies missing objective checks and separates blocking changes from optional improvements."
+    }
+  ],
+  "limits": {
+    "max_wall_time_seconds": 900,
+    "max_human_interventions": 0
+  }
+}
