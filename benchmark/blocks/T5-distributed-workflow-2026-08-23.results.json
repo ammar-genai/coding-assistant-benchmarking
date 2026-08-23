@@ -1,0 +1,73 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T5-distributed-workflow-2026-08-23",
+  "protocol": "benchmark/blocks/T5-distributed-workflow-2026-08-23.json",
+  "status": "executed-stopped-before-worker",
+  "baseline_git_commit": "375f3440aa0e6a2e19fed697ac4b34ef4e95e6a9",
+  "run_id": "2026-08-23T17-41-13.540Z_distributed_T5-review-queue",
+  "result": {
+    "status": "failed",
+    "acceptance_status": "fail",
+    "elapsed_ms": 677892,
+    "changed_paths": [],
+    "out_of_scope_paths": [],
+    "human_interventions": 0,
+    "paid_worker_started": false,
+    "openrouter_cost_usd": 0,
+    "stop_rule_applied": "The pre-implementation reviewer timed out, so the workflow stopped before the paid worker."
+  },
+  "stages": [
+    {
+      "position": 1,
+      "assistant": "codex",
+      "model": "gpt-5.6-sol",
+      "role": "lead planner",
+      "status": "complete",
+      "elapsed_ms": 76778,
+      "read_only_changes": [],
+      "tool_calls": {
+        "command_execution": 3
+      },
+      "usage": {
+        "input_tokens": 69652,
+        "cached_input_tokens_subset": 47360,
+        "output_tokens": 2765,
+        "reasoning_output_tokens_subset": 636
+      },
+      "handoff_sha256": "7820a9d7dd65db1cfcf20576b9424d5b08409061b3326c7dc32c21324fc765c1"
+    },
+    {
+      "position": 2,
+      "assistant": "claude",
+      "model": "claude-opus-5",
+      "role": "pre-implementation plan reviewer",
+      "status": "timeout",
+      "elapsed_ms": 600255,
+      "read_only_changes": [],
+      "exit_code": 143,
+      "reported_cost_usd": null,
+      "usage": null,
+      "observed_partial_telemetry": {
+        "cache_read_input_tokens_in_last_message": 16292,
+        "final_result_record_present": false
+      }
+    }
+  ],
+  "diagnosis": {
+    "category": "harness-adapter interaction",
+    "evidence": "Claude completed a detailed review in a Write tool input targeting its user plan directory, but permission mode plan and the read-only tool list made Write unavailable. The tool failed at 599.5 seconds and the stage timed out before Claude returned the review as final text.",
+    "raw_stdout_sha256": "331da9bf62d1de88a80094878fe5999a803128be6f229deacf3329765d37cbb6",
+    "task_files_modified": false,
+    "private_tests_exposed": false
+  },
+  "change_control": {
+    "rerun_inside_block": false,
+    "next_protocol": "T5-distributed-workflow-v2-2026-08-23",
+    "correction": "Use Claude permission mode dontAsk with only read-only tools, explicitly require response text rather than a plan file, and allow 900 seconds for each Opus review stage."
+  },
+  "interpretation": [
+    "This is a valid workflow failure and evidence that harness modes can interact badly even when the model produced useful reasoning.",
+    "It is not an OpenCode or Kimi result because the paid worker was never started.",
+    "No OpenRouter budget was consumed by this attempt."
+  ]
+}

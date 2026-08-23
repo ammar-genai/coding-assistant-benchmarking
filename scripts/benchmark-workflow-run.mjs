@@ -316,7 +316,7 @@ function claudeCommand(model, prompt, { allowVisibleCommand = null } = {}) {
     "--setting-sources",
     "project",
     "--permission-mode",
-    "plan",
+    "dontAsk",
     "--tools",
     allowVisibleCommand ? "Read,Glob,Grep,Bash" : "Read,Glob,Grep",
   ];
@@ -453,10 +453,10 @@ const preview = {
   task: `${task.id}@${task.version}`,
   workflow: [
     { order: 1, assistant: "codex", model: options.plannerModel, role: "read-only lead planner", timeout_seconds: 600 },
-    { order: 2, assistant: "claude", model: options.reviewerModel, role: "read-only plan reviewer", timeout_seconds: 600 },
+    { order: 2, assistant: "claude", model: options.reviewerModel, role: "read-only plan reviewer", timeout_seconds: 900 },
     { order: 3, assistant: "opencode", model: options.workerModel, role: "implementation worker", timeout_seconds: task.limits.max_wall_time_seconds },
     { order: 4, assistant: "codex", model: options.plannerModel, role: "integration lead", timeout_seconds: 900 },
-    { order: 5, assistant: "claude", model: options.reviewerModel, role: "read-only final reviewer", timeout_seconds: 600 },
+    { order: 5, assistant: "claude", model: options.reviewerModel, role: "read-only final reviewer", timeout_seconds: 900 },
     { order: 6, assistant: "private harness", model: null, role: "visible and private grader", timeout_seconds: 120 },
   ],
   prompt_sha256: sha256(taskPrompt),
@@ -521,10 +521,10 @@ try {
     throw new Error("Lead planning stage did not complete cleanly; paid worker stage was not started.");
   }
 
-  const planReviewPrompt = `${taskPrompt}\n\n---\n\n# Lead plan to review\n\n${plannerSummary.final_text}\n\n---\n\n# Your role: pre-implementation plan reviewer\n\nDo not edit any file. Find cross-layer mismatches, missing validation or safety cases, and test gaps. Return a compact corrected plan of at most 900 words with exactly these headings: Blocking gaps, Corrected contract decisions, Worker checklist. If there are no blocking gaps, write "No blocking gaps" under that heading. The implementation worker will receive your review. Do not claim access to private tests.`;
+  const planReviewPrompt = `${taskPrompt}\n\n---\n\n# Lead plan to review\n\n${plannerSummary.final_text}\n\n---\n\n# Your role: pre-implementation plan reviewer\n\nDo not edit any file or attempt to create a plan file. Return the review directly in your response. Find cross-layer mismatches, missing validation or safety cases, and test gaps. Return a compact corrected plan of at most 900 words with exactly these headings: Blocking gaps, Corrected contract decisions, Worker checklist. If there are no blocking gaps, write "No blocking gaps" under that heading. The implementation worker will receive your review. Do not claim access to private tests.`;
   const beforePlanReview = snapshotDirectory(worktree.checkout);
   const reviewCommand = claudeCommand(options.reviewerModel, planReviewPrompt);
-  const reviewOutcome = await execute(reviewCommand.command, reviewCommand.args, 600_000, worktree.checkout);
+  const reviewOutcome = await execute(reviewCommand.command, reviewCommand.args, 900_000, worktree.checkout);
   const reviewSummary = summarizeClaude(reviewOutcome);
   const planReviewChanges = compareSnapshots(beforePlanReview, snapshotDirectory(worktree.checkout));
   saveStage(runDirectory, "02-claude-plan-review", planReviewPrompt, reviewOutcome, reviewSummary, planReviewChanges);
@@ -581,10 +581,10 @@ try {
     visible_checks_passed: integrationVerification.checks.every((check) => check.exit_code === 0 && !check.timed_out),
   });
 
-  const finalReviewPrompt = `${taskPrompt}\n\n---\n\n# Your role: final independent reviewer\n\nDo not edit any file. Inspect the current diff and run the visible verification command if permitted. Review correctness, validation and error consistency, data isolation, HTML injection safety, test quality, documentation, and file scope. Do not claim access to private tests. End with one valid JSON object on a single line using this shape: {"verdict":"pass|fail","findings":[{"severity":"high|medium|low","file":"path","issue":"text"}],"visible_verification":"pass|fail|not-run"}.`;
+  const finalReviewPrompt = `${taskPrompt}\n\n---\n\n# Your role: final independent reviewer\n\nDo not edit any file or attempt to create a plan file. Return the review directly in your response. Inspect the current diff and run the visible verification command if permitted. Review correctness, validation and error consistency, data isolation, HTML injection safety, test quality, documentation, and file scope. Do not claim access to private tests. End with one valid JSON object on a single line using this shape: {"verdict":"pass|fail","findings":[{"severity":"high|medium|low","file":"path","issue":"text"}],"visible_verification":"pass|fail|not-run"}.`;
   const beforeFinalReview = snapshotDirectory(worktree.checkout);
   const finalReviewCommand = claudeCommand(options.reviewerModel, finalReviewPrompt, { allowVisibleCommand: visibleCommand });
-  const finalReviewOutcome = await execute(finalReviewCommand.command, finalReviewCommand.args, 600_000, worktree.checkout);
+  const finalReviewOutcome = await execute(finalReviewCommand.command, finalReviewCommand.args, 900_000, worktree.checkout);
   const finalReviewSummary = summarizeClaude(finalReviewOutcome);
   const finalReviewChanges = compareSnapshots(beforeFinalReview, snapshotDirectory(worktree.checkout));
   saveStage(runDirectory, "05-claude-final-review", finalReviewPrompt, finalReviewOutcome, finalReviewSummary, finalReviewChanges);

@@ -1,0 +1,148 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T5-distributed-workflow-v2-2026-08-23",
+  "status": "preregistered",
+  "purpose": "Run the three-assistant T5 workflow after correcting the observed Claude read-only adapter interaction, then compare it with a fresh solo Codex control.",
+  "supersedes": {
+    "protocol": "benchmark/blocks/T5-distributed-workflow-2026-08-23.json",
+    "result": "benchmark/blocks/T5-distributed-workflow-2026-08-23.results.json",
+    "reason": "The first attempt stopped before the paid worker because Claude plan mode attempted to save its review to a plan file through a deliberately unavailable Write tool. No task file changed and no OpenRouter call began."
+  },
+  "task": {
+    "id": "T5-review-queue",
+    "version": "1.0.0",
+    "prompt_sha256": "1c562b4223cd4fb632c1856e40e446fee758281c4cb08822324bd117a59d6f22",
+    "private_suite": "T5-review-queue",
+    "private_sha256": "9da9154bfe7a7a96f2dfb68b374bbb712773803d577c6f2e990dce63ff374fb1"
+  },
+  "baseline": {
+    "parent_commit_before_preregistration": "375f3440aa0e6a2e19fed697ac4b34ef4e95e6a9",
+    "resolution": "Use the clean commit containing this v2 protocol, the v1 result, and the corrected workflow runner for both v2 runs."
+  },
+  "adapter_change": {
+    "claude_permission_mode_before": "plan",
+    "claude_permission_mode_now": "dontAsk",
+    "available_tools_for_plan_review": "Read, Glob, Grep",
+    "available_tools_for_final_review": "Read, Glob, Grep, plus only the frozen visible Bash command",
+    "write_tools_available": false,
+    "prompt_change": "Both Claude stages must return the review directly and must not create a plan file.",
+    "review_timeout_seconds_before": 600,
+    "review_timeout_seconds_now": 900,
+    "rationale": "Keep both stages operationally read-only without invoking Claude Code's special plan-file workflow."
+  },
+  "execution_order": [
+    {
+      "position": 1,
+      "run": "distributed-workflow-v2",
+      "command": "npm run benchmark:workflow -- --task T5-review-queue --planner-model gpt-5.6-sol --reviewer-model claude-opus-5 --worker-model openrouter/moonshotai/kimi-k3 --execute"
+    },
+    {
+      "position": 2,
+      "run": "solo-frontier-control-v2",
+      "command": "npm run benchmark:run -- --assistant codex --task T5-review-queue --model gpt-5.6-sol --execute"
+    }
+  ],
+  "distributed_roles": [
+    {
+      "position": 1,
+      "assistant": "codex",
+      "required_version": "0.146.0-alpha.3.1",
+      "model": "gpt-5.6-sol",
+      "access_path": "subscription",
+      "role": "read-only lead planner",
+      "timeout_seconds": 600
+    },
+    {
+      "position": 2,
+      "assistant": "claude",
+      "required_version": "2.1.241",
+      "model": "claude-opus-5",
+      "access_path": "subscription",
+      "role": "read-only pre-implementation plan reviewer",
+      "timeout_seconds": 900
+    },
+    {
+      "position": 3,
+      "assistant": "opencode",
+      "required_version": "1.18.21",
+      "model": "openrouter/moonshotai/kimi-k3",
+      "access_path": "api",
+      "role": "complete implementation worker",
+      "timeout_seconds": 1200
+    },
+    {
+      "position": 4,
+      "assistant": "codex",
+      "required_version": "0.146.0-alpha.3.1",
+      "model": "gpt-5.6-sol",
+      "access_path": "subscription",
+      "role": "integration lead",
+      "timeout_seconds": 900
+    },
+    {
+      "position": 5,
+      "assistant": "claude",
+      "required_version": "2.1.241",
+      "model": "claude-opus-5",
+      "access_path": "subscription",
+      "role": "read-only final reviewer",
+      "timeout_seconds": 900
+    },
+    {
+      "position": 6,
+      "assistant": "private-harness",
+      "model": null,
+      "access_path": "local",
+      "role": "visible and private grader",
+      "timeout_seconds": 120
+    }
+  ],
+  "budget": {
+    "currency": "USD",
+    "lifetime_openrouter_ceiling": 1.5,
+    "spent_before_v2": 0.758898,
+    "remaining_before_v2": 0.741102,
+    "v1_openrouter_cost": 0,
+    "paid_v2_calls": "Exactly one Kimi K3 implementation call; no paid repair or Qwen call.",
+    "limit_policy": "Do not increase a provider limit or enable Anthropic usage credits. Stop the paid lane after Kimi regardless of outcome."
+  },
+  "acceptance": {
+    "allowed_changed_paths": [
+      "benchmark/fixtures/T5-review-queue/review-store.mjs",
+      "benchmark/fixtures/T5-review-queue/review-api.mjs",
+      "benchmark/fixtures/T5-review-queue/review-page.mjs",
+      "benchmark/fixtures/T5-review-queue/student-tests.mjs",
+      "benchmark/fixtures/T5-review-queue/README.md"
+    ],
+    "visible_command": "node --test benchmark/fixtures/T5-review-queue/review-queue.test.mjs benchmark/fixtures/T5-review-queue/student-tests.mjs",
+    "pass_rule": "All visible and private checks pass, no read-only stage changes files, and no final path is out of scope."
+  },
+  "rules": [
+    "Use fresh ephemeral assistant sessions; do not reuse the v1 transcript or generated review as an input.",
+    "Use one isolated worktree for distributed stages and a separate worktree for the solo control.",
+    "Stop before the paid worker if either v2 planning stage fails, times out, returns no handoff, or changes the workspace.",
+    "Preserve worker-only and integrated patches separately, including failures and partial output.",
+    "Do not show private checks to any assistant and do not rerun inside this v2 block.",
+    "Report v1 as a harness failure and v2 separately; do not combine their elapsed time as though v1 were part of a successful workflow.",
+    "Report that Codex and Claude products saw the task in v1, although v2 uses fresh non-persistent sessions. Kimi and OpenCode did not see it in v1.",
+    "Use no human intervention, model substitution, dependency installation, account-limit change, or task-contract change."
+  ],
+  "comparison_fields": [
+    "rubric_score",
+    "acceptance_status",
+    "elapsed_ms",
+    "stage_elapsed_ms",
+    "worker_visible_result_before_integration",
+    "worker_patch_share_retained",
+    "plan_findings",
+    "integration_changes",
+    "final_review_findings",
+    "visible_and_private_tests",
+    "changed_and_out_of_scope_paths",
+    "tokens_by_stage_with_adapter_definitions",
+    "openrouter_worker_cost_usd",
+    "subscription_telemetry_separately",
+    "human_interventions",
+    "evidence_quality"
+  ]
+}
