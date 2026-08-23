@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "id": "T3-comparison-summary",
+  "version": "1.0.0",
+  "title": "Build an assistant comparison summary",
+  "type": "feature",
+  "mode": "workspace-write",
+  "prompt_path": "prompt.md",
+  "allowed_paths": [
+    "benchmark/fixtures/T3-comparison-summary/summarize-assistants.mjs",
+    "benchmark/fixtures/T3-comparison-summary/render-comparison-table.mjs",
+    "benchmark/fixtures/T3-comparison-summary/student-tests.mjs"
+  ],
+  "forbidden_actions": [
+    "Edit the committed visible test, task definitions, harness files, or generated evidence",
+    "Install dependencies or use the network",
+    "Commit or push changes"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "visible-tests",
+      "description": "The committed feature tests and assistant-authored tests pass.",
+      "command": "node --test benchmark/fixtures/T3-comparison-summary/comparison-summary.test.mjs benchmark/fixtures/T3-comparison-summary/student-tests.mjs"
+    },
+    {
+      "id": "private-tests",
+      "description": "Private aggregation, validation, rendering, and student-test checks pass."
+    },
+    {
+      "id": "allowed-scope",
+      "description": "Only the three allowed files change."
+    }
+  ],
+  "verification": {
+    "visible_commands": [
+      "node --test benchmark/fixtures/T3-comparison-summary/comparison-summary.test.mjs benchmark/fixtures/T3-comparison-summary/student-tests.mjs"
+    ],
+    "hidden_suite": "T3-comparison-summary",
+    "hidden_sha256": "9dc3451835119cfa209ed7c08a34e73e9237d976936b8a46a4beb93d35341d25"
+  },
+  "limits": {
+    "max_wall_time_seconds": 900,
+    "max_human_interventions": 0
+  }
+}

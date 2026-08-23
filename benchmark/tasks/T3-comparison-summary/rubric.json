@@ -1,0 +1,42 @@
+{
+  "task_id": "T3-comparison-summary",
+  "task_version": "1.0.0",
+  "total_points": 100,
+  "criteria": [
+    {
+      "id": "visible-tests",
+      "points": 20,
+      "description": "All committed visible tests pass."
+    },
+    {
+      "id": "private-tests",
+      "points": 30,
+      "description": "Private aggregation, validation, rendering, and immutability tests pass."
+    },
+    {
+      "id": "assistant-tests",
+      "points": 15,
+      "description": "At least two meaningful, passing tests are added without skips or placeholders."
+    },
+    {
+      "id": "feature-correctness",
+      "points": 15,
+      "description": "Aggregation, tie-breaking, median calculation, ordering, and Markdown output follow the contract."
+    },
+    {
+      "id": "scope-control",
+      "points": 10,
+      "description": "Only the three allowed implementation and student-test files change."
+    },
+    {
+      "id": "implementation-quality",
+      "points": 5,
+      "description": "The implementation is readable, maintainable, and avoids input mutation."
+    },
+    {
+      "id": "final-report",
+      "points": 5,
+      "description": "The final response explains the design, added edge cases, and verification."
+    }
+  ]
+}
