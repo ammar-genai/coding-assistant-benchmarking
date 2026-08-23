@@ -371,11 +371,14 @@ No paid API call occurred. OpenRouter spend remains `$1.3764798`, leaving
 
 ## Exact next steps
 
-1. Decide whether a later OpenCode/Kimi T6 row is worth a new explicit budget.
-   Do not increase a provider limit automatically.
-2. Run repeated randomized trials only where they can change a decision; one
-   task is not a general winner.
-3. Publish the HTML dashboard only if the user explicitly requests deployment.
+1. Run the preregistered T6 shared-Kimi harness block in its frozen order:
+   OpenCode, Codex, then Claude Code. This uses the existing Ollama Cloud route
+   and makes no OpenRouter or Anthropic-credit call.
+2. Grade and report the three results without rerunning a failure.
+3. Do not buy a separate Kimi K3 T6 row: the remaining OpenRouter allowance is
+   too small, and the shared Kimi K2.7 block tests the more important harness
+   question without new metered spend.
+4. Publish the HTML dashboard only if the user explicitly requests deployment.
 
 ## HTML results dashboard
 

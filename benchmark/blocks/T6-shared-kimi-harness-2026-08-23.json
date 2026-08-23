@@ -1,0 +1,106 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T6-shared-kimi-harness-2026-08-23",
+  "status": "preregistered",
+  "purpose": "Compare Codex, Claude Code, and OpenCode as harnesses on the same complex maintenance incident while holding the hosted model, prompt, fixture, permissions, and time limit constant.",
+  "decision_target": "Test whether the earlier shared-model harness findings still hold on difficult debugging, and whether OpenCode remains a credible secondary harness when model quality is fixed.",
+  "task": {
+    "id": "T6-rejected-promise-cache",
+    "version": "1.0.0",
+    "prompt_sha256": "9717e7ec3248b0901eb2ad8f3eeaa701e323342da75c7b1e01753fd9ae24e3a1",
+    "private_suite": "T6-rejected-promise-cache",
+    "private_sha256": "637a6db66e712abfece7df0fd0b28f51e3a2f8d22f07ed0204af6d7fbfe81b94"
+  },
+  "shared_model": {
+    "model": "ollama/kimi-k2.7-code:cloud",
+    "access_path": "ollama-cloud",
+    "availability_check": "ollama list succeeded immediately before preregistration",
+    "reason": "This is the strongest identical hosted route already verified through all three harness adapters without using OpenRouter."
+  },
+  "baseline": {
+    "parent_commit_before_preregistration": "62c24c1b3f3f8b64f077f545013c7b9eb2a5a34d",
+    "resolution": "Use the clean Git commit containing this preregistration file for all three runs. Capture the exact commit independently in each manifest."
+  },
+  "run_policy": {
+    "runs_per_harness": 1,
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0,
+    "preserve_failures": true,
+    "rerun_inside_block": false,
+    "openrouter_calls": 0,
+    "anthropic_usage_credits": false
+  },
+  "randomization": {
+    "method": "Sort routes by ascending SHA-256(seed|assistant|model).",
+    "seed": "T6-shared-kimi-harness-2026-08-23|62c24c1b3f3f8b64f077f545013c7b9eb2a5a34d",
+    "order": [
+      {
+        "position": 1,
+        "assistant": "opencode",
+        "required_version": "1.18.21",
+        "model": "ollama/kimi-k2.7-code:cloud",
+        "access_path": "ollama-cloud",
+        "hash": "1d012cf1919c8ecb0ab479e8b4161903c6bc94bd187b69484d2a5897d11d6fd0",
+        "command": "npm run benchmark:run -- --assistant opencode --task T6-rejected-promise-cache --model ollama/kimi-k2.7-code:cloud --execute"
+      },
+      {
+        "position": 2,
+        "assistant": "codex",
+        "required_version": "0.146.0-alpha.3.1",
+        "model": "ollama/kimi-k2.7-code:cloud",
+        "access_path": "ollama-cloud",
+        "hash": "5aaccee689c7735de9e574a9c99db8dac8abe2838be79ca77f91426d88ba77e9",
+        "command": "npm run benchmark:run -- --assistant codex --task T6-rejected-promise-cache --model ollama/kimi-k2.7-code:cloud --execute"
+      },
+      {
+        "position": 3,
+        "assistant": "claude",
+        "required_version": "2.1.241",
+        "model": "ollama/kimi-k2.7-code:cloud",
+        "access_path": "ollama-cloud",
+        "hash": "dc4a742fae7516c63c7c840b0273e5ed823f7b9f406a1f5c6aa4ac77e0a01b39",
+        "command": "npm run benchmark:run -- --assistant claude --task T6-rejected-promise-cache --model ollama/kimi-k2.7-code:cloud --execute"
+      }
+    ]
+  },
+  "acceptance": {
+    "allowed_changed_paths": [
+      "benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs",
+      "benchmark/fixtures/T6-rejected-promise-cache/config-api.mjs",
+      "benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs",
+      "benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md"
+    ],
+    "visible_command": "node --test benchmark/fixtures/T6-rejected-promise-cache/config-cache.test.mjs benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs",
+    "private_suite": "T6-rejected-promise-cache",
+    "pass_rule": "All visible and private checks pass, the incident note contains all requested sections with a correct diagnosis, and every changed path is allowed."
+  },
+  "comparison_fields": [
+    "rubric_score",
+    "acceptance_status",
+    "elapsed_ms",
+    "time_to_first_edit_ms",
+    "visible_and_private_tests",
+    "changed_and_out_of_scope_paths",
+    "tool_calls_by_type",
+    "denied_failed_or_repeated_commands",
+    "input_tokens",
+    "cached_input_tokens",
+    "output_tokens",
+    "reasoning_tokens",
+    "reported_cost_with_caveat",
+    "incident_report_quality",
+    "human_interventions",
+    "final_evidence_quality"
+  ],
+  "rules": [
+    "Execute in the preregistered order without substituting a harness or model.",
+    "Use a fresh isolated worktree and non-persistent session for every run.",
+    "Preserve failures, partial patches, permission errors, quota errors, and timeouts as results.",
+    "Do not rerun a route inside this block and do not repair one harness's result with another.",
+    "Do not show private checks or the removed maintainer reference to any assistant.",
+    "Do not use OpenRouter, enable Anthropic usage credits, or increase any account limit in this block.",
+    "Do not treat a wrapper-reported zero cost as proof of zero underlying Ollama Cloud cost.",
+    "Use the top-frontier block for product-pairing conclusions and this block only for harness conclusions.",
+    "Do not claim a general winner from one run per harness."
+  ]
+}
