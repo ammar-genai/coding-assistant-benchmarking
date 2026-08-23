@@ -303,9 +303,17 @@ read-only MCP boundary, and thin tool-specific skill/plugin wrappers.
 
 The current roles are Codex as primary lead/integrator, Claude Code as primary
 independent reviewer and alternate lead, and OpenCode as a strong secondary
-tool/open-model worker. Native subagents, resume behavior, portable skills,
-shared MCP, and native browser behavior remain feature pilots rather than
-counted evidence.
+tool/open-model worker. Native subagents, resume behavior, actual cross-client
+skill/MCP invocation, and native browser behavior remain feature pilots rather
+than counted evidence.
+
+The first portable extension substrate is complete. It combines one canonical
+`benchmark-audit` workflow, thin Codex/OpenCode and Claude Code skill wrappers,
+and a dependency-free read-only MCP server. The real MCP process passes 4/4
+tests; Claude Code and OpenCode connected from isolated configurations, Codex
+parsed and enabled the example configuration, and OpenCode discovered the
+skill. No user configuration or paid inference was used. Full evidence:
+[`benchmark/reports/portable-extension-pilot.md`](benchmark/reports/portable-extension-pilot.md).
 
 ### T6 incident/debugging task
 
@@ -320,7 +328,6 @@ The frozen prompt, fixture, rubric, private hash, validator registration, and
 design report are under `benchmark/tasks/T6-rejected-promise-cache`,
 `benchmark/fixtures/T6-rejected-promise-cache`, and
 [`benchmark/reports/T6-task-design.md`](benchmark/reports/T6-task-design.md).
-No assistant under test has seen the task.
 
 The subscription-only top-frontier block is preregistered in
 [`benchmark/blocks/T6-top-frontier-2026-08-23.json`](benchmark/blocks/T6-top-frontier-2026-08-23.json).
@@ -341,11 +348,13 @@ No paid API call occurred. OpenRouter spend remains `$1.3764798`, leaving
 
 ## Exact next steps
 
-1. Commit the T6 result JSON, comparison report, and updated handoff.
-2. Build the first no-cost portable extension pilot: a shared read-only MCP
-   server and a small `benchmark-audit` workflow with thin client wrappers.
-3. Decide whether a later OpenCode/Kimi T6 row is worth a new explicit budget. Do not
-   increase a provider limit automatically.
+1. Preregister the read-only extension-invocation pilot using one public saved
+   run and one frozen audit prompt; keep it separate from task-quality scores.
+2. Run the pilot once through each subscription-backed assistant, measuring
+   invocation reliability, returned fields, elapsed time, tokens, and
+   permission events. Do not use OpenRouter for this block.
+3. Decide whether a later OpenCode/Kimi T6 row is worth a new explicit budget.
+   Do not increase a provider limit automatically.
 4. Run repeated randomized trials only where they can change a decision; one
    task is not a general winner.
 

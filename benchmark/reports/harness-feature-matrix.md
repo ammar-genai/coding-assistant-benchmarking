@@ -25,7 +25,7 @@ The three tools overlap on the basics, but they are not interchangeable.
   Qwen T4 timeout shows that OpenCode results remain highly model-dependent.
 
 This is not a general market ranking. It combines official feature
-documentation with the project's own T1-T5 evidence and labels the difference.
+documentation with the project's own T1-T6 evidence and labels the difference.
 
 ## Evidence labels
 
@@ -57,10 +57,10 @@ documentation with the project's own T1-T5 evidence and labels the difference.
 
 | Extension | Codex | Claude Code | OpenCode | Portability judgment |
 |---|---|---|---|---|
-| Skills | `SKILL.md`; repository skills can live under `.agents/skills`. | `SKILL.md` under Claude skill/plugin locations. | `SKILL.md`; explicitly discovers `.opencode`, `.claude`, and `.agents` skill locations. | The instruction format is similar, but discovery and metadata are not identical. Keep canonical workflow instructions separate and use thin client wrappers. |
+| Skills | `SKILL.md`; repository skills can live under `.agents/skills`. The shared wrapper passes structural validation. | `SKILL.md` under Claude skill/plugin locations. The shared wrapper passes structural validation. | `SKILL.md`; explicitly discovers `.opencode`, `.claude`, and `.agents` skill locations. The shared wrapper was discovered by the installed CLI. | **Pilot tested.** One canonical workflow works with thin wrappers, but cross-client model invocation is still untested. |
 | Plugins | Installable bundles can package workflows and integrations around skills, tools/apps, and MCP. | Plugins can bundle skills, agents, hooks, and MCP configuration. | Local JavaScript/TypeScript or npm plugins add hooks, tools, and integrations. | Plugin packages are **not** directly portable. The runtime and manifest differ in every product. |
 | Hooks | Lifecycle hooks are documented and configurable. | Broad documented hook system, including command, HTTP, MCP, prompt, and agent hooks. | Plugin events can intercept tool and session behavior. | Keep required enforcement in repository scripts/CI. Treat product hooks as convenience and defense in depth. |
-| MCP | Supports STDIO and Streamable HTTP servers, including OAuth. | Supports local and remote MCP configuration and plugin-bundled servers. | Supports local and remote MCP servers; MCP tools add context and need deliberate permission control. | This is the best common integration boundary across all three products. |
+| MCP | Supports STDIO and Streamable HTTP servers, including OAuth. The pilot config parsed and was enabled; model invocation is untested. | Supports local and remote MCP configuration and plugin-bundled servers. The pilot server connected from an isolated config. | Supports local and remote MCP servers; MCP tools add context and need deliberate permission control. The pilot server connected from an injected config. | **Pilot tested.** This is the best common integration boundary; tool invocation and token overhead remain to be measured. |
 | Custom agents | Configurable agent roles and model/reasoning overrides. | Custom subagents can have their own prompts, tools, models, skills, and permissions. | Custom primary/subagents can have model, prompt, tool, and permission settings. | Exchange task contracts and result files, not private internal agent state. |
 | External providers | Supports configured model providers and Ollama/local OSS modes, but the normal product is optimized around OpenAI models. | Supports Anthropic access plus supported cloud/provider routes; shared Ollama tests required a wrapper. | Provider catalog and custom provider configuration are central features. | OpenCode is the preferred model-routing worker; do not force it to be the safety/integration lead. |
 
@@ -121,14 +121,17 @@ unless separately approved.
 | Instruction loading | One shared `AGENTS.md`, a minimal `CLAUDE.md` shim, and one nested override. | Each assistant identifies the effective rule and obeys the nested override. | Files read, wrong-rule count, added prompt tokens where exposed. |
 | Permission conformance | Allow one file and one exact test command; deliberately request a second write, unrelated Git discovery, and network. | Allowed operations work; all three forbidden operations are denied without side effects. | Prompts, denials, filesystem diff, OS-level versus policy-level enforcement. |
 | Resume/recovery | Stop after a saved checkpoint, then resume or fork. | The assistant continues without redoing the edit or forgetting acceptance checks. | Resume commands, elapsed time, duplicate tool calls, final scope. |
-| Shared skill | A small `benchmark-audit` workflow with one canonical instruction source and thin wrappers. | Each product invokes it on demand and returns the same required fields. | Install files, context overhead, invocation reliability, disable/uninstall path. |
-| Shared MCP | One local read-only server with `get_task_contract` and `summarize_run` tools. | All three discover and call it; denied mutation is impossible by server design. | Setup steps, calls, errors, extra context/tokens, permission prompts. |
+| Shared skill | **Substrate complete.** A small `benchmark-audit` workflow has one canonical instruction source and thin wrappers. | Each product invokes it on demand and returns the same required fields. | Wrappers validate; OpenCode discovery passes. Cross-client model invocation remains. |
+| Shared MCP | **Substrate complete.** One local read-only server exposes `get_task_contract` and `summarize_run`. | All three discover and call it; denied mutation is impossible by server design. | Protocol tests pass; Claude/OpenCode connect and Codex parses the config. Actual assistant calls and context cost remain. |
 | Native delegation | One lead plus two read-only repository reviewers; no parallel writes. | Findings are combined with source paths and no workspace changes. | Wall time, total tokens, duplicated reads, disagreement, inspection experience. |
 | Browser | One local UI flow and one console-error case. | The same observable behaviors are checked at desktop and mobile width. | Native versus MCP/external route, setup time, screenshots, console evidence. |
 | Telemetry export | One tiny fixed task. | Model, elapsed time, tool calls, errors, and token fields are recoverable; cost is labeled as metered, estimate, subscription telemetry, or missing. | Raw JSON plus a normalized result record. |
 
-Do not combine these feature pilots into the existing T1-T5 quality scores.
+Do not combine these feature pilots into the existing T1-T6 quality scores.
 They answer whether the harness can be operated safely and repeatably.
+
+The implementation and no-model evidence for the shared skill/MCP rows are in
+[`portable-extension-pilot.md`](portable-extension-pilot.md).
 
 ## Adoption decision now
 

@@ -1,0 +1,13 @@
+{
+  "mcpServers": {
+    "benchmark-audit": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "<repo-root>/benchmark/extensions/benchmark-audit/server.mjs",
+        "--root",
+        "<repo-root>"
+      ]
+    }
+  }
+}

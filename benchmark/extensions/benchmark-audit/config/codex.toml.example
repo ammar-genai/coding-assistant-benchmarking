@@ -1,0 +1,6 @@
+[mcp_servers.benchmark-audit]
+command = "node"
+args = ["<repo-root>/benchmark/extensions/benchmark-audit/server.mjs", "--root", "<repo-root>"]
+startup_timeout_sec = 5
+tool_timeout_sec = 10
+enabled = true

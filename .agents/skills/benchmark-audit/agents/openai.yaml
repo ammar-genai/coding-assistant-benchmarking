@@ -1,0 +1,4 @@
+interface:
+  display_name: "Benchmark Audit"
+  short_description: "Audit saved coding-assistant benchmark evidence"
+  default_prompt: "Use $benchmark-audit to audit a saved benchmark run."

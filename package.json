@@ -12,12 +12,13 @@
     "test": "npm run build && node --test tests/rendered-html.test.mjs",
     "lint": "eslint . --ignore-pattern dist --ignore-pattern .next",
     "typecheck": "tsc --noEmit",
-    "verify": "npm run typecheck && npm run lint && npm test && npm run benchmark:validate",
+    "verify": "npm run typecheck && npm run lint && npm test && npm run benchmark:mcp:test && npm run benchmark:validate",
     "benchmark:env": "node scripts/benchmark-env.mjs",
     "benchmark:env:write": "node scripts/benchmark-env.mjs --write",
     "benchmark:validate": "node scripts/benchmark-validate.mjs",
     "benchmark:run": "node scripts/benchmark-run.mjs",
     "benchmark:workflow": "node scripts/benchmark-workflow-run.mjs",
+    "benchmark:mcp:test": "node --test benchmark/extensions/benchmark-audit/server.test.mjs",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {
