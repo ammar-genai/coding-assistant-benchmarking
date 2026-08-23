@@ -135,6 +135,17 @@ tokens, 73 reasoning tokens, and a cost of $0.0011946. This was a connectivity
 check, not a counted benchmark. See
 [`benchmark/reports/QWEN-OPENROUTER-SETUP.md`](benchmark/reports/QWEN-OPENROUTER-SETUP.md).
 
+### First Qwen benchmark result
+
+OpenCode + Qwen3.8-27B passed frozen T1 on 2026-08-23 with a manual score of
+93/100. The isolated read-only run finished in 141.210 seconds, made no
+workspace changes, used 352,593 reported input tokens and 3,955 output tokens,
+and cost $0.1632682 according to OpenCode. Its strongest areas were architecture,
+request flow, and the change plan. It lost points because one risk inferred a
+dirty checkout from a stale resume instruction even though the recorded
+baseline was clean. See
+[`benchmark/reports/T1-qwen-openrouter-pilot.md`](benchmark/reports/T1-qwen-openrouter-pilot.md).
+
 ## Selected distributed workflow
 
 The evidence from T3 supports the following first controlled distributed test:
@@ -159,22 +170,22 @@ block comparing Kimi and Qwen workers under the same frontier plan.
 
 ## Exact next steps
 
-1. Review and deliberately commit the prepared setup documentation, OpenCode
-   provider entry, and benchmark-runner access-path change. A recorded run
-   requires a named clean Git baseline.
-2. Run OpenCode + Qwen3.8-27B on frozen T1 as the first isolated, read-only
-   Qwen pilot.
-3. Grade and report the Qwen T1 evidence without combining it with earlier
-   study blocks.
-4. Run the existing verification commands to confirm the saved baseline is
+1. Review and deliberately commit the Qwen T1 report, updated handoff, and
+   preregistered T2 model-block protocol.
+2. Create a new same-baseline OpenCode model block for frozen T2 with DeepSeek,
+   Kimi, and Qwen in randomized order, one run each.
+3. Compare correctness, time, tool calls, token categories, reported cost,
+   scope, and intervention count. Do not combine the block with older T2 runs.
+4. Advance Qwen to T3 only if its T2 result justifies the additional cost.
+5. Run the existing verification commands to confirm the saved baseline is
    healthy.
-5. Design and manually solve T4 as a small UI task with desktop and mobile
+6. Design and manually solve T4 as a small UI task with desktop and mobile
    checks, accessibility checks, strict file ownership, visible tests, and
    private acceptance checks.
-6. Freeze and commit the T4 contract before any model sees it.
-7. Run the Claude single-agent control.
-8. Run the Claude-plan, Kimi-implementation, Claude-review workflow.
-9. Do not make cost or winner claims until there are repeated randomized runs
+7. Freeze and commit the T4 contract before any model sees it.
+8. Run the Claude single-agent control.
+9. Run the Claude-plan, Kimi-implementation, Claude-review workflow.
+10. Do not make cost or winner claims until there are repeated randomized runs
    and normalized telemetry.
 
 ## Verification commands
