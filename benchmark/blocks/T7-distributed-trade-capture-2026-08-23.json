@@ -133,6 +133,28 @@
         "Automatic acceptance failed because the allowed typecheck generated an out-of-scope tsconfig.tsbuildinfo file and the isolated worktree did not contain node_modules for typecheck and lint.",
         "The integrator reproduced the owned patch with apply_patch; local domain tests, typecheck, and lint passed without source repair."
       ]
+    },
+    {
+      "stage": "ticket-implementation",
+      "run_id": "2026-08-23T22-19-50.198Z_claude_T7-trade-ticket",
+      "status": "complete",
+      "automatic_acceptance": "fail",
+      "behavioral_acceptance": "pass-after-hidden-test-audit",
+      "elapsed_ms": 1085797,
+      "access_path": "subscription",
+      "input_tokens": 38,
+      "cache_creation_input_tokens": 48682,
+      "cache_read_input_tokens": 655691,
+      "output_tokens": 24799,
+      "thinking_tokens": 15724,
+      "subscription_cost_telemetry_usd": 0.5752952,
+      "metered_cost_usd": null,
+      "permission_denials": 0,
+      "notes": [
+        "The worker changed only trade-ticket.tsx; typecheck and lint passed.",
+        "The private suite passed field coverage and ownership but failed a source regex that required the local name hasErrors. The implementation used hasBookingErrors with the required disabled-book behavior.",
+        "The integrator reproduced the exact worker blob; no source repair was made."
+      ]
     }
   ],
   "run_policy": {

@@ -23,6 +23,7 @@ function usage() {
 Options:
   --task <id>       Task directory name (default: T1-repo-map)
   --model <id>      Exact model ID. Defaults to the assistant's normal baseline.
+  --commit <ref>    Baseline commit/ref (default: HEAD).
   --execute         Execute and record the run. Without this flag, print a preview.
   --help            Show this message.
 
@@ -37,7 +38,7 @@ function parseArgs(argv) {
     const value = argv[index];
     if (value === "--execute") options.execute = true;
     else if (value === "--help") options.help = true;
-    else if (value === "--assistant" || value === "--task" || value === "--model") {
+    else if (value === "--assistant" || value === "--task" || value === "--model" || value === "--commit") {
       const next = argv[index + 1];
       if (!next) throw new Error(`${value} requires a value`);
       options[value.slice(2)] = next;
@@ -404,6 +405,7 @@ if (!options.execute) {
     task: `${task.id}@${task.version}`,
     assistant: options.assistant,
     model,
+    baseline: options.commit ?? "HEAD",
     command: [selected.command, ...selected.args.slice(0, -1), "<prompt.md>"],
     timeout_seconds: task.limits.max_wall_time_seconds,
   }, null, 2));
@@ -415,7 +417,7 @@ const runId = `${createdAt.toISOString().replaceAll(":", "-")}_${options.assista
 const runDirectory = resolve(projectRoot, "benchmark", "runs", runId);
 mkdirSync(runDirectory, { recursive: false });
 
-const gitCommit = gitValue(["rev-parse", "--verify", "HEAD"]);
+const gitCommit = gitValue(["rev-parse", "--verify", `${options.commit ?? "HEAD"}^{commit}`]);
 if (!gitCommit) throw new Error("A baseline Git commit is required before executing a benchmark.");
 const trackedChanges = gitValue(["status", "--porcelain", "--untracked-files=no"]);
 if (trackedChanges) throw new Error("Commit or restore tracked workspace changes before executing a benchmark.");
