@@ -1,0 +1,152 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T6-top-frontier-2026-08-23",
+  "protocol": "benchmark/blocks/T6-top-frontier-2026-08-23.json",
+  "status": "complete",
+  "baseline_git_commit": "303270e525acb8f9b189303ef52c4c08cbb0d946",
+  "task": {
+    "id": "T6-rejected-promise-cache",
+    "version": "1.0.0",
+    "prompt_sha256": "9717e7ec3248b0901eb2ad8f3eeaa701e323342da75c7b1e01753fd9ae24e3a1",
+    "private_sha256": "637a6db66e712abfece7df0fd0b28f51e3a2f8d22f07ed0204af6d7fbfe81b94"
+  },
+  "routes": [
+    {
+      "position": 1,
+      "run_id": "2026-08-23T18-22-22.767Z_codex_T6-rejected-promise-cache",
+      "assistant": "codex",
+      "assistant_version": "codex-cli 0.146.0-alpha.3.1",
+      "model": "gpt-5.6-sol",
+      "access_path": "subscription",
+      "status": "complete",
+      "acceptance_status": "pass",
+      "rubric_score": 99,
+      "elapsed_ms": 129209,
+      "time_to_first_edit_ms": null,
+      "time_to_first_edit_note": "The Codex JSON stream did not timestamp file-change events.",
+      "human_interventions": 0,
+      "changed_paths": [
+        "benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md",
+        "benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs",
+        "benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs"
+      ],
+      "out_of_scope_paths": [],
+      "visible_tests": {
+        "passed": 8,
+        "failed": 0
+      },
+      "private_tests": {
+        "passed": 8,
+        "failed": 0
+      },
+      "patch_sha256": "e9656788e97828bfedc9e58a546154b73957cea636778c8cf354f09b8f47134a",
+      "tool_calls": {
+        "command_execution": 6,
+        "file_change": 1
+      },
+      "failed_commands": 1,
+      "failed_command_note": "An optional repository-wide benchmark validator failed because ignored private suites are intentionally absent from isolated Git worktrees. Required and private T6 grading passed.",
+      "permission_denials": 0,
+      "usage": {
+        "input_tokens": 234593,
+        "cached_input_tokens_subset": 201984,
+        "output_tokens": 5640,
+        "reasoning_output_tokens_subset": 1811
+      },
+      "metered_cost_usd": null,
+      "score_breakdown": {
+        "root_cause_and_private_tests": 40,
+        "cache_contract": 15,
+        "narrow_safe_repair": 10,
+        "regression_test_quality": 10,
+        "incident_analysis": 10,
+        "scope_and_tool_discipline": 9,
+        "final_report": 5
+      }
+    },
+    {
+      "position": 2,
+      "run_id": "2026-08-23T18-24-39.543Z_claude_T6-rejected-promise-cache",
+      "assistant": "claude",
+      "assistant_version": "2.1.241 (Claude Code)",
+      "model": "claude-opus-5",
+      "access_path": "subscription",
+      "status": "complete",
+      "acceptance_status": "pass",
+      "rubric_score": 97,
+      "elapsed_ms": 228453,
+      "time_to_first_edit_ms": 65396,
+      "human_interventions": 0,
+      "changed_paths": [
+        "benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md",
+        "benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs",
+        "benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs"
+      ],
+      "out_of_scope_paths": [],
+      "visible_tests": {
+        "passed": 11,
+        "failed": 0
+      },
+      "private_tests": {
+        "passed": 8,
+        "failed": 0
+      },
+      "patch_sha256": "c29fdc46e2b60d0067b77ebf338a2e95f1569fdf1cc88e33f6740544c3b97df3",
+      "tool_calls": {
+        "Bash": 16,
+        "Read": 7,
+        "Edit": 3,
+        "Write": 3
+      },
+      "permission_denials": 10,
+      "dangerously_disable_sandbox_requests": 5,
+      "dangerously_disable_sandbox_note": "Three exact approved visible-test commands ran. Two broader temporary-copy commands carrying the flag were denied. A separate attempted /tmp write was also denied.",
+      "usage": {
+        "input_tokens": 50,
+        "cache_creation_input_tokens": 31458,
+        "cache_read_input_tokens": 558296,
+        "output_tokens": 17199,
+        "thinking_tokens_subset": 6474
+      },
+      "subscription_cli_telemetry_usd": 1.025615,
+      "subscription_cli_telemetry_is_metered_spend": false,
+      "score_breakdown": {
+        "root_cause_and_private_tests": 40,
+        "cache_contract": 15,
+        "narrow_safe_repair": 10,
+        "regression_test_quality": 10,
+        "incident_analysis": 10,
+        "scope_and_tool_discipline": 8,
+        "final_report": 4
+      }
+    }
+  ],
+  "comparison": {
+    "acceptance_winner": "tie",
+    "quality_winner": "codex-by-tool-discipline",
+    "score_difference": 2,
+    "elapsed_winner": "codex",
+    "claude_to_codex_elapsed_ratio": 1.7681,
+    "claude_extra_elapsed_ms": 99244,
+    "implementation_result": "Both assistants independently diagnosed rejected-Promise cache poisoning and used identity-checked eviction to protect an overlapping replacement.",
+    "codex_advantage": "Faster, much smaller tool trace, concise complete incident note, and no permission churn.",
+    "claude_advantage": "Broader assistant-authored regression suite and a more detailed incident explanation.",
+    "interpretation": "Both top accessible products are strong debuggers on this task. Codex produced the more efficient and disciplined run; Claude produced more evidence than required but spent substantial time negotiating the deliberately narrow command policy."
+  },
+  "budget": {
+    "openrouter_cost_usd": 0,
+    "openrouter_cumulative_usd": 1.3764798,
+    "approved_openrouter_ceiling_usd": 1.5,
+    "remaining_under_ceiling_usd": 0.1235202,
+    "claude_subscription_cli_telemetry_usd": 1.025615,
+    "claude_telemetry_is_metered_spend": false,
+    "codex_subscription_cost_exposed": false,
+    "provider_limits_changed": false
+  },
+  "caveats": [
+    "This is one run per route and not a reliability estimate.",
+    "Codex and Claude token fields use different cache definitions and are not compared as one efficiency number.",
+    "Opus 5 is the best accessible Claude route in this account, not the originally requested Fable 5 route.",
+    "OpenCode and open models were intentionally excluded because the remaining approved OpenRouter budget is too small for a comparable Kimi K3 run."
+  ]
+}

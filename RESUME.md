@@ -328,12 +328,23 @@ Hash randomization set the order to Codex/GPT-5.6 Sol first and Claude
 Code/Opus 5 second. It permits no reruns, substitutions, human intervention,
 OpenRouter calls, usage-credit enablement, or account-limit changes.
 
+The block is now complete. Both routes passed all visible and private checks
+with three allowed changed files and no intervention. Codex scored 99 in
+129.209 seconds; Claude scored 97 in 228.453 seconds. Codex's advantage was a
+smaller, faster tool trace. Claude added broader regression tests and a more
+detailed incident note but incurred ten permission denials while negotiating
+the narrow Bash policy. Full evidence:
+[`benchmark/reports/T6-top-frontier-comparison.md`](benchmark/reports/T6-top-frontier-comparison.md).
+
+No paid API call occurred. OpenRouter spend remains `$1.3764798`, leaving
+`$0.1235202` under the approved ceiling.
+
 ## Exact next steps
 
-1. Commit the T6 top-frontier preregistration, then run Codex/GPT-5.6 Sol and
-   Claude Code/Opus 5 in the frozen order.
-2. Grade both saved patches and write the T6 comparison report without reruns.
-3. Decide whether a later OpenCode/Kimi row is worth a new explicit budget. Do not
+1. Commit the T6 result JSON, comparison report, and updated handoff.
+2. Build the first no-cost portable extension pilot: a shared read-only MCP
+   server and a small `benchmark-audit` workflow with thin client wrappers.
+3. Decide whether a later OpenCode/Kimi T6 row is worth a new explicit budget. Do not
    increase a provider limit automatically.
 4. Run repeated randomized trials only where they can change a decision; one
    task is not a general winner.
