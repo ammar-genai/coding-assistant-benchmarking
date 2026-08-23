@@ -17,6 +17,7 @@
     "benchmark:env:write": "node scripts/benchmark-env.mjs --write",
     "benchmark:validate": "node scripts/benchmark-validate.mjs",
     "benchmark:run": "node scripts/benchmark-run.mjs",
+    "benchmark:workflow": "node scripts/benchmark-workflow-run.mjs",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {

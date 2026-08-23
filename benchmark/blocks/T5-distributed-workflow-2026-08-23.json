@@ -1,0 +1,163 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T5-distributed-workflow-2026-08-23",
+  "status": "preregistered",
+  "purpose": "Test whether frontier planning and review plus a top hosted open-model worker can deliver an accepted cross-layer feature, and compare the final result with one frontier assistant working alone.",
+  "task": {
+    "id": "T5-review-queue",
+    "version": "1.0.0",
+    "prompt_sha256": "1c562b4223cd4fb632c1856e40e446fee758281c4cb08822324bd117a59d6f22",
+    "private_suite": "T5-review-queue",
+    "private_sha256": "9da9154bfe7a7a96f2dfb68b374bbb712773803d577c6f2e990dce63ff374fb1"
+  },
+  "baseline": {
+    "parent_commit_before_preregistration": "9fb9e6af0c79bd9bd977a2c5892b4e77bac0bf2a",
+    "resolution": "Use the clean Git commit containing this protocol and the workflow runner for both the distributed run and the solo control. Record the exact commit in each manifest."
+  },
+  "hypotheses": [
+    "A frontier lead and independent frontier plan review will give the open worker an executable contract with fewer cross-layer mistakes.",
+    "The OpenCode worker will produce a substantial bounded implementation rather than leaving the frontier integrator to implement the task from scratch.",
+    "The distributed result will pass all visible and private checks with no out-of-scope changes.",
+    "Distribution will use more elapsed time than the solo control, so it is useful only if it improves auditability, cost allocation, or defect prevention."
+  ],
+  "execution_order": [
+    {
+      "position": 1,
+      "run": "distributed-workflow",
+      "command": "npm run benchmark:workflow -- --task T5-review-queue --planner-model gpt-5.6-sol --reviewer-model claude-opus-5 --worker-model openrouter/moonshotai/kimi-k3 --execute"
+    },
+    {
+      "position": 2,
+      "run": "solo-frontier-control",
+      "command": "npm run benchmark:run -- --assistant codex --task T5-review-queue --model gpt-5.6-sol --execute"
+    }
+  ],
+  "distributed_roles": [
+    {
+      "position": 1,
+      "assistant": "codex",
+      "required_version": "0.146.0-alpha.3.1",
+      "model": "gpt-5.6-sol",
+      "access_path": "subscription",
+      "role": "Read-only lead plan covering modules, contracts, risks, ownership, and visible checks.",
+      "timeout_seconds": 600
+    },
+    {
+      "position": 2,
+      "assistant": "claude",
+      "required_version": "2.1.241",
+      "model": "claude-opus-5",
+      "access_path": "subscription",
+      "role": "Read-only pre-implementation review that corrects plan gaps before the worker sees it.",
+      "timeout_seconds": 600
+    },
+    {
+      "position": 3,
+      "assistant": "opencode",
+      "required_version": "1.18.21",
+      "model": "openrouter/moonshotai/kimi-k3",
+      "access_path": "api",
+      "role": "Implement the complete frozen task within the five owned files and run visible checks.",
+      "timeout_seconds": 1200
+    },
+    {
+      "position": 4,
+      "assistant": "codex",
+      "required_version": "0.146.0-alpha.3.1",
+      "model": "gpt-5.6-sol",
+      "access_path": "subscription",
+      "role": "Integrate the worker patch, run visible checks, and make only evidence-backed corrections.",
+      "timeout_seconds": 900
+    },
+    {
+      "position": 5,
+      "assistant": "claude",
+      "required_version": "2.1.241",
+      "model": "claude-opus-5",
+      "access_path": "subscription",
+      "role": "Final independent read-only diff and visible-test review with a structured verdict.",
+      "timeout_seconds": 600
+    },
+    {
+      "position": 6,
+      "assistant": "private-harness",
+      "required_version": null,
+      "model": null,
+      "access_path": "local",
+      "role": "Run frozen visible and private checks after all assistant stages.",
+      "timeout_seconds": 120
+    }
+  ],
+  "solo_control": {
+    "assistant": "codex",
+    "required_version": "0.146.0-alpha.3.1",
+    "model": "gpt-5.6-sol",
+    "access_path": "subscription",
+    "prompt": "The unaugmented frozen task prompt",
+    "timeout_seconds": 1200,
+    "fresh_session": true,
+    "fresh_worktree": true
+  },
+  "claude_route": {
+    "requested_program_route": "claude-fable-5",
+    "executable_route": "claude-opus-5",
+    "reason": "The recorded pre-freeze access check returned HTTP 429 before Fable inference because usage credits are disabled. Opus 5 is the strongest accessible Claude route and remains labeled as such."
+  },
+  "budget": {
+    "currency": "USD",
+    "lifetime_openrouter_ceiling": 1.5,
+    "spent_before_this_block": 0.758898,
+    "maximum_remaining_before_this_block": 0.741102,
+    "paid_calls_in_this_block": "Exactly one counted Kimi K3 implementation call; no paid repair or Qwen call.",
+    "subscription_telemetry": "Record CLI estimates for Codex and Claude separately; do not treat them as metered API charges.",
+    "limit_policy": "Do not increase any provider limit or enable Anthropic usage credits. Stop the paid lane after the Kimi worker regardless of outcome."
+  },
+  "stage_rules": [
+    "Use one isolated worktree for the distributed stages so handoffs operate on the same patch, and a separate isolated worktree for the solo control.",
+    "A planner or pre-implementation reviewer failure, timeout, empty handoff, or read-only workspace mutation stops the workflow before the paid worker.",
+    "Preserve a worker timeout, failure, partial patch, and failed checks; the preregistered integration stage still evaluates and integrates the current state.",
+    "Codex integration is a planned role, not an unreported repair. Preserve both the worker-only patch and final integrated patch.",
+    "The final Claude review is read-only. Run the private suite only after it finishes, and never show private checks to an assistant.",
+    "Use no human intervention, no rerun, no model substitution, no dependency installation, and no network access from task agents.",
+    "If a required route is unavailable, preserve that result and do not silently substitute another model."
+  ],
+  "acceptance": {
+    "allowed_changed_paths": [
+      "benchmark/fixtures/T5-review-queue/review-store.mjs",
+      "benchmark/fixtures/T5-review-queue/review-api.mjs",
+      "benchmark/fixtures/T5-review-queue/review-page.mjs",
+      "benchmark/fixtures/T5-review-queue/student-tests.mjs",
+      "benchmark/fixtures/T5-review-queue/README.md"
+    ],
+    "visible_command": "node --test benchmark/fixtures/T5-review-queue/review-queue.test.mjs benchmark/fixtures/T5-review-queue/student-tests.mjs",
+    "pass_rule": "All visible and private checks pass, no read-only stage changes files, and no final path is out of scope."
+  },
+  "comparison_fields": [
+    "rubric_score",
+    "acceptance_status",
+    "elapsed_ms",
+    "stage_elapsed_ms",
+    "time_to_first_worker_edit_ms",
+    "worker_visible_result_before_integration",
+    "worker_patch_share_retained",
+    "integration_changed_paths_and_reasons",
+    "plan_defects_found_before_implementation",
+    "final_review_findings",
+    "visible_tests",
+    "private_tests",
+    "changed_paths",
+    "out_of_scope_paths",
+    "tool_calls_by_stage",
+    "input_cached_output_and_reasoning_tokens_by_stage",
+    "openrouter_worker_cost_usd",
+    "subscription_cli_telemetry_separately",
+    "human_interventions",
+    "final_evidence_quality"
+  ],
+  "interpretation_rules": [
+    "Compare worker-only correctness with final integrated correctness so frontier repair is never attributed to the open worker.",
+    "Report paid worker cost separately from subscription-backed frontier stages and report token definitions by adapter.",
+    "Do not treat one workflow as a general winner or claim that distribution saves money unless outcome quality is at least equal to the solo control.",
+    "Use the result to decide whether the pattern deserves a reversed-role repeat; do not automatically spend on that repeat."
+  ]
+}
