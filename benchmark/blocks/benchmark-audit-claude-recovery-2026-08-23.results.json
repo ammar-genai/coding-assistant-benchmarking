@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "block_id": "benchmark-audit-claude-recovery-2026-08-23",
+  "status": "complete",
+  "baseline_git_commit": "ee2654b6032e06ed080fbdb7796d9852b0ea6ff1",
+  "prompt_sha256": "5b84ef31a99f2ccb2d2dedc467b1962884f4e774a97d096d98dd544a5b4a81e4",
+  "run": {
+    "run_id": "2026-08-23T18-51-59.066Z_claude_benchmark-audit-invocation",
+    "assistant": "claude",
+    "assistant_version": "2.1.241 (Claude Code)",
+    "model": "claude-opus-5",
+    "access_path": "subscription",
+    "status": "complete",
+    "acceptance_status": "pass",
+    "elapsed_ms": 24198,
+    "workspace_unchanged": true,
+    "skill": {
+      "discovered": true,
+      "invocations": 1
+    },
+    "mcp": {
+      "server_status": "connected",
+      "get_task_contract_attempts": 1,
+      "get_task_contract_successes": 1,
+      "summarize_run_attempts": 1,
+      "summarize_run_successes": 1,
+      "permission_denials": 0,
+      "unexpected_tools": []
+    },
+    "output_contract": {
+      "required_headings": "4/4",
+      "fact_accuracy": "pass",
+      "unsupported_claims": 0,
+      "manual_note": "Claude accurately limited the verdict to mechanical acceptance, prompt integrity, and scope because the read-only MCP summary does not expose content-level rubric evidence."
+    },
+    "usage": {
+      "definition": "Claude result-event fields; cache creation, cache read, and thinking are separate and are not normalized to other clients.",
+      "input_tokens": 6,
+      "cache_creation_input_tokens": 9402,
+      "cache_read_input_tokens": 18920,
+      "output_tokens": 1733,
+      "thinking_tokens": 208,
+      "subscription_cli_telemetry_usd": 0.148095,
+      "cost_interpretation": "Claude CLI subscription telemetry, not metered API spend."
+    }
+  },
+  "controlled_comparison": {
+    "original_run_id": "2026-08-23T18-46-49.768Z_claude_benchmark-audit-invocation",
+    "original_status": "fail",
+    "original_elapsed_ms": 22921,
+    "original_permission_denials": 2,
+    "recovery_status": "pass",
+    "recovery_elapsed_ms": 24198,
+    "recovery_permission_denials": 0,
+    "only_configuration_change": "The two visible MCP tool names were added to --allowedTools while dontAsk and the complete available tool list remained unchanged.",
+    "finding": "In Claude Code non-interactive dontAsk mode, --tools controls availability but does not itself preauthorize MCP execution; the same exact tool names also need --allowedTools."
+  },
+  "cost": {
+    "openrouter_spend_before_usd": 1.3764798,
+    "openrouter_spend_after_usd": 1.3764798,
+    "new_metered_api_spend_usd": 0,
+    "remaining_approved_openrouter_ceiling_usd": 0.1235202
+  },
+  "decision": {
+    "portable_extension_status": "ready for controlled opt-in use",
+    "default_enablement": false,
+    "reason": "All three assistants completed end-to-end MCP invocation after product-specific configuration, but enabling the server by default would change benchmark context and tool surfaces."
+  },
+  "limitations": [
+    "The recovery is one run and proves the narrow configuration, not long-term reliability.",
+    "The successful recovery does not erase the original setup failure or its subscription usage.",
+    "The MCP audit intentionally cannot establish content-level rubric quality without inspecting patches, tests, reports, or transcripts.",
+    "Claude CLI cost is subscription telemetry and is not added to metered API spend."
+  ]
+}

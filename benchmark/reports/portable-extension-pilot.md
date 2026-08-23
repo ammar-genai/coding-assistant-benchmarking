@@ -84,9 +84,11 @@ its frozen `dontAsk` policy denied both calls. The preserved comparison and
 grader correction are documented in
 [`benchmark-audit-invocation-pilot.md`](benchmark-audit-invocation-pilot.md).
 
-The next narrow recovery check should preauthorize only Claude's two MCP tools
-while retaining `dontAsk` and the same read-only surface. Keep that result
-separate from T1-T6 task-quality scores and from the original failed lane.
+The narrow recovery check then preauthorized only Claude's two MCP tools while
+retaining `dontAsk` and the same read-only surface; it passed. The extension is
+ready for controlled opt-in use, while remaining disabled by default so it
+does not contaminate counted benchmark lanes. See
+[`benchmark-audit-claude-recovery.md`](benchmark-audit-claude-recovery.md).
 
 ## Files
 

@@ -329,6 +329,15 @@ the normalized result corrects the grade and the runner now checks tool errors.
 No rerun occurred. Full evidence:
 [`benchmark/reports/benchmark-audit-invocation-pilot.md`](benchmark/reports/benchmark-audit-invocation-pilot.md).
 
+A separately preregistered Claude-only recovery then changed exactly one
+configuration dimension: it added the same two MCP names to `--allowedTools`
+while retaining `dontAsk` and the narrow visible-tool list. The recovery passed
+in 24.198 seconds with two successful MCP calls, no denials, no fallback tools,
+and no workspace change. The extension is now ready for controlled opt-in use,
+but remains disabled by default to avoid changing counted benchmark context.
+Full evidence:
+[`benchmark/reports/benchmark-audit-claude-recovery.md`](benchmark/reports/benchmark-audit-claude-recovery.md).
+
 ### T6 incident/debugging task
 
 `T6-rejected-promise-cache@1.0.0` is designed and maintainer-validated. It
@@ -362,13 +371,11 @@ No paid API call occurred. OpenRouter spend remains `$1.3764798`, leaving
 
 ## Exact next steps
 
-1. Commit the extension-invocation results, grader correction, report, and
-   updated runner.
-2. Preregister a Claude-only recovery block that changes only the permission
-   configuration by adding the two MCP names to `--allowedTools`; keep
-   `dontAsk`, the prompt, target run, model, and read-only surface unchanged.
-3. Run that recovery once without OpenRouter, preserve its result, and decide
-   whether the portable extension is ready for ordinary project use.
+1. Commit the Claude recovery result and updated reports.
+2. Add a compact final-study-results section to the HTML application so the
+   browser view shows the actual T1-T6 and extension findings, not only the
+   original plan.
+3. Run browser QA on the updated desktop and mobile result view.
 4. Decide whether a later OpenCode/Kimi T6 row is worth a new explicit budget.
    Do not increase a provider limit automatically.
 5. Run repeated randomized trials only where they can change a decision; one

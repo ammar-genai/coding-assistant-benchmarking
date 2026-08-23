@@ -40,9 +40,12 @@ the skill as available, and both MCP tools as exposed. The runner used
 this configuration, availability did not preauthorize execution, so Claude
 Code denied both calls rather than asking.
 
-The correction is small and should be tested in a separately frozen recovery
-block: retain `dontAsk`, retain the narrow `--tools` list, and add the two MCP
-names to `--allowedTools`. Do not rewrite or rerun this block.
+That correction was tested in a separately frozen recovery block: `dontAsk`
+and the narrow `--tools` list remained, and the two MCP names were added to
+`--allowedTools`. Claude then completed both calls with zero denials. The
+recovery is documented in
+[`benchmark-audit-claude-recovery.md`](benchmark-audit-claude-recovery.md).
+It does not rewrite or replace this block.
 
 ## Grading correction
 
@@ -70,9 +73,10 @@ No OpenRouter request occurred. Cumulative OpenRouter spend remains
 
 The portable architecture is viable: one dependency-free MCP server delivered
 the same bounded evidence in Codex and OpenCode, and all three products found
-the shared extension surface. The most important operational lesson is that
-connection, discovery, availability, and permission are four different checks.
-The harness must record each separately.
+the shared extension surface. The later Claude recovery proved the server also
+works there when its exact tools are preauthorized. The most important
+operational lesson is that connection, discovery, availability, permission,
+and successful return are separate checks. The harness must record each.
 
 Full normalized evidence is in
 [`benchmark-audit-invocation-2026-08-23.results.json`](../blocks/benchmark-audit-invocation-2026-08-23.results.json).
