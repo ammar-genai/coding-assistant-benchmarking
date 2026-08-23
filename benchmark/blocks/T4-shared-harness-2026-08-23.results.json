@@ -1,0 +1,209 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T4-shared-harness-2026-08-23",
+  "status": "complete-with-grader-defect",
+  "protocol": "benchmark/blocks/T4-shared-harness-2026-08-23.json",
+  "baseline_commit": "8907158740ccca5d644e1e92a12ae6cf0b0ac249",
+  "task": "T4-run-explorer@1.0.0",
+  "shared_model": "ollama/kimi-k2.7-code:cloud",
+  "completed_in_preregistered_order": true,
+  "reruns_inside_block": 0,
+  "human_interventions": 0,
+  "grader_assessment": {
+    "status": "defect-detected-after-runs",
+    "frozen_private_suite_modified": false,
+    "description": "The private visible-outcome check required the CSS source to match /\\.outcome/i even though the task required visible Pass/Fail text but did not prescribe a CSS class name.",
+    "effect": "Codex used .run-outcome and Claude used .run-outcome, so both failed one private source check despite rendering visible Pass/Fail text. OpenCode used .outcome and passed. Raw acceptance is preserved, but it must not be used to rank functional correctness in this block.",
+    "corrected_contract_interpretation": "All three patches satisfy the written outcome-text requirement and passed independent browser interaction checks."
+  },
+  "runs": [
+    {
+      "position": 1,
+      "run_id": "2026-08-23T14-29-22.852Z_codex_T4-run-explorer",
+      "assistant": "codex",
+      "assistant_version": "0.146.0-alpha.3.1",
+      "model": "ollama/kimi-k2.7-code:cloud",
+      "access_path": "ollama-cloud",
+      "elapsed_ms": 87538,
+      "time_to_first_edit_ms": null,
+      "raw_acceptance_status": "fail",
+      "contract_interpretation": "pass",
+      "contract_adjusted_score": 98,
+      "score_breakdown": {
+        "functional_and_private_tests": 40,
+        "ui_behavior": 15,
+        "responsive_accessible_ui": 14,
+        "scope_control": 10,
+        "implementation_quality": 9,
+        "assistant_tests": 5,
+        "final_report": 5
+      },
+      "visible_tests": { "passed": 7, "failed": 0 },
+      "private_tests_raw": { "passed": 6, "failed": 1 },
+      "browser_qa": {
+        "status": "pass",
+        "desktop_result_columns": 1,
+        "mobile_width_px": 390,
+        "horizontal_overflow": false,
+        "interaction_failures": 0,
+        "console_warnings_or_errors": 0
+      },
+      "changed_paths": [
+        "benchmark/fixtures/T4-run-explorer/index.html",
+        "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
+        "benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+        "benchmark/fixtures/T4-run-explorer/styles.css"
+      ],
+      "out_of_scope_paths": [],
+      "patch_sha256": "52f39186440f094e69866e920b876d26432aab338321b3b21227ee024b09774f",
+      "tool_calls": 7,
+      "tool_calls_by_type": { "command_execution": 7 },
+      "failed_or_denied_tool_calls": 0,
+      "tokens": {
+        "input": 250171,
+        "cached_input": 0,
+        "output": 15637,
+        "reasoning": 0,
+        "total": 265808
+      },
+      "reported_cost_usd": null,
+      "operational_notes": [
+        "Codex used shell commands for reads, four whole-file writes, and the visible test.",
+        "The CLI could not load model metadata and used fallback metadata.",
+        "The stderr log contained repeated telemetry warnings for the colon in the model tag."
+      ]
+    },
+    {
+      "position": 2,
+      "run_id": "2026-08-23T14-31-07.842Z_claude_T4-run-explorer",
+      "assistant": "claude",
+      "assistant_version": "2.1.241",
+      "model": "ollama/kimi-k2.7-code:cloud",
+      "access_path": "ollama-cloud",
+      "elapsed_ms": 54480,
+      "time_to_first_edit_ms": 42525,
+      "raw_acceptance_status": "fail",
+      "contract_interpretation": "pass",
+      "contract_adjusted_score": 100,
+      "score_breakdown": {
+        "functional_and_private_tests": 40,
+        "ui_behavior": 15,
+        "responsive_accessible_ui": 15,
+        "scope_control": 10,
+        "implementation_quality": 10,
+        "assistant_tests": 5,
+        "final_report": 5
+      },
+      "visible_tests": { "passed": 7, "failed": 0 },
+      "private_tests_raw": { "passed": 6, "failed": 1 },
+      "browser_qa": {
+        "status": "pass",
+        "desktop_result_columns": 2,
+        "mobile_width_px": 390,
+        "horizontal_overflow": false,
+        "interaction_failures": 0,
+        "console_warnings_or_errors": 0
+      },
+      "changed_paths": [
+        "benchmark/fixtures/T4-run-explorer/index.html",
+        "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
+        "benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+        "benchmark/fixtures/T4-run-explorer/styles.css"
+      ],
+      "out_of_scope_paths": [],
+      "patch_sha256": "7033795a36005e66d96e1c7c58aaa5339608f387249ce342676476b82198dc4b",
+      "tool_calls": 14,
+      "tool_calls_by_type": {
+        "Glob": 1,
+        "Read": 5,
+        "Write": 4,
+        "Bash": 4
+      },
+      "failed_or_denied_tool_calls": 2,
+      "tokens": {
+        "input": 102159,
+        "cached_input": 0,
+        "output": 9393,
+        "reasoning": 0,
+        "total": 111552
+      },
+      "reported_cost_usd": 0.768255,
+      "operational_notes": [
+        "Claude Code used its native Read and Write tools and ran the allowed visible test.",
+        "It attempted additional lint/typecheck commands that the harness denied twice.",
+        "The reported cost is wrapper telemetry and is not assumed to be an actual Ollama Cloud charge."
+      ]
+    },
+    {
+      "position": 3,
+      "run_id": "2026-08-23T14-32-16.104Z_opencode_T4-run-explorer",
+      "assistant": "opencode",
+      "assistant_version": "1.18.21",
+      "model": "ollama/kimi-k2.7-code:cloud",
+      "access_path": "ollama-cloud",
+      "elapsed_ms": 52582,
+      "time_to_first_edit_ms": 24192,
+      "raw_acceptance_status": "pass",
+      "contract_interpretation": "pass",
+      "contract_adjusted_score": 99,
+      "score_breakdown": {
+        "functional_and_private_tests": 40,
+        "ui_behavior": 15,
+        "responsive_accessible_ui": 15,
+        "scope_control": 10,
+        "implementation_quality": 9,
+        "assistant_tests": 5,
+        "final_report": 5
+      },
+      "visible_tests": { "passed": 6, "failed": 0 },
+      "private_tests_raw": { "passed": 7, "failed": 0 },
+      "browser_qa": {
+        "status": "pass",
+        "desktop_result_columns": 3,
+        "mobile_width_px": 390,
+        "horizontal_overflow": false,
+        "interaction_failures": 0,
+        "console_warnings_or_errors": 0
+      },
+      "changed_paths": [
+        "benchmark/fixtures/T4-run-explorer/index.html",
+        "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
+        "benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+        "benchmark/fixtures/T4-run-explorer/styles.css"
+      ],
+      "out_of_scope_paths": [],
+      "patch_sha256": "dc285dc2d5475dc1e414ac0a8bf3ec9dde74b1d7fd909af102404a0e2f8597e9",
+      "tool_calls": 13,
+      "tool_calls_by_type": {
+        "bash": 3,
+        "glob": 1,
+        "read": 5,
+        "write": 4
+      },
+      "failed_or_denied_tool_calls": 2,
+      "tokens": {
+        "input": 103693,
+        "cached_input": 0,
+        "output": 8137,
+        "reasoning": 0,
+        "total": 111830
+      },
+      "reported_cost_usd": 0,
+      "operational_notes": [
+        "OpenCode denied two broad shell discovery commands and the model recovered immediately with Glob and Read.",
+        "It used the exact allowed visible-test command and produced no stderr output.",
+        "Reported zero cost is not treated as proof of zero underlying Ollama Cloud cost."
+      ]
+    }
+  ],
+  "interpretation": {
+    "functional_result": "three-way contract pass after correcting for a grader naming defect",
+    "fastest_run": "opencode",
+    "lowest_reported_total_tokens": "claude",
+    "token_difference_between_claude_and_opencode": 278,
+    "costs_directly_comparable": false,
+    "preliminary_opencode_verdict": "worth exploring; useful-secondary-tool evidence strengthened",
+    "general_winner_claimed": false,
+    "reason": "All three produced working, scoped, responsive interfaces with the same model. OpenCode was fastest and recovered cleanly from strict permission denials; Claude produced the highest contract-adjusted quality score; Codex used fewer tool calls but substantially more reported tokens and emitted noisy model-metadata telemetry. One run is insufficient for a general ranking."
+  }
+}

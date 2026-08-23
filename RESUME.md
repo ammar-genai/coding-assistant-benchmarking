@@ -211,6 +211,26 @@ keyboard focus, overflow, and console checks. The reference answer was then
 removed, and the intentionally failing starter was restored. See
 [`benchmark/reports/T4-task-design.md`](benchmark/reports/T4-task-design.md).
 
+### T4 shared-model harness comparison
+
+The preregistered shared-model block ran Codex, Claude Code, and OpenCode once
+each with `ollama/kimi-k2.7-code:cloud` on baseline `8907158`. OpenCode was
+fastest at 52.582 seconds, Claude took 54.480 seconds, and Codex took 87.538
+seconds. Claude and OpenCode each reported about 112,000 total tokens; Codex
+reported 265,808.
+
+All three produced scoped interfaces that passed visible tests and external
+desktop/mobile browser QA. The raw runner marked Codex and Claude as failures
+because a private source check accidentally required a CSS class matching
+`.outcome`; both used `.run-outcome` while still rendering visible Pass/Fail
+text. OpenCode happened to use `.outcome`. The frozen result is preserved and
+was not rerun. Treat this block as a three-way contract pass with a contaminated
+raw pass/fail signal. Full evidence:
+[`benchmark/reports/T4-shared-harness-comparison.md`](benchmark/reports/T4-shared-harness-comparison.md).
+
+The preliminary OpenCode verdict is now **worth exploring / useful secondary
+tool**, not yet primary-tool adoption.
+
 ## Selected distributed workflow
 
 The evidence from T3 supports the following first controlled distributed test:
@@ -244,15 +264,17 @@ block comparing Kimi and Qwen workers under the same frontier plan.
 3. Confirm the current OpenRouter price and provider route for Kimi K3 before
    adding `openrouter/moonshotai/kimi-k3` to the project configuration. Obtain
    approval before increasing the existing OpenRouter spending limit.
-4. Review the completed T4 contract and deliberately commit it to freeze the
-   clean baseline before any selected model sees the task.
-5. Preregister and run the four-route headline block: Codex + GPT-5.6 Sol,
+4. Review and deliberately commit the completed T4 shared-harness result JSON,
+   report, and updated handoff.
+5. Run the four-route headline block: Codex + GPT-5.6 Sol,
    Claude Code + Fable 5, OpenCode + Kimi K3, and OpenCode + Qwen3.8-27B.
-6. Run the controlled three-harness block on T4 with the same Kimi K2.7 Code
-   Ollama Cloud route through Codex, Claude Code, and OpenCode.
-7. Run the two mirrored distributed workflows with the frontier lead and
+6. Before that block, perform the declared exact-route access and price checks;
+   obtain approval for any Fable usage-credit spend or OpenRouter limit change.
+7. Create a new T4 task version before any repeat so the behavior-based private
+   check replaces the accidental `.outcome` class-name requirement.
+8. Run the two mirrored distributed workflows with the frontier lead and
    reviewer roles reversed.
-8. Do not make cost or winner claims until there are repeated randomized runs
+9. Do not make cost or winner claims until there are repeated randomized runs
    and normalized telemetry.
 
 ## Verification commands

@@ -56,6 +56,23 @@ DeepSeek V4 Pro have not been called through this account. Their first request
 must be a minimal access check after confirming current price and the spending
 limit.
 
+The price check was refreshed immediately after the T4 shared-model block:
+
+- Kimi K3 is listed at `$2.60` per million input tokens and `$13.00` per
+  million output tokens, with `$0.29` per million cache-read tokens. The route
+  has multiple providers and a 1,048,576-token context window.
+- Qwen3.8-27B is listed at `$0.40` per million input tokens and `$3.00` per
+  million output tokens, with provider-dependent cache-read pricing.
+
+Sources:
+
+- <https://openrouter.ai/moonshotai/kimi-k3-20260715>
+- <https://openrouter.ai/qwen/qwen3.8-27b>
+
+Using the shared T4 block's observed token scale only as a planning estimate,
+one Kimi K3 T4 run should usually remain below `$1.00` and one Qwen3.8-27B run
+below `$0.25`. These are safety estimates, not guarantees or recorded costs.
+
 ### Ollama Cloud
 
 The local Ollama catalog currently contains the hosted routes:
@@ -75,3 +92,11 @@ All required tools are installed and authenticated. Exact Fable 5 entitlement
 remains deliberately untested because proving it requires an inference request
 that could consume usage credits. This does not block task design or freezing a
 clean benchmark baseline.
+
+Anthropic currently lists Fable 5 at `$10` per million input tokens and `$50`
+per million output tokens for API use. A T4 run at the shared block's observed
+token scale would be roughly `$1.50`, but Claude Code subscription or usage-credit
+accounting may differ. Require a separate user-approved ceiling before the
+minimal access check and counted run.
+
+Source: <https://platform.claude.com/docs/en/about-claude/models/overview>
