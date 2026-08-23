@@ -371,14 +371,33 @@ No paid API call occurred. OpenRouter spend remains `$1.3764798`, leaving
 
 ## Exact next steps
 
-1. Run the preregistered T6 shared-Kimi harness block in its frozen order:
-   OpenCode, Codex, then Claude Code. This uses the existing Ollama Cloud route
-   and makes no OpenRouter or Anthropic-credit call.
-2. Grade and report the three results without rerunning a failure.
-3. Do not buy a separate Kimi K3 T6 row: the remaining OpenRouter allowance is
+1. Review the consolidated pilot conclusion with the user and choose whether
+   any single repeat can change an adoption decision.
+2. Do not buy a separate Kimi K3 T6 row: the remaining OpenRouter allowance is
    too small, and the shared Kimi K2.7 block tests the more important harness
    question without new metered spend.
+3. Run a repeated block only if it can change an adoption decision; do not add
+   runs only to manufacture a larger sample.
 4. Publish the HTML dashboard only if the user explicitly requests deployment.
+
+The consolidated conclusion is in
+[`benchmark/reports/final-study-report.md`](benchmark/reports/final-study-report.md).
+It answers the six program questions, preserves cost and telemetry caveats, and
+maps each recommendation to the underlying reports.
+
+### T6 shared-model harness block
+
+The same complex T6 incident task was run through OpenCode, Codex, and Claude
+Code with `ollama/kimi-k2.7-code:cloud`. All three passed all eight private
+checks, stayed within the same three files, and required no intervention.
+OpenCode scored 99 in 55.115 seconds, Claude scored 98 in 78.832 seconds, and
+Codex scored 98 in 93.662 seconds. This strengthens the conclusion that
+OpenCode is a strong secondary harness, not only a convenient model launcher.
+Full evidence:
+[`benchmark/reports/T6-shared-kimi-harness-comparison.md`](benchmark/reports/T6-shared-kimi-harness-comparison.md).
+
+No paid API call occurred. OpenRouter spend remains `$1.3764798`, leaving
+`$0.1235202` under the approved ceiling.
 
 ## HTML results dashboard
 

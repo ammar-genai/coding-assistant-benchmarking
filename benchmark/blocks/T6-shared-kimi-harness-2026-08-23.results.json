@@ -1,0 +1,190 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T6-shared-kimi-harness-2026-08-23",
+  "protocol": "benchmark/blocks/T6-shared-kimi-harness-2026-08-23.json",
+  "status": "complete",
+  "baseline_git_commit": "75a958ed96ccda1ee1c6d78bebe101ff28e01718",
+  "task": {
+    "id": "T6-rejected-promise-cache",
+    "version": "1.0.0",
+    "prompt_sha256": "9717e7ec3248b0901eb2ad8f3eeaa701e323342da75c7b1e01753fd9ae24e3a1",
+    "private_sha256": "637a6db66e712abfece7df0fd0b28f51e3a2f8d22f07ed0204af6d7fbfe81b94"
+  },
+  "shared_model": "ollama/kimi-k2.7-code:cloud",
+  "completed_in_preregistered_order": true,
+  "reruns_inside_block": 0,
+  "human_interventions": 0,
+  "routes": [
+    {
+      "position": 1,
+      "run_id": "2026-08-23T19-23-23.578Z_opencode_T6-rejected-promise-cache",
+      "assistant": "opencode",
+      "assistant_version": "1.18.21",
+      "model": "ollama/kimi-k2.7-code:cloud",
+      "access_path": "ollama-cloud",
+      "status": "complete",
+      "acceptance_status": "pass",
+      "rubric_score": 99,
+      "elapsed_ms": 55115,
+      "time_to_first_edit_ms": 11660,
+      "changed_paths": [
+        "benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md",
+        "benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs",
+        "benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs"
+      ],
+      "out_of_scope_paths": [],
+      "visible_tests": { "passed": 11, "failed": 0 },
+      "private_tests": { "passed": 8, "failed": 0 },
+      "patch_sha256": "41f887740f35c3793b18b634e2bb30be5756b0abbe0ca79a98a97757f2e710ac",
+      "tool_calls": {
+        "bash": 5,
+        "edit": 5,
+        "read": 9,
+        "write": 2
+      },
+      "permission_denials": 1,
+      "permission_note": "A request to run only the committed test file was denied. The model immediately used the exact allowed two-file command.",
+      "usage": {
+        "input_tokens": 226625,
+        "cached_input_tokens": 0,
+        "output_tokens": 7541,
+        "reasoning_tokens": 0,
+        "total_tokens": 234166
+      },
+      "reported_cost_usd": 0,
+      "reported_cost_is_proof_of_zero_underlying_cost": false,
+      "stderr_bytes": 0,
+      "score_breakdown": {
+        "root_cause_and_private_tests": 40,
+        "cache_contract": 15,
+        "narrow_safe_repair": 10,
+        "regression_test_quality": 10,
+        "incident_analysis": 10,
+        "scope_and_tool_discipline": 9,
+        "final_report": 5
+      }
+    },
+    {
+      "position": 2,
+      "run_id": "2026-08-23T19-24-25.822Z_codex_T6-rejected-promise-cache",
+      "assistant": "codex",
+      "assistant_version": "codex-cli 0.146.0-alpha.3.1",
+      "model": "ollama/kimi-k2.7-code:cloud",
+      "access_path": "ollama-cloud",
+      "status": "complete",
+      "acceptance_status": "pass",
+      "rubric_score": 98,
+      "elapsed_ms": 93662,
+      "time_to_first_edit_ms": null,
+      "time_to_first_edit_note": "The Codex JSON stream did not timestamp shell-driven file writes.",
+      "changed_paths": [
+        "benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md",
+        "benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs",
+        "benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs"
+      ],
+      "out_of_scope_paths": [],
+      "visible_tests": { "passed": 9, "failed": 0 },
+      "private_tests": { "passed": 8, "failed": 0 },
+      "patch_sha256": "586211328b49e78ed17483ff488b8352c074717ca3818a5b17f0bc698ae2fe1e",
+      "tool_calls": { "command_execution": 17 },
+      "failed_commands": 1,
+      "failed_command_note": "The first required visible-suite run reproduced the seeded failure before the repair.",
+      "permission_denials": 0,
+      "usage": {
+        "input_tokens": 305461,
+        "cached_input_tokens": 0,
+        "output_tokens": 9828,
+        "reasoning_tokens": 0,
+        "total_tokens": 315289
+      },
+      "reported_cost_usd": null,
+      "stderr_bytes": 2353680,
+      "repeated_telemetry_warnings": 12958,
+      "score_breakdown": {
+        "root_cause_and_private_tests": 40,
+        "cache_contract": 15,
+        "narrow_safe_repair": 10,
+        "regression_test_quality": 10,
+        "incident_analysis": 10,
+        "scope_and_tool_discipline": 8,
+        "final_report": 5
+      }
+    },
+    {
+      "position": 3,
+      "run_id": "2026-08-23T19-26-05.659Z_claude_T6-rejected-promise-cache",
+      "assistant": "claude",
+      "assistant_version": "2.1.241 (Claude Code)",
+      "model": "ollama/kimi-k2.7-code:cloud",
+      "access_path": "ollama-cloud",
+      "status": "complete",
+      "acceptance_status": "pass",
+      "rubric_score": 98,
+      "elapsed_ms": 78832,
+      "time_to_first_edit_ms": 30884,
+      "changed_paths": [
+        "benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md",
+        "benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs",
+        "benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs"
+      ],
+      "out_of_scope_paths": [],
+      "visible_tests": { "passed": 8, "failed": 0 },
+      "private_tests": { "passed": 8, "failed": 0 },
+      "patch_sha256": "3aecaef482091506ddcdf65eb0ec4f024fcb598c034d4768aa607b4e25140123",
+      "tool_calls": {
+        "Bash": 8,
+        "Edit": 2,
+        "Read": 7,
+        "Write": 2
+      },
+      "permission_denials": 2,
+      "permission_note": "Two extra lint commands were denied. The exact allowed visible command remained available and passed.",
+      "usage": {
+        "input_tokens": 218906,
+        "cached_input_tokens": 0,
+        "output_tokens": 11142,
+        "thinking_tokens_subset": 0,
+        "total_tokens": 230048
+      },
+      "wrapper_cost_telemetry_usd": 1.400835,
+      "wrapper_cost_telemetry_is_metered_study_spend": false,
+      "stderr_bytes": 298,
+      "score_breakdown": {
+        "root_cause_and_private_tests": 40,
+        "cache_contract": 15,
+        "narrow_safe_repair": 10,
+        "regression_test_quality": 10,
+        "incident_analysis": 10,
+        "scope_and_tool_discipline": 8,
+        "final_report": 5
+      }
+    }
+  ],
+  "comparison": {
+    "acceptance_winner": "three-way tie",
+    "score_winner": "opencode by one tool-discipline point",
+    "elapsed_winner": "opencode",
+    "claude_to_opencode_elapsed_ratio": 1.4303,
+    "codex_to_opencode_elapsed_ratio": 1.6994,
+    "implementation_result": "All three independently diagnosed rejected-Promise cache poisoning and used identity-checked eviction to protect an overlapping replacement.",
+    "opencode_advantage": "Fastest run, earliest measured edit, broadest student regression suite, immediate recovery from one narrow permission denial, and no stderr output.",
+    "codex_advantage": "No permission negotiation and a correct complete result, but the Ollama adapter used shell-only operations and emitted severe repeated metadata telemetry noise.",
+    "claude_advantage": "Second-fastest run with native file tools and a clear incident report; two unnecessary lint attempts were denied.",
+    "interpretation": "With the model fixed, OpenCode produced the strongest measured harness result on this task. This supports using OpenCode as a serious secondary harness, but one run per product is not a general reliability ranking."
+  },
+  "permission_surface_caveat": "The policy intent was identical, but native enforcement differed. OpenCode used path and exact-command rules, Claude used native edit tools plus an exact Bash allowance, and Codex used a workspace-write sandbox with the task contract enforcing path scope. Those differences are part of the harness result.",
+  "budget": {
+    "new_openrouter_cost_usd": 0,
+    "openrouter_cumulative_usd": 1.3764798,
+    "approved_openrouter_ceiling_usd": 1.5,
+    "remaining_under_ceiling_usd": 0.1235202,
+    "provider_limits_changed": false,
+    "anthropic_usage_credits_enabled": false
+  },
+  "caveats": [
+    "This is one run per harness and not a reliability estimate.",
+    "The three clients expose different token and cache definitions, so token totals are preserved rather than ranked as directly comparable cost.",
+    "OpenCode's reported zero and Claude's wrapper estimate do not establish the underlying price of Ollama Cloud inference.",
+    "Top-native product conclusions still come from the frontier-model blocks, not this shared-model block."
+  ]
+}

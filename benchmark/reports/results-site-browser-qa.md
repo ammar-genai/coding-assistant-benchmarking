@@ -32,6 +32,9 @@ The application was exercised in the in-app browser at the local preview URL.
   focus target.
 - The browser console contained no warnings or errors.
 - The generated social image resolved through an absolute `og:image` URL.
+- After the final T6 shared-Kimi block, all three new rows were present with
+  their recorded scores and times. The nine-row table retained the same mobile
+  containment and the browser console remained clear.
 
 ## Outcome
 

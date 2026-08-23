@@ -39,6 +39,8 @@ test("server-renders the coding assistant study plan", async () => {
   assert.match(html, /What the recorded runs actually showed/);
   assert.match(html, /3\.57×/);
   assert.match(html, /OpenCode \+ Qwen3\.8-27B/);
+  assert.match(html, /T6 shared model/);
+  assert.match(html, /55\.115 s/);
   assert.match(html, /One skill and MCP server worked across all three/);
   assert.match(html, /\$1\.3765/);
   assert.match(html, /property="og:image" content="http:\/\/localhost\/og\.png"/i);

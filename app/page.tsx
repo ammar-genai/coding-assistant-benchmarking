@@ -80,6 +80,27 @@ const resultRows = [
     time: "228.453 s",
     note: "Broader tests, with ten permission denials",
   },
+  {
+    task: "T6 shared model",
+    route: "OpenCode + Kimi K2.7",
+    score: "99",
+    time: "55.115 s",
+    note: "Fastest fixed-model harness; one denied command",
+  },
+  {
+    task: "T6 shared model",
+    route: "Claude Code + Kimi K2.7",
+    score: "98",
+    time: "78.832 s",
+    note: "Second-fastest; two denied lint attempts",
+  },
+  {
+    task: "T6 shared model",
+    route: "Codex + Kimi K2.7",
+    score: "98",
+    time: "93.662 s",
+    note: "Accepted, with noisy Ollama adapter telemetry",
+  },
 ];
 
 const modelRows = [
@@ -633,7 +654,7 @@ export default function Home() {
               </div>
             </div>
 
-            <div className="table-wrap results-table-wrap" tabIndex={0} aria-label="Top native benchmark results">
+            <div className="table-wrap results-table-wrap" tabIndex={0} aria-label="Selected benchmark results">
               <table>
                 <thead>
                   <tr>
@@ -679,10 +700,11 @@ export default function Home() {
               </article>
               <article>
                 <span>Small-model lesson</span>
-                <h3>Model choice can dominate the harness.</h3>
+                <h3>Model and harness both matter.</h3>
                 <p>
-                  Kimi K3 earned a full T4 result in OpenCode. Qwen3.8-27B produced
-                  a working interface but timed out before completing the contract.
+                  Kimi K3 earned a full T4 result in OpenCode, while Qwen3.8-27B
+                  timed out. With Kimi K2.7 held fixed on T6, all three harnesses
+                  passed and OpenCode was fastest.
                 </p>
               </article>
             </div>

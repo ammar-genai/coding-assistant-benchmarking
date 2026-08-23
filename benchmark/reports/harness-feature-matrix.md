@@ -74,6 +74,14 @@ grader assumption. OpenCode finished in 52.582 seconds, Claude in 54.480, and
 Codex in 87.538. This is the cleanest evidence that OpenCode itself is worth
 testing, not only its model catalog.
 
+The more difficult T6 shared-Kimi block confirmed the direction without a
+grader correction. All three harnesses passed all eight private checks and
+stayed in scope. OpenCode scored 99 in 55.115 seconds, Claude scored 98 in
+78.832 seconds, and Codex scored 98 in 93.662 seconds. OpenCode had one denied
+command and no stderr; Claude had two denied lint attempts; Codex emitted 2.35
+MB of repeated Ollama-model telemetry warnings. This is one run per harness,
+but it is direct evidence about the harness rather than the model.
+
 ### Best accessible product: model plus harness
 
 On corrected T4, Codex/GPT-5.6 Sol, Claude Code/Opus 5, and OpenCode/Kimi K3 all
@@ -143,7 +151,7 @@ Claude's controlled permission recovery is in
 |---|---|---|
 | Codex | **Primary lead and default implementation tool** | Best fit for controlled local work, integration, app/browser workflow, and safe autonomy; top-native result was fully accepted. |
 | Claude Code | **Primary independent reviewer and alternate lead** | High-value plan challenge and review quality; excellent documented extension surface; automation modes need explicit validation. |
-| OpenCode | **Strong secondary tool and open-model worker** | Real accepted results, fastest successful T4 route, flexible providers, and the best metered cost visibility; reliability varies materially by model and browser automation is not yet comparable. |
+| OpenCode | **Strong secondary tool and open-model worker** | Real accepted results, the fastest T4 top-native route, the fastest T6 shared-model harness run, flexible providers, and the best metered cost visibility; reliability varies materially by model and browser automation is not yet comparable. |
 
 ## Official references
 

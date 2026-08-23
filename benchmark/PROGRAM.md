@@ -2,7 +2,7 @@
 
 Program date: 2026-08-23
 
-Status: active design for the next complex tasks
+Status: pilot evidence complete through T6; selective repeats pending
 
 ## What this project must answer
 

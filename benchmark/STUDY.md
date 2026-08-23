@@ -1,8 +1,10 @@
 # Coding Assistant and Model Study
 
-Study version: `1.0.0-draft`  
-Started: `2026-08-22`  
-Status: setup and pilot
+Study version: `1.1.0-pilot`
+
+Started: `2026-08-22`
+
+Status: pilot evidence complete through T6; selective repeats pending
 
 ## Question
 
@@ -56,7 +58,9 @@ Use each product with its strongest normal pairing: Codex with the chosen OpenAI
 3. T3: build a multi-file feature with tests and documentation.
 4. T4: build and verify a user interface on desktop and mobile.
 
-Challenge tasks T5–T8 cover behavior-preserving refactoring, dependency migration, incident/security investigation, and CI/project-guidance repair. Create those only after T1–T4 complete a clean pilot.
+Challenge tasks T5 and T6 now cover a cross-layer feature and an incident
+investigation. Create T7 or T8 only when it fills a remaining decision gap;
+do not add tasks only to increase the run count.
 
 ## Run contract
 
