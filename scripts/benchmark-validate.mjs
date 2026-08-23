@@ -106,6 +106,12 @@ validateWriteTask("T5-review-queue-v2", [
   "benchmark/fixtures/T5-review-queue/student-tests.mjs",
   "benchmark/fixtures/T5-review-queue/README.md",
 ]);
+validateWriteTask("T6-rejected-promise-cache", [
+  "benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs",
+  "benchmark/fixtures/T6-rejected-promise-cache/config-api.mjs",
+  "benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs",
+  "benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md",
+]);
 
 const claudeRules = readFileSync(resolve(root, "CLAUDE.md"), "utf8");
 assert.match(claudeRules, /^@AGENTS\.md\b/);

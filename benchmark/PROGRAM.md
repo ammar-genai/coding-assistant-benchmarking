@@ -125,6 +125,13 @@ and an incident-style explanation.
 This exposes debugging, restraint, recovery, and the difference between a model
 that writes plausible code and a harness that guides it to verified code.
 
+The designed task is `T6-rejected-promise-cache@1.0.0`. A cached in-flight
+configuration load continues replaying a transient rejection after the origin
+recovers. The task protects successful caching and concurrent request
+coalescing, includes an old-load/new-replacement race, and requires a concise
+incident report. Its maintainer reference passes 8 visible and 8 private
+checks; the committed starter is intentionally failing.
+
 ## Run plan
 
 ### Pilot

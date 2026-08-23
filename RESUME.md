@@ -307,14 +307,29 @@ tool/open-model worker. Native subagents, resume behavior, portable skills,
 shared MCP, and native browser behavior remain feature pilots rather than
 counted evidence.
 
+### T6 incident/debugging task
+
+`T6-rejected-promise-cache@1.0.0` is designed and maintainer-validated. It
+contains failing tests, a partially misleading incident log, a poisoned
+rejected-Promise cache, a replacement race, student regression tests, and an
+incident-report requirement. A temporary reference repair passed 8 of 8
+visible checks and 8 of 8 private checks, then was removed. The restored starter
+passes 3 of 6 visible checks and remains intentionally failing.
+
+The frozen prompt, fixture, rubric, private hash, validator registration, and
+design report are under `benchmark/tasks/T6-rejected-promise-cache`,
+`benchmark/fixtures/T6-rejected-promise-cache`, and
+[`benchmark/reports/T6-task-design.md`](benchmark/reports/T6-task-design.md).
+No assistant under test has seen the task.
+
 ## Exact next steps
 
-1. Design and freeze T6, the incident/debugging task, before another model sees
-   it. Use subscription routes first because only `$0.1235202` remains under
-   the OpenRouter ceiling.
-2. Decide whether the next paid block is worth a new explicit budget. Do not
+1. Commit the frozen T6 task baseline, then preregister a subscription-only
+   Codex/GPT-5.6 Sol versus Claude Code/Opus 5 pilot in randomized order.
+2. Run one fresh isolated attempt per route with no reruns or intervention.
+3. Decide whether a later OpenCode/Kimi row is worth a new explicit budget. Do not
    increase a provider limit automatically.
-3. Run repeated randomized trials only where they can change a decision; one
+4. Run repeated randomized trials only where they can change a decision; one
    task is not a general winner.
 
 ## Verification commands

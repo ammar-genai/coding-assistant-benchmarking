@@ -1,0 +1,51 @@
+{
+  "schema_version": "1.0",
+  "id": "T6-rejected-promise-cache",
+  "version": "1.0.0",
+  "title": "Diagnose and repair a rejected-promise cache incident",
+  "type": "incident",
+  "mode": "workspace-write",
+  "prompt_path": "prompt.md",
+  "allowed_paths": [
+    "benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs",
+    "benchmark/fixtures/T6-rejected-promise-cache/config-api.mjs",
+    "benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs",
+    "benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md"
+  ],
+  "forbidden_actions": [
+    "Edit the committed visible test, incident log, task definitions, harness files, or generated evidence",
+    "Install dependencies or use the network",
+    "Add sleeps, arbitrary retry loops, or a second cache",
+    "Commit, push, or start an external service"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "visible-tests",
+      "description": "The committed incident tests and assistant-authored regression tests pass.",
+      "command": "node --test benchmark/fixtures/T6-rejected-promise-cache/config-cache.test.mjs benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs"
+    },
+    {
+      "id": "private-tests",
+      "description": "Private failure-eviction, overlapping-replacement, cache-contract, isolation, API, and test-quality checks pass."
+    },
+    {
+      "id": "incident-report",
+      "description": "The completed incident note explains impact, evidence, misleading signals, the narrow fix, regression coverage, and remaining risk."
+    },
+    {
+      "id": "allowed-scope",
+      "description": "Only the four allowed implementation, test, and incident-report files change."
+    }
+  ],
+  "verification": {
+    "visible_commands": [
+      "node --test benchmark/fixtures/T6-rejected-promise-cache/config-cache.test.mjs benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs"
+    ],
+    "hidden_suite": "T6-rejected-promise-cache",
+    "hidden_sha256": "637a6db66e712abfece7df0fd0b28f51e3a2f8d22f07ed0204af6d7fbfe81b94"
+  },
+  "limits": {
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0
+  }
+}

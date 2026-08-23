@@ -1,0 +1,5 @@
+2026-08-23T14:03:18.004Z level=error tenant=acme request=cfg-781 attempt=1 cache=miss status=503 error=origin_timeout
+2026-08-23T14:03:18.407Z level=info component=origin-probe tenant=acme status=200 latency_ms=31
+2026-08-23T14:03:19.015Z level=error tenant=acme request=cfg-782 attempt=2 cache=hit status=503 error=origin_timeout
+2026-08-23T14:03:21.027Z level=error tenant=acme request=cfg-783 attempt=3 cache=hit status=503 error=origin_timeout
+2026-08-23T14:03:21.031Z level=info incident=config-read-failure tenant=acme request_count=3 origin_load_count=1 upstream_probe=healthy

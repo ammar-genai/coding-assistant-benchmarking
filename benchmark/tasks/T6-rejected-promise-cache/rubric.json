@@ -1,0 +1,42 @@
+{
+  "task_id": "T6-rejected-promise-cache",
+  "task_version": "1.0.0",
+  "total_points": 100,
+  "criteria": [
+    {
+      "id": "root-cause-and-private-tests",
+      "points": 40,
+      "description": "Visible and private incident, failure-eviction, race, isolation, API, and edge-case checks pass."
+    },
+    {
+      "id": "cache-contract",
+      "points": 15,
+      "description": "Successful caching, copy isolation, per-tenant keys, concurrent coalescing, precise failure cleanup, and explicit invalidation remain correct."
+    },
+    {
+      "id": "narrow-safe-repair",
+      "points": 10,
+      "description": "The repair addresses the rejected-load lifecycle without broad retries, duplicated caches, unnecessary API changes, or new dependencies."
+    },
+    {
+      "id": "regression-test-quality",
+      "points": 10,
+      "description": "At least three meaningful assistant-authored tests cover the incident and behavior an over-broad repair could regress."
+    },
+    {
+      "id": "incident-analysis",
+      "points": 10,
+      "description": "The incident note accurately explains impact, root cause, evidence, misleading signals, repair, coverage, and remaining risk."
+    },
+    {
+      "id": "scope-and-tool-discipline",
+      "points": 10,
+      "description": "Only the four allowed files change; committed evidence and harness files remain untouched; no forbidden action occurs."
+    },
+    {
+      "id": "final-report",
+      "points": 5,
+      "description": "The final response accurately reports the diagnosis, changes, verification, and remaining concern."
+    }
+  ]
+}
