@@ -254,43 +254,58 @@ choice remains decisive. Full evidence:
 
 ## Selected distributed workflow
 
-The evidence from T3 supports the following first controlled distributed test:
+### T5 all-assistant result
 
-1. Claude Code with its subscription frontier model creates a read-only plan
-   and acceptance checklist for a new T4 task.
-2. OpenCode + Kimi K2.7 Code implements the bounded change in an isolated
-   worktree.
-3. Claude reviews the patch and visible test evidence without access to private
-   tests.
-4. Kimi receives at most one repair pass.
-5. The private grader decides the final outcome.
+The first distributed workflow is complete on the frozen cross-layer
+`T5-review-queue` task:
 
-Run Claude alone on the same T4 task as the control. Compare final score, total
-elapsed time, frontier-model time, repair count, scope control, and human
-interventions. Later, repeat the workflow with OpenAI and Anthropic lead/reviewer
-roles reversed.
+1. Codex/GPT-5.6 Sol planned read-only.
+2. Claude Code/Opus 5 challenged and corrected the plan read-only.
+3. OpenCode/Kimi K3 implemented all five owned files.
+4. Codex integrated and ran the gate without changing the worker patch.
+5. Claude performed a final read-only review and returned `pass`.
+6. The private harness graded the saved patch.
 
-Qwen3.8-27B can be evaluated first as an additional OpenCode worker on an
-already-frozen task. If it passes that pilot, create a later distributed-study
-block comparing Kimi and Qwen workers under the same frontier plan.
+The distributed result scored 100 and passed 9/9 visible plus 7/7 corrected
+private checks in 536.704 seconds. Kimi finished its stage in 112.515 seconds
+for `$0.6175818`; Codex made zero integration edits, so the accepted
+implementation is fully attributable to the open worker.
+
+The solo Codex/GPT-5.6 Sol control also scored 100 after a grader correction,
+passing 8/8 visible and 7/7 corrected private checks in 150.206 seconds. The
+raw private suite failed only because it required the spelling `in-memory`
+while the README used `in memory` and correctly documented non-durability plus
+reset-on-restart. The raw fail is preserved; neither patch was edited or rerun.
+
+The distributed route was 3.57 times slower and did not improve final quality.
+It did demonstrate auditability, useful plan challenge, and successful bounded
+delegation to OpenCode/Kimi. Use this pattern for high-review work, not as the
+default for every bounded feature. Full evidence:
+[`benchmark/reports/T5-distributed-workflow-comparison.md`](benchmark/reports/T5-distributed-workflow-comparison.md).
+
+The first workflow attempt is separately preserved as a harness failure:
+Claude's special plan mode tried to write a user plan file through a read-only
+adapter and timed out before Kimi started. V2 changed only the read-only Claude
+adapter; no paid call occurred in attempt 1.
+
+Cumulative OpenRouter spend is now `$1.3764798` of the approved `$1.50`
+ceiling, leaving `$0.1235202`. Do not make another paid model call or increase a
+provider limit without a new explicit approval.
 
 ## Exact next steps
 
-1. Review and deliberately commit the completed top-native result JSON, report,
-   and updated handoff.
-2. Design a new unseen T5 task and preregister one all-assistant workflow:
-   Codex + GPT-5.6 Sol plans, OpenCode + Kimi K3 implements, Claude Code + Opus
-   5 reviews, and Kimi receives at most one bounded repair pass.
-3. Add a solo frontier-model control on the same T5 task and freeze both routes
-   before any selected model sees the prompt.
-4. Obtain a new explicit API ceiling before the distributed Kimi calls. Do not
-   increase an account spending limit.
-5. Run the distributed route and solo control, then grade both with the same
-   private suite and compare quality, wall time, frontier time, API cost, tool
-   calls, scope, and repair count.
-6. Evaluate plugins, MCP integration, sessions, configuration effort, and
-   repository-scale behavior before considering OpenCode a primary tool.
-7. Run repeated randomized trials before making a general winner claim.
+1. Commit the verified T5 corrected grader, result JSON, comparison report, and
+   updated handoff.
+2. Build the common harness-feature checklist for Codex, Claude Code, and
+   OpenCode: permissions, planning, resume/recovery, plugins/skills/hooks/MCP,
+   browser support, telemetry, configuration, and error handling.
+3. Design and freeze T6, the incident/debugging task, before another model sees
+   it. Use subscription routes first because only `$0.1235202` remains under
+   the OpenRouter ceiling.
+4. Decide whether the next paid block is worth a new explicit budget. Do not
+   increase a provider limit automatically.
+5. Run repeated randomized trials only where they can change a decision; one
+   task is not a general winner.
 
 ## Verification commands
 

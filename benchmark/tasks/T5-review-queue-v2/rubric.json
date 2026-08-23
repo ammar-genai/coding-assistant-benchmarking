@@ -1,0 +1,42 @@
+{
+  "task_id": "T5-review-queue-v2",
+  "task_version": "1.0.1",
+  "total_points": 100,
+  "criteria": [
+    {
+      "id": "functional-and-private-tests",
+      "points": 40,
+      "description": "Visible and behavior-focused private store, API, rendering, documentation, and edge-case checks pass."
+    },
+    {
+      "id": "api-and-data-contract",
+      "points": 15,
+      "description": "Validation, status codes, headers, storage, timestamps, filtering, summaries, and errors follow the contract."
+    },
+    {
+      "id": "safe-user-facing-result",
+      "points": 10,
+      "description": "The complete HTML document is accessible, useful, handles the empty state, and escapes dynamic values."
+    },
+    {
+      "id": "regression-and-test-quality",
+      "points": 10,
+      "description": "Committed tests pass and at least three meaningful additional tests cover useful behavior."
+    },
+    {
+      "id": "scope-control",
+      "points": 10,
+      "description": "Only the five allowed files change and forbidden actions are avoided."
+    },
+    {
+      "id": "implementation-quality",
+      "points": 10,
+      "description": "The modules are deterministic, dependency-free, readable, maintainable, and protect stored state."
+    },
+    {
+      "id": "final-report",
+      "points": 5,
+      "description": "The final response accurately reports design, tests, verification, and remaining concerns."
+    }
+  ]
+}

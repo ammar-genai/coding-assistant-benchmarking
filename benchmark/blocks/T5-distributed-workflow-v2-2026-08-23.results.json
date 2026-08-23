@@ -1,0 +1,265 @@
+{
+  "schema_version": "1.0",
+  "block_id": "T5-distributed-workflow-v2-2026-08-23",
+  "protocol": "benchmark/blocks/T5-distributed-workflow-v2-2026-08-23.json",
+  "status": "complete",
+  "baseline_git_commit": "d53fbaba03ce3fdb363453aec50e305fa539a521",
+  "task": {
+    "id": "T5-review-queue",
+    "version": "1.0.0",
+    "prompt_sha256": "1c562b4223cd4fb632c1856e40e446fee758281c4cb08822324bd117a59d6f22"
+  },
+  "corrected_grader": {
+    "task_id": "T5-review-queue-v2",
+    "version": "1.0.1",
+    "private_sha256": "300e85642a8f26be5c405be73a97a242c57b05d228a6c479353aea63610b026b",
+    "reason": "The original suite required the literal hyphenated phrase in-memory. The solo README used the semantically equivalent in memory and explicitly documented non-durability plus reset on restart. V2 accepts a space or hyphen and relaxes harmless HTML attribute-order assumptions.",
+    "reruns": 0,
+    "candidate_patches_modified": false
+  },
+  "distributed": {
+    "run_id": "2026-08-23T17-55-02.091Z_distributed_T5-review-queue",
+    "raw_status": "complete",
+    "raw_acceptance_status": "pass",
+    "corrected_acceptance_status": "pass",
+    "rubric_score": 100,
+    "elapsed_ms": 536704,
+    "human_interventions": 0,
+    "changed_paths": [
+      "benchmark/fixtures/T5-review-queue/README.md",
+      "benchmark/fixtures/T5-review-queue/review-api.mjs",
+      "benchmark/fixtures/T5-review-queue/review-page.mjs",
+      "benchmark/fixtures/T5-review-queue/review-store.mjs",
+      "benchmark/fixtures/T5-review-queue/student-tests.mjs"
+    ],
+    "out_of_scope_paths": [],
+    "visible_tests": {
+      "passed": 9,
+      "failed": 0
+    },
+    "original_private_tests": {
+      "passed": 7,
+      "failed": 0
+    },
+    "corrected_private_tests": {
+      "passed": 7,
+      "failed": 0
+    },
+    "patch": {
+      "worker_sha256": "beeebd9cba1119a4dfa4427ae8cdcc0678a47f68e6d33fe1265f998cf0f3a3be",
+      "integrated_sha256": "beeebd9cba1119a4dfa4427ae8cdcc0678a47f68e6d33fe1265f998cf0f3a3be",
+      "final_sha256": "beeebd9cba1119a4dfa4427ae8cdcc0678a47f68e6d33fe1265f998cf0f3a3be",
+      "worker_patch_retained_pct": 100,
+      "integration_edits": 0,
+      "files_changed": 5
+    },
+    "stages": [
+      {
+        "position": 1,
+        "assistant": "codex",
+        "model": "gpt-5.6-sol",
+        "role": "lead planner",
+        "status": "complete",
+        "elapsed_ms": 86071,
+        "read_only_changes": [],
+        "tool_calls": {
+          "command_execution": 3
+        },
+        "usage": {
+          "input_tokens": 105147,
+          "cached_input_tokens_subset": 90624,
+          "output_tokens": 3318,
+          "reasoning_output_tokens_subset": 896
+        }
+      },
+      {
+        "position": 2,
+        "assistant": "claude",
+        "model": "claude-opus-5",
+        "role": "plan reviewer",
+        "status": "complete",
+        "elapsed_ms": 93772,
+        "read_only_changes": [],
+        "tool_calls": {
+          "Glob": 2,
+          "Read": 5
+        },
+        "blocking_gaps_reported": 7,
+        "usage": {
+          "input_tokens": 8,
+          "cache_creation_input_tokens": 15075,
+          "cache_read_input_tokens": 40401,
+          "output_tokens": 6556,
+          "thinking_tokens_subset": 3419
+        },
+        "subscription_cli_telemetry_usd": 0.3391435
+      },
+      {
+        "position": 3,
+        "assistant": "opencode",
+        "model": "openrouter/moonshotai/kimi-k3",
+        "role": "implementation worker",
+        "status": "complete",
+        "elapsed_ms": 112515,
+        "time_to_first_edit_ms": 84725,
+        "visible_tests_passed_before_integration": 9,
+        "visible_tests_failed_before_integration": 0,
+        "tool_calls": {
+          "Read": 10,
+          "Glob": 2,
+          "Bash": 3,
+          "Write": 5
+        },
+        "denied_commands": 1,
+        "usage": {
+          "input_tokens": 38807,
+          "cache_read_tokens": 300736,
+          "output_tokens": 9149,
+          "reasoning_tokens": 18247,
+          "total_tokens_including_cache": 366939
+        },
+        "metered_cost_usd": 0.6175818
+      },
+      {
+        "position": 4,
+        "assistant": "codex",
+        "model": "gpt-5.6-sol",
+        "role": "integration lead",
+        "status": "complete",
+        "elapsed_ms": 82567,
+        "changed_paths_during_stage": [],
+        "visible_tests_passed": 9,
+        "visible_tests_failed": 0,
+        "tool_calls": {
+          "command_execution": 3
+        },
+        "usage": {
+          "input_tokens": 116443,
+          "cached_input_tokens_subset": 98048,
+          "output_tokens": 2988,
+          "reasoning_output_tokens_subset": 1890
+        }
+      },
+      {
+        "position": 5,
+        "assistant": "claude",
+        "model": "claude-opus-5",
+        "role": "final reviewer",
+        "status": "complete",
+        "elapsed_ms": 160346,
+        "read_only_changes": [],
+        "verdict": "pass",
+        "high_findings": 0,
+        "medium_findings": 0,
+        "low_findings": 4,
+        "tool_calls": {
+          "Bash": 6,
+          "Grep": 1,
+          "Read": 6
+        },
+        "permission_denials": 1,
+        "usage": {
+          "input_tokens": 18,
+          "cache_creation_input_tokens": 30967,
+          "cache_read_input_tokens": 177064,
+          "output_tokens": 11729,
+          "thinking_tokens_subset": 6722
+        },
+        "subscription_cli_telemetry_usd": 0.694001
+      }
+    ],
+    "score_breakdown": {
+      "functional_and_private_tests": 40,
+      "api_and_data_contract": 15,
+      "safe_user_facing_result": 10,
+      "regression_and_test_quality": 10,
+      "scope_control": 10,
+      "implementation_quality": 10,
+      "final_report": 5
+    }
+  },
+  "solo_control": {
+    "run_id": "2026-08-23T18-04-08.614Z_codex_T5-review-queue",
+    "assistant": "codex",
+    "model": "gpt-5.6-sol",
+    "raw_status": "complete",
+    "raw_acceptance_status": "fail",
+    "raw_failure": "The original private suite passed 6 of 7 checks and failed only the phrase-level in-memory assertion.",
+    "corrected_acceptance_status": "pass",
+    "rubric_score": 100,
+    "elapsed_ms": 150206,
+    "time_to_first_edit_ms": null,
+    "human_interventions": 0,
+    "changed_paths": [
+      "benchmark/fixtures/T5-review-queue/README.md",
+      "benchmark/fixtures/T5-review-queue/review-api.mjs",
+      "benchmark/fixtures/T5-review-queue/review-page.mjs",
+      "benchmark/fixtures/T5-review-queue/review-store.mjs",
+      "benchmark/fixtures/T5-review-queue/student-tests.mjs"
+    ],
+    "out_of_scope_paths": [],
+    "visible_tests": {
+      "passed": 8,
+      "failed": 0
+    },
+    "original_private_tests": {
+      "passed": 6,
+      "failed": 1,
+      "invalid_phrase_level_failure": 1
+    },
+    "corrected_private_tests": {
+      "passed": 7,
+      "failed": 0
+    },
+    "patch_sha256": "8f607e33e38307bc5ba1cce83b6ceec0cf83453e4d0fe7199aecde9b5cc0538f",
+    "tool_calls": {
+      "command_execution": 3,
+      "file_change": 1
+    },
+    "usage": {
+      "input_tokens": 117772,
+      "cached_input_tokens_subset": 94720,
+      "output_tokens": 7334,
+      "reasoning_output_tokens_subset": 1228
+    },
+    "metered_cost_usd": null,
+    "score_breakdown": {
+      "functional_and_private_tests": 40,
+      "api_and_data_contract": 15,
+      "safe_user_facing_result": 10,
+      "regression_and_test_quality": 10,
+      "scope_control": 10,
+      "implementation_quality": 10,
+      "final_report": 5
+    }
+  },
+  "comparison": {
+    "quality_winner": "tie",
+    "corrected_score_difference": 0,
+    "elapsed_winner": "solo-control",
+    "distributed_to_solo_elapsed_ratio": 3.5731,
+    "distributed_extra_elapsed_ms": 386498,
+    "worker_completed_without_frontier_edits": true,
+    "distributed_plan_review_blocking_gaps_reported": 7,
+    "distributed_independent_final_review": true,
+    "interpretation": "The delegation pattern worked and Kimi owned the accepted implementation, but the distributed result did not beat the solo frontier control on correctness or time. Its benefit in this run was auditability and role separation."
+  },
+  "budget": {
+    "openrouter_spent_before_block_usd": 0.758898,
+    "openrouter_block_cost_usd": 0.6175818,
+    "openrouter_cumulative_usd": 1.3764798,
+    "approved_ceiling_usd": 1.5,
+    "remaining_under_ceiling_usd": 0.1235202,
+    "claude_subscription_cli_telemetry_usd": 1.0331445,
+    "claude_telemetry_is_metered_spend": false,
+    "codex_subscription_cost_exposed": false,
+    "provider_limits_changed": false
+  },
+  "caveats": [
+    "This is one task and not a general reliability estimate.",
+    "Token definitions differ across adapters and are not summed into a cross-product efficiency score.",
+    "The failed v1 workflow remains separate harness evidence and is not included in the successful v2 elapsed time.",
+    "Codex and Claude saw T5 in the failed v1 block, but v2 and the solo control used fresh non-persistent sessions. Kimi and OpenCode did not see T5 before v2.",
+    "The corrected private suite was applied to saved patches without edits or reruns."
+  ]
+}
