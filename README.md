@@ -1,53 +1,52 @@
-# Coding Assistant Study Plan
+# Coding Intelligence Field Study
 
-Current status and the exact continuation point are recorded in
-[`RESUME.md`](RESUME.md).
+This repository is the complete private archive of a two-phase applied study of coding assistants, frontier models, open-weight models, neutral model harnesses, and distributed AI development.
 
-An interactive six-week playbook for comparing:
+The project moved from controlled assistant benchmarks to a neutral five-model comparison, then turned the evidence into a research website, a working securitized-products trade-capture mock, a research paper, and a presentation deck.
 
-- Codex, Claude Code, and OpenCode as coding assistants
-- Pi as a neutral model harness
-- OpenAI and Anthropic frontier models
-- DeepSeek and Kimi through Ollama Cloud, plus a small local Qwen control
-- Skills, plugins, MCP servers, hooks, permissions, and multi-agent workflows
+## Published showcase
 
-The plan separates assistant effects from model effects, defines a 94-run core
-study, and ends with a distributed project led by a frontier model and completed
-by smaller workers.
+- [Research website](https://ammar-genai.github.io/coding-intelligence-field-study/)
+- [End-to-end study flow](https://ammar-genai.github.io/coding-intelligence-field-study/#study-flow)
+- [Research Lab](https://ammar-genai.github.io/coding-intelligence-field-study/lab/)
+- [Trade Capture application](https://ammar-genai.github.io/coding-intelligence-field-study/trade-capture/)
+- [Public compiled-site repository](https://github.com/ammar-genai/coding-intelligence-field-study)
 
-## Local use
+The public repository contains only compiled presentation artifacts. This private repository preserves the source, benchmark evidence, private checks, reports, and reproducibility tooling.
+
+## Start here
+
+- [`ARTIFACTS.md`](ARTIFACTS.md) — complete archive map and preservation boundary
+- [`benchmark/reports/phase-1/PHASE-1-COMPREHENSIVE.md`](benchmark/reports/phase-1/PHASE-1-COMPREHENSIVE.md) — detailed assistant-product study
+- [`benchmark/reports/phase-2/PHASE-2-COMPREHENSIVE.md`](benchmark/reports/phase-2/PHASE-2-COMPREHENSIVE.md) — detailed neutral Pi model comparison
+- [`benchmark/reports/final-study-report.md`](benchmark/reports/final-study-report.md) — cross-phase findings
+- [`RESUME.md`](RESUME.md) — chronological project record and continuation context
+
+## What was evaluated
+
+Phase 1 treated Codex, Claude Code, and OpenCode as complete coding-assistant products. Tasks progressed from repository analysis through bounded fixes, UI work, concurrency debugging, portable skills and MCP integration, and a distributed trade-capture build.
+
+Phase 2 held the Pi harness, prompts, provider, tools, timeouts, and intervention policy fixed while comparing five model routes across 20 counted observations. It measured quality, acceptance, elapsed time, reported cost, reliability, and scope discipline.
+
+## Applications and publications
+
+- `app/` — research showcase, Research Lab, and trade-capture application
+- `output/pdf/` — research paper
+- `output/presentation/` — presentation deck
+- `public/` — deployable paper, deck, social card, and application imagery
+
+## Reproduce and verify
 
 ```bash
 npm install
+npm run verify
+npm run benchmark:phase2:validate
+```
+
+Run the local site with:
+
+```bash
 npm run dev
 ```
 
-Open the local URL shown in the terminal. Progress checkboxes are stored only in
-the browser on that device. Use the **Print / save PDF** action for a static copy.
-
-## Verification
-
-```bash
-npm run verify
-```
-
-## Benchmark setup
-
-The reproducible study contract is in `benchmark/STUDY.md`. The first frozen
-task is a read-only repository analysis with a 100-point rubric.
-
-```bash
-npm run benchmark:env
-npm run benchmark:validate
-npm run benchmark:run -- --assistant opencode
-```
-
-The last command is a safe preview. Add `--execute` to create a unique evidence
-folder in `benchmark/runs/`. Generated runs are ignored by Git and never
-overwritten.
-
-The first isolated shared-model result is documented in
-`benchmark/reports/T1-shared-model-pilot.md`.
-
-Model and product details in the plan were researched on August 22, 2026. Record
-the exact assistant version and model ID again before every study block.
+The benchmark contracts, recorded results, and saved evidence are historical artifacts. Do not rewrite a completed run; create a new versioned study block instead.

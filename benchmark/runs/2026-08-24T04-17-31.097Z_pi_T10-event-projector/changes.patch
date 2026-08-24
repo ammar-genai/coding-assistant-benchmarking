@@ -1,0 +1,425 @@
+diff --git a/benchmark/fixtures/T10-event-projector/INCIDENT.md b/benchmark/fixtures/T10-event-projector/INCIDENT.md
+index b38f49d..571640e 100644
+--- a/benchmark/fixtures/T10-event-projector/INCIDENT.md
++++ b/benchmark/fixtures/T10-event-projector/INCIDENT.md
+@@ -1,23 +1,78 @@
+ # Event projector incident
+ 
+-Status: investigation pending
++Status: resolved
+ 
+ ## Impact
+ 
+-Complete after diagnosing the fixture.
++- One temporary persistence rejection permanently broke the projector: every
++  later `project` call for any trade rejected with the same original error.
++- All trades shared one global queue, so a slow or stalled persistence call for
++  one trade blocked unrelated trades.
++- State was committed to the in-memory map before `applyToStore` succeeded, so
++  a failed persist still mutated the snapshot, leaving the store and the
++  projector inconsistent.
++- No version, ordering, terminal-state, or payload validation existed, so
++  gaps, duplicates, post-cancel events, and malformed events were silently
++  applied.
+ 
+ ## Root cause
+ 
+-Complete after diagnosing the fixture.
++Three defects in `createEventProjector`:
++
++1. **Poisoned chain.** `pending = pending.then(...)` reused the rejected
++   promise as the tail of the queue. Once any handler threw, every subsequent
++   `.then` short-circuited with the old rejection forever.
++2. **Global serialization.** A single `pending` promise queued all trades
++   together instead of maintaining one queue per `tradeId`.
++3. **Commit before persist.** `states.set(...)` ran before `await
++   applyToStore(...)`, so a persistence failure still changed observable
++   state; there was also no validation of versions, event types, payload
++   fields, or terminal (cancelled) status.
+ 
+ ## Fix
+ 
+-Complete after implementing the repair.
++- Replaced the global queue with a per-trade queue map. Each trade's chain is
++  extended via `previous.catch(() => {}).then(...)` so a rejected event is
++  surfaced to its caller but never poisons the queue tail, and the stored tail
++  is itself swallowed (`run.catch(() => {})`).
++- Moved the `states.set` commit to after `applyToStore` resolves; a rejection
++  leaves state untouched.
++- Added full validation: first event must be `CREATED` at version 1; later
++  events must be exactly `current.version + 1`; duplicates/stale versions
++  return the current snapshot without persisting; gaps, repeated `CREATED`,
++  and events after `CANCELLED` reject with `RangeError`; malformed events
++  (bad type, non-integer version, invalid `notional`/`owner`) reject with
++  `TypeError` before touching the queue or the store.
++- Isolation: the incoming event is `structuredClone`d before queueing, and all
++  states passed to the store callback, returned from `project`, or read via
++  `getSnapshot` are deep copies.
+ 
+ ## Regression coverage
+ 
+-Complete after adding tests.
++`student-tests.mjs` adds five tests:
++
++1. Different trades progress independently when one trade's persistence is
++   stalled (per-trade concurrency).
++2. Duplicate/stale versions return the snapshot without re-persisting.
++3. Version gaps, invalid first events, and events after `CANCELLED` reject
++   without changing state.
++4. Malformed events (`null`, unsupported type, negative/infinite notional,
++   empty owner, non-integer version) reject with `TypeError` and never reach
++   the store.
++5. Mutating inputs, callback arguments, returned states, or snapshots does not
++   affect internal state.
++
++The committed test file additionally covers per-trade serialization and
++recovery after a temporary persistence rejection.
+ 
+ ## Remaining risk
+ 
+-Complete after verification.
++- State is in-memory only; a process restart loses projections and there is no
++  rehydration from the store.
++- `applyToStore` and the state commit are not atomic: if the process dies
++  after persist but before commit, a replay of the same event would be
++  persisted twice (the store must be idempotent on `(tradeId, version)`).
++- Events must be structured-cloneable; exotic payloads (functions, proxies)
++  are rejected with `TypeError` by design.
++- Per-trade queue entries are never garbage-collected, so a very large number
++  of distinct trade IDs grows the maps unboundedly.
+diff --git a/benchmark/fixtures/T10-event-projector/event-projector.mjs b/benchmark/fixtures/T10-event-projector/event-projector.mjs
+index d9af188..a56d35f 100644
+--- a/benchmark/fixtures/T10-event-projector/event-projector.mjs
++++ b/benchmark/fixtures/T10-event-projector/event-projector.mjs
+@@ -1,7 +1,45 @@
++const SUPPORTED_TYPES = new Set(["CREATED", "AMENDED", "CANCELLED"]);
++
+ function copyState(state) {
+   return state ? structuredClone(state) : null;
+ }
+ 
++function isValidNotional(value) {
++  return typeof value === "number" && Number.isFinite(value) && value > 0;
++}
++
++function isValidOwner(value) {
++  return typeof value === "string" && value.length > 0;
++}
++
++function validateEvent(event) {
++  if (event === null || typeof event !== "object") {
++    throw new TypeError("event must be an object");
++  }
++  if (typeof event.tradeId !== "string" || event.tradeId.length === 0) {
++    throw new TypeError("event.tradeId must be a non-empty string");
++  }
++  if (!Number.isInteger(event.version) || event.version < 1) {
++    throw new TypeError("event.version must be a positive integer");
++  }
++  if (!SUPPORTED_TYPES.has(event.type)) {
++    throw new TypeError(`unsupported event type: ${String(event.type)}`);
++  }
++  if (event.type === "CREATED" || event.type === "AMENDED") {
++    if (event.payload === null || typeof event.payload !== "object") {
++      throw new TypeError("event.payload must be an object");
++    }
++  }
++  if (event.type === "CREATED") {
++    if (!isValidNotional(event.payload.notional)) {
++      throw new TypeError("CREATED requires a positive finite notional");
++    }
++    if (!isValidOwner(event.payload.owner)) {
++      throw new TypeError("CREATED requires a non-empty owner");
++    }
++  }
++}
++
+ function reduceEvent(previous, event) {
+   if (event.type === "CREATED") {
+     return {
+@@ -13,12 +51,23 @@ function reduceEvent(previous, event) {
+     };
+   }
+   if (event.type === "AMENDED") {
+-    return { ...previous, ...event.payload, version: event.version };
++    const next = { ...previous, version: event.version };
++    if ("notional" in event.payload) {
++      if (!isValidNotional(event.payload.notional)) {
++        throw new TypeError("AMENDED notional must be positive and finite");
++      }
++      next.notional = event.payload.notional;
++    }
++    if ("owner" in event.payload) {
++      if (!isValidOwner(event.payload.owner)) {
++        throw new TypeError("AMENDED owner must be a non-empty string");
++      }
++      next.owner = event.payload.owner;
++    }
++    return next;
+   }
+-  if (event.type === "CANCELLED") {
+-    return { ...previous, version: event.version, status: "cancelled" };
+-  }
+-  throw new TypeError(`unsupported event type: ${event.type}`);
++  // CANCELLED
++  return { ...previous, version: event.version, status: "cancelled" };
+ }
+ 
+ export function createEventProjector(applyToStore) {
+@@ -27,16 +76,61 @@ export function createEventProjector(applyToStore) {
+   }
+ 
+   const states = new Map();
+-  let pending = Promise.resolve();
+-
+-  async function project(event) {
+-    pending = pending.then(async () => {
+-      const next = reduceEvent(states.get(event.tradeId), event);
+-      states.set(event.tradeId, next);
+-      await applyToStore(event.tradeId, copyState(next), structuredClone(event));
+-      return copyState(next);
+-    });
+-    return pending;
++  const queues = new Map();
++
++  async function handle(event) {
++    const current = states.get(event.tradeId);
++
++    if (!current) {
++      if (event.type !== "CREATED" || event.version !== 1) {
++        throw new RangeError(
++          "first event for a trade must be CREATED at version 1",
++        );
++      }
++    } else {
++      if (event.version <= current.version) {
++        // Duplicate or stale event: return current snapshot, do not persist.
++        return copyState(current);
++      }
++      if (current.status === "cancelled") {
++        throw new RangeError("trade is cancelled and cannot accept new events");
++      }
++      if (event.version !== current.version + 1) {
++        throw new RangeError(
++          `version gap: expected ${current.version + 1}, got ${event.version}`,
++        );
++      }
++      if (event.type === "CREATED") {
++        throw new RangeError("CREATED is only valid as the first event");
++      }
++    }
++
++    const next = reduceEvent(current, event);
++    // Persist first; commit only after applyToStore succeeds.
++    await applyToStore(event.tradeId, copyState(next), structuredClone(event));
++    states.set(event.tradeId, next);
++    return copyState(next);
++  }
++
++  async function project(rawEvent) {
++    // Validate before queueing, then take a defensive copy so later caller
++    // mutation cannot affect processing.
++    validateEvent(rawEvent);
++    let event;
++    try {
++      event = structuredClone(rawEvent);
++    } catch {
++      throw new TypeError("event must be structured-cloneable");
++    }
++
++    const previous = queues.get(event.tradeId) ?? Promise.resolve();
++    const run = previous.catch(() => {}).then(() => handle(event));
++    // Keep the per-trade queue alive even when this event fails.
++    queues.set(
++      event.tradeId,
++      run.catch(() => {}),
++    );
++    return run;
+   }
+ 
+   function getSnapshot(tradeId) {
+diff --git a/benchmark/fixtures/T10-event-projector/student-tests.mjs b/benchmark/fixtures/T10-event-projector/student-tests.mjs
+index 4571e60..f02aa8c 100644
+--- a/benchmark/fixtures/T10-event-projector/student-tests.mjs
++++ b/benchmark/fixtures/T10-event-projector/student-tests.mjs
+@@ -1,7 +1,177 @@
+-// Replace this placeholder with at least four meaningful node:test cases.
+ import assert from "node:assert/strict";
+ import test from "node:test";
+ 
+-test("replace this placeholder with projector regression tests", () => {
+-  assert.fail("Add at least four meaningful tests");
++import { createEventProjector } from "./event-projector.mjs";
++
++const created = (tradeId = "trade-1", payload = {}) => ({
++  tradeId,
++  version: 1,
++  type: "CREATED",
++  payload: { notional: 100, owner: "desk-a", ...payload },
++});
++
++test("different trades make progress independently of a stalled trade", async () => {
++  let releaseA;
++  const gateA = new Promise((resolve) => {
++    releaseA = resolve;
++  });
++  const order = [];
++  const projector = createEventProjector(async (tradeId) => {
++    if (tradeId === "trade-a") {
++      await gateA;
++    }
++    order.push(tradeId);
++  });
++
++  const slow = projector.project(created("trade-a"));
++  const fast = projector.project(created("trade-b"));
++
++  // trade-b must persist even though trade-a is still blocked.
++  assert.equal((await fast).tradeId, "trade-b");
++  assert.deepEqual(order, ["trade-b"]);
++
++  releaseA();
++  await slow;
++  assert.deepEqual(order, ["trade-b", "trade-a"]);
++});
++
++test("duplicate or stale versions return the snapshot without persisting", async () => {
++  const calls = [];
++  const projector = createEventProjector(async (_tradeId, state) => {
++    calls.push(state.version);
++  });
++
++  await projector.project(created());
++  await projector.project({
++    tradeId: "trade-1",
++    version: 2,
++    type: "AMENDED",
++    payload: { notional: 200 },
++  });
++
++  const duplicate = await projector.project({
++    tradeId: "trade-1",
++    version: 2,
++    type: "AMENDED",
++    payload: { notional: 999 },
++  });
++  const stale = await projector.project(created());
++
++  assert.deepEqual(calls, [1, 2]);
++  assert.equal(duplicate.version, 2);
++  assert.equal(duplicate.notional, 200);
++  assert.equal(stale.version, 2);
++});
++
++test("version gaps, bad first events, and terminal trades reject without state change", async () => {
++  const projector = createEventProjector(async () => {});
++
++  // Invalid first event: not CREATED / not version 1.
++  await assert.rejects(
++    projector.project({
++      tradeId: "trade-x",
++      version: 1,
++      type: "AMENDED",
++      payload: { notional: 5 },
++    }),
++    RangeError,
++  );
++  assert.equal(projector.getSnapshot("trade-x"), null);
++
++  await projector.project(created());
++
++  // Version gap.
++  await assert.rejects(
++    projector.project({ tradeId: "trade-1", version: 3, type: "CANCELLED" }),
++    RangeError,
++  );
++  assert.equal(projector.getSnapshot("trade-1").version, 1);
++
++  // Cancel, then a later new version must reject.
++  await projector.project({ tradeId: "trade-1", version: 2, type: "CANCELLED" });
++  await assert.rejects(
++    projector.project({
++      tradeId: "trade-1",
++      version: 3,
++      type: "AMENDED",
++      payload: { owner: "desk-b" },
++    }),
++    RangeError,
++  );
++  assert.deepEqual(projector.getSnapshot("trade-1"), {
++    tradeId: "trade-1",
++    version: 2,
++    status: "cancelled",
++    notional: 100,
++    owner: "desk-a",
++  });
++});
++
++test("malformed events reject with TypeError and never reach the store", async () => {
++  let calls = 0;
++  const projector = createEventProjector(async () => {
++    calls += 1;
++  });
++
++  await assert.rejects(projector.project(null), TypeError);
++  await assert.rejects(
++    projector.project({ tradeId: "t", version: 1, type: "SPLIT", payload: {} }),
++    TypeError,
++  );
++  await assert.rejects(
++    projector.project(created("t", { notional: -5 })),
++    TypeError,
++  );
++  await assert.rejects(
++    projector.project(created("t", { owner: "" })),
++    TypeError,
++  );
++  await assert.rejects(
++    projector.project({ tradeId: "t", version: 1.5, type: "CREATED", payload: { notional: 1, owner: "o" } }),
++    TypeError,
++  );
++
++  await projector.project(created("t"));
++  await assert.rejects(
++    projector.project({
++      tradeId: "t",
++      version: 2,
++      type: "AMENDED",
++      payload: { notional: Infinity },
++    }),
++    TypeError,
++  );
++  assert.equal(projector.getSnapshot("t").notional, 100);
++  assert.equal(calls, 1);
++});
++
++test("inputs, callback values, and snapshots are isolated from internal state", async () => {
++  let seenState;
++  let seenEvent;
++  const projector = createEventProjector(async (_tradeId, state, event) => {
++    seenState = state;
++    seenEvent = event;
++  });
++
++  const input = created();
++  const result = await projector.project(input);
++
++  // Mutating the input after the call must not affect stored state.
++  input.payload.notional = -1;
++  input.version = 99;
++
++  // Mutating callback values and returned/snapshot values must not leak in.
++  seenState.owner = "hacker";
++  seenEvent.type = "CANCELLED";
++  result.status = "cancelled";
++  const snapshot = projector.getSnapshot("trade-1");
++  snapshot.notional = 0;
++
++  assert.deepEqual(projector.getSnapshot("trade-1"), {
++    tradeId: "trade-1",
++    version: 1,
++    status: "active",
++    notional: 100,
++    owner: "desk-a",
++  });
+ });

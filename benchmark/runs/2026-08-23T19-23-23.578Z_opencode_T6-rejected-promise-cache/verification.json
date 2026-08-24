@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "id": "visible-1",
+      "kind": "visible",
+      "command": "node --test benchmark/fixtures/T6-rejected-promise-cache/config-cache.test.mjs benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs",
+      "elapsed_ms": 120,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ caches successful loads and returns isolated copies (1.116959ms)\n✔ coalesces concurrent cache misses for one tenant (0.106042ms)\n✔ retries the origin after a transient load failure (0.282125ms)\n✔ the API recovers on the request after a transient origin failure (0.19775ms)\n✔ keeps tenants separate and supports targeted invalidation (0.11975ms)\n✔ a rejected load is removed so the next read retries the origin (1.363792ms)\n✔ a late failure for a replaced entry must not evict the replacement (0.131125ms)\n✔ callers waiting on a failed load all observe the same failure (0.079709ms)\n✔ an invalid origin result must not poison future reads (0.092916ms)\n✔ successful entries are not evicted by unrelated failures (0.097208ms)\n✔ the API contract is preserved after an origin recovery (0.182ms)\nℹ tests 11\nℹ suites 0\nℹ pass 11\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 65.4555\n",
+      "stderr": ""
+    },
+    {
+      "id": "private-1",
+      "kind": "private",
+      "command": "[private suite: T6-rejected-promise-cache]",
+      "elapsed_ms": 115,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ evicts a rejected load and retries successfully (1.25175ms)\n✔ coalesces concurrent failures but allows the next read to retry (0.112958ms)\n✔ does not let a late failure delete an overlapping replacement (0.106084ms)\n✔ invalid origin data does not poison the tenant cache (0.093916ms)\n✔ a failed tenant does not disturb a successful tenant (0.430792ms)\n✔ keeps successful caching, copy isolation, and invalidation (0.098292ms)\n✔ preserves API status and headers while recovering (0.224667ms)\n✔ student tests contain meaningful regression coverage (2.146458ms)\nℹ tests 8\nℹ suites 0\nℹ pass 8\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 66.6665\n",
+      "stderr": ""
+    }
+  ],
+  "infrastructure_errors": []
+}

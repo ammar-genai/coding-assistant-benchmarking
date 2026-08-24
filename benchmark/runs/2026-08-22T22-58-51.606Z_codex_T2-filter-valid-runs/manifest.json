@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-22T22-58-51.606Z_codex_T2-filter-valid-runs",
+  "task": {
+    "id": "T2-filter-valid-runs",
+    "version": "1.0.0"
+  },
+  "assistant": "codex",
+  "assistant_version": "codex-cli 0.146.0-alpha.3.1",
+  "model": "ollama/deepseek-v4-flash:cloud",
+  "access_path": "ollama-cloud",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-JnYaAV/checkout",
+    "git_commit": "4a335e72fb728c7c7b21f561ea653daa354ffb3d",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "072917648e5a0d8841bb7bb38f8b68f556753be65d433084dd79189c316cca93",
+  "command": [
+    "codex",
+    "exec",
+    "--ephemeral",
+    "--json",
+    "--ignore-user-config",
+    "--sandbox",
+    "workspace-write",
+    "--cd",
+    "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-JnYaAV/checkout",
+    "--oss",
+    "--local-provider",
+    "ollama",
+    "--model",
+    "deepseek-v4-flash:cloud",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-22T22:58:51.642Z",
+  "settings": {
+    "task_mode": "workspace-write",
+    "max_wall_time_seconds": 600,
+    "max_human_interventions": 0
+  }
+}

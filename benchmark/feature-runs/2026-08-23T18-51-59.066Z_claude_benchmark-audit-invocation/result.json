@@ -1,0 +1,74 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T18-51-59.066Z_claude_benchmark-audit-invocation",
+  "status": "complete",
+  "acceptance_status": "pass",
+  "started_at": "2026-08-23T18:51:59.066Z",
+  "finished_at": "2026-08-23T18:52:23.264Z",
+  "elapsed_ms": 24198,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "automatic_checks": {
+    "process_complete": true,
+    "workspace_unchanged": true,
+    "get_task_contract_once": true,
+    "summarize_run_once": true,
+    "required_tool_calls_succeeded": true,
+    "no_unexpected_tools": true,
+    "four_required_headings": true
+  },
+  "tool_calls": [
+    "Skill",
+    "mcp__benchmark-audit__get_task_contract",
+    "mcp__benchmark-audit__summarize_run"
+  ],
+  "tool_failures": [],
+  "required_tool_call_counts": {
+    "get_task_contract": 1,
+    "summarize_run": 1
+  },
+  "required_tool_calls_succeeded": true,
+  "unexpected_tool_calls": [],
+  "final_response": "## Verdict\n\n**Pass.** Acceptance status is `pass`, both prompt-integrity flags are true, all changed paths are inside the allowed set, and every visible and private check passed with no infrastructure errors or timeout.\n\n## Evidence\n\n- **Baseline commit:** `303270e525acb8f9b189303ef52c4c08cbb0d946`, with `dirty_at_start: false` — the run started from a clean named repository state.\n- **Prompt match flags:** `prompt_matches_manifest: true` and `prompt_matches_current_task: true`. The run's `prompt_sha256` (`9717e7ec…e24e3a1`) is identical to the frozen contract's `prompt_sha256` for task version 1.0.0, so the prompt was not altered between contract and run.\n- **Changed paths (3):** `benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md`, `config-cache.mjs`, and `student-tests.mjs`. All three are in the contract's four-file allowed list; the fourth allowed file, `config-api.mjs`, was left untouched, which is consistent with the \"narrow, safe repair\" criterion rather than a gap.\n- **Out-of-scope paths:** none (`out_of_scope_paths: []`), so the `allowed-scope` acceptance check is satisfied and no committed evidence or harness file was modified.\n- **Visible verification:** 1 total, 1 passed, 0 failed, 0 timed out.\n- **Private verification:** 1 total, 1 passed, 0 failed, 0 timed out. `infrastructure_errors` is empty and `notes` is empty.\n- **Artifacts:** all eight expected artifacts present — `manifest.json`, `result.json`, `changes.json`, `verification.json`, `changes.patch`, `stdout.log`, `stderr.log`, `prompt.md`.\n\n## Telemetry\n\n- **Assistant:** codex (`codex-cli 0.146.0-alpha.3.1`)\n- **Model:** `gpt-5.6-sol`\n- **Access path:** subscription\n- **Elapsed time:** 129,209 ms (~2 min 9 s), `timed_out: false`, `human_intervention_limit: 0`\n\nComparable token and metered-cost totals are not supplied by these MCP results. Because the access path is a subscription rather than metered API billing, any cost figure would also need a separate, stated conversion basis before it could be compared across lanes.\n\n## Limitations\n\n- I did not inspect raw prompts, transcripts, patches, logs, private tests, or the incident note itself. The skill's `workflow.md` was also not read, since this pilot restricted me to the two MCP tools.\n- Verification is reported only as pass/fail counts (1 visible suite, 1 private suite). These results confirm the suites passed but carry no per-assertion detail, so I cannot independently confirm which private checks ran.\n- The rubric's qualitative criteria are **not** supported by this evidence: `incident-analysis` (10 pts), `regression-test-quality` (10 pts, requires at least three meaningful assistant-authored tests), `narrow-safe-repair` (10 pts), and `final-report` (5 pts) all require reading the diff, the tests, the incident note, and the final response. The `incident-report` acceptance check likewise has no command and cannot be confirmed from these results. This verdict therefore covers mechanical acceptance, prompt integrity, and scope discipline only — it is not a rubric score.\n- Forbidden actions such as network use or dependency installation are not represented as fields in either result; absence of out-of-scope paths is evidence about the workspace, not a direct check on those behaviors.",
+  "required_headings_present": [
+    "Verdict",
+    "Evidence",
+    "Telemetry",
+    "Limitations"
+  ],
+  "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 9402,
+    "cache_read_input_tokens": 18920,
+    "output_tokens": 1733,
+    "output_tokens_details": {
+      "thinking_tokens": 208
+    },
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 9402,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "not_available",
+    "iterations": [
+      {
+        "input_tokens": 2,
+        "output_tokens": 1364,
+        "cache_read_input_tokens": 8832,
+        "cache_creation_input_tokens": 2148,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 2148
+        },
+        "type": "message"
+      }
+    ],
+    "speed": "standard"
+  },
+  "subscription_cli_telemetry_usd": 0.14809499999999998
+}

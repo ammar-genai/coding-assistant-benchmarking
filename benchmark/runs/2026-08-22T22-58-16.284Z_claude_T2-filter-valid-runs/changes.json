@@ -1,0 +1,6 @@
+{
+  "changed_paths": [
+    "benchmark/fixtures/T2-run-filter/select-comparison-runs.mjs"
+  ],
+  "out_of_scope_paths": []
+}

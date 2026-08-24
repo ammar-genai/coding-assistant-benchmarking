@@ -46,7 +46,7 @@
   right: 0;
   width: 62%;
   height: 100%;
-  background-image: linear-gradient(90deg, #123b48 0%, rgba(18, 59, 72, 0.08) 62%), url("/trade-capture-structure.png");
+  background-image: linear-gradient(90deg, #123b48 0%, rgba(18, 59, 72, 0.08) 62%), var(--tc-hero-image);
   background-position: center right;
   background-size: cover;
   content: "";

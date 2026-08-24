@@ -1,0 +1,84 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T17-55-02.091Z_distributed_T5-review-queue",
+  "task": {
+    "id": "T5-review-queue",
+    "version": "1.0.0"
+  },
+  "baseline_git_commit": "d53fbaba03ce3fdb363453aec50e305fa539a521",
+  "prompt_sha256": "1c562b4223cd4fb632c1856e40e446fee758281c4cb08822324bd117a59d6f22",
+  "started_at": "2026-08-23T17:55:02.091Z",
+  "assistants": {
+    "codex": {
+      "version": "codex-cli 0.146.0-alpha.3.1",
+      "model": "gpt-5.6-sol",
+      "access_path": "subscription"
+    },
+    "claude": {
+      "version": "2.1.241 (Claude Code)",
+      "model": "claude-opus-5",
+      "access_path": "subscription"
+    },
+    "opencode": {
+      "version": "1.18.21",
+      "model": "openrouter/moonshotai/kimi-k3",
+      "access_path": "api"
+    }
+  },
+  "policy": {
+    "max_human_interventions": 0,
+    "preserve_failures": true,
+    "private_tests_visible_to_assistants": false,
+    "allowed_paths": [
+      "benchmark/fixtures/T5-review-queue/review-store.mjs",
+      "benchmark/fixtures/T5-review-queue/review-api.mjs",
+      "benchmark/fixtures/T5-review-queue/review-page.mjs",
+      "benchmark/fixtures/T5-review-queue/student-tests.mjs",
+      "benchmark/fixtures/T5-review-queue/README.md"
+    ],
+    "stage_order": [
+      {
+        "order": 1,
+        "assistant": "codex",
+        "model": "gpt-5.6-sol",
+        "role": "read-only lead planner",
+        "timeout_seconds": 600
+      },
+      {
+        "order": 2,
+        "assistant": "claude",
+        "model": "claude-opus-5",
+        "role": "read-only plan reviewer",
+        "timeout_seconds": 900
+      },
+      {
+        "order": 3,
+        "assistant": "opencode",
+        "model": "openrouter/moonshotai/kimi-k3",
+        "role": "implementation worker",
+        "timeout_seconds": 1200
+      },
+      {
+        "order": 4,
+        "assistant": "codex",
+        "model": "gpt-5.6-sol",
+        "role": "integration lead",
+        "timeout_seconds": 900
+      },
+      {
+        "order": 5,
+        "assistant": "claude",
+        "model": "claude-opus-5",
+        "role": "read-only final reviewer",
+        "timeout_seconds": 900
+      },
+      {
+        "order": 6,
+        "assistant": "private harness",
+        "model": null,
+        "role": "visible and private grader",
+        "timeout_seconds": 120
+      }
+    ]
+  }
+}

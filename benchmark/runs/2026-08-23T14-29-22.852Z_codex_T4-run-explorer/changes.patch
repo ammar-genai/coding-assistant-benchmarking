@@ -1,0 +1,744 @@
+diff --git a/benchmark/fixtures/T4-run-explorer/index.html b/benchmark/fixtures/T4-run-explorer/index.html
+index a19002a..e6479e3 100644
+--- a/benchmark/fixtures/T4-run-explorer/index.html
++++ b/benchmark/fixtures/T4-run-explorer/index.html
+@@ -9,9 +9,73 @@
+   </head>
+   <body>
+     <main>
+-      <p>Benchmark evidence</p>
++      <p class="eyebrow">Benchmark evidence</p>
+       <h1>Run explorer</h1>
+-      <p>Build the interactive comparison interface described in the task.</p>
++      <p class="explainer">
++        These are sample benchmark runs used to develop the comparison
++        interface. They are not final study results.
++      </p>
++
++      <section class="controls" aria-label="Filter and sort runs">
++        <div class="filters">
++          <div class="field">
++            <label for="assistant-filter">Assistant</label>
++            <select id="assistant-filter">
++              <option value="all">All assistants</option>
++              <option value="Codex">Codex</option>
++              <option value="Claude Code">Claude Code</option>
++              <option value="OpenCode">OpenCode</option>
++            </select>
++          </div>
++
++          <div class="field">
++            <label for="outcome-filter">Outcome</label>
++            <select id="outcome-filter">
++              <option value="all">All outcomes</option>
++              <option value="pass">Pass</option>
++              <option value="fail">Fail</option>
++            </select>
++          </div>
++
++          <div class="field">
++            <label for="sort-order">Sort by</label>
++            <select id="sort-order">
++              <option value="score-desc">Score (high to low)</option>
++              <option value="time-asc">Time (fastest)</option>
++              <option value="cost-asc">Cost (known first)</option>
++            </select>
++          </div>
++        </div>
++
++        <button id="reset-filters" type="button">Reset filters</button>
++      </section>
++
++      <section class="summary" aria-label="Summary statistics">
++        <div class="summary-item">
++          <span id="visible-count">0</span>
++          <span class="summary-label">visible runs</span>
++        </div>
++        <div class="summary-item">
++          <span id="pass-rate">0%</span>
++          <span class="summary-label">pass rate</span>
++        </div>
++        <div class="summary-item">
++          <span id="median-time">0.0s</span>
++          <span class="summary-label">median time</span>
++        </div>
++        <div class="summary-item">
++          <span id="known-cost">$0.00</span>
++          <span class="summary-label">known cost</span>
++          <small class="summary-note">Subscription costs excluded</small>
++        </div>
++      </section>
++
++      <p id="status" class="status" aria-live="polite">Loading runs…</p>
++
++      <section aria-label="Results">
++        <ol id="results-list"></ol>
++        <p id="empty-state" hidden>No runs match the current filters.</p>
++      </section>
+     </main>
+   </body>
+ </html>
+diff --git a/benchmark/fixtures/T4-run-explorer/run-explorer.mjs b/benchmark/fixtures/T4-run-explorer/run-explorer.mjs
+index 3a98d63..7f6d033 100644
+--- a/benchmark/fixtures/T4-run-explorer/run-explorer.mjs
++++ b/benchmark/fixtures/T4-run-explorer/run-explorer.mjs
+@@ -1,3 +1,5 @@
++// Pure functions and browser UI for the benchmark run explorer.
++
+ export const sampleRuns = Object.freeze([
+   Object.freeze({
+     id: "cx-sol-01",
+@@ -55,16 +57,222 @@ export const sampleRuns = Object.freeze([
+   }),
+ ]);
+ 
+-export function filterRuns() {
+-  throw new Error("Not implemented");
++export function filterRuns(runs, filters = {}) {
++  if (!Array.isArray(runs)) {
++    throw new TypeError("runs must be an array");
++  }
++
++  const { assistant = "all", outcome = "all" } = filters;
++  return runs.filter((run) => {
++    if (assistant !== "all" && run.assistant !== assistant) return false;
++    if (outcome !== "all" && run.outcome !== outcome) return false;
++    return true;
++  });
++}
++
++export function sortRuns(runs, order) {
++  if (!Array.isArray(runs)) {
++    throw new TypeError("runs must be an array");
++  }
++
++  const sorted = [...runs];
++
++  if (order === "score-desc") {
++    sorted.sort((a, b) => {
++      if (b.score !== a.score) return b.score - a.score;
++      if (a.elapsedSeconds !== b.elapsedSeconds)
++        return a.elapsedSeconds - b.elapsedSeconds;
++      return a.id.localeCompare(b.id);
++    });
++  } else if (order === "time-asc") {
++    sorted.sort((a, b) => {
++      if (a.elapsedSeconds !== b.elapsedSeconds)
++        return a.elapsedSeconds - b.elapsedSeconds;
++      if (b.score !== a.score) return b.score - a.score;
++      return a.id.localeCompare(b.id);
++    });
++  } else if (order === "cost-asc") {
++    sorted.sort((a, b) => {
++      const aKnown = Number.isFinite(a.costUsd);
++      const bKnown = Number.isFinite(b.costUsd);
++      if (aKnown !== bKnown) return bKnown ? 1 : -1;
++      if (aKnown && bKnown && a.costUsd !== b.costUsd)
++        return a.costUsd - b.costUsd;
++      if (b.score !== a.score) return b.score - a.score;
++      return a.id.localeCompare(b.id);
++    });
++  } else {
++    throw new TypeError(`unsupported order: ${order}`);
++  }
++
++  return sorted;
++}
++
++export function summarizeRuns(runs) {
++  if (!Array.isArray(runs)) {
++    throw new TypeError("runs must be an array");
++  }
++
++  const visibleCount = runs.length;
++  if (visibleCount === 0) {
++    return {
++      visibleCount: 0,
++      passRatePct: 0,
++      medianElapsedSeconds: 0,
++      totalCostUsd: 0,
++      costedRunCount: 0,
++    };
++  }
++
++  const passCount = runs.filter((run) => run.outcome === "pass").length;
++  const passRatePct = Math.round((passCount / visibleCount) * 1000) / 10;
++
++  const elapsedSorted = runs
++    .map((run) => run.elapsedSeconds)
++    .sort((a, b) => a - b);
++  const mid = Math.floor(elapsedSorted.length / 2);
++  const medianElapsedSeconds =
++    elapsedSorted.length % 2 === 1
++      ? elapsedSorted[mid]
++      : (elapsedSorted[mid - 1] + elapsedSorted[mid]) / 2;
++
++  let totalCents = 0;
++  let costedRunCount = 0;
++  for (const run of runs) {
++    if (Number.isFinite(run.costUsd)) {
++      totalCents += Math.round(run.costUsd * 100);
++      costedRunCount += 1;
++    }
++  }
++  const totalCostUsd = totalCents / 100;
++
++  return {
++    visibleCount,
++    passRatePct,
++    medianElapsedSeconds,
++    totalCostUsd,
++    costedRunCount,
++  };
++}
++
++function formatDuration(seconds) {
++  return `${seconds.toFixed(1)}s`;
++}
++
++function formatCurrency(value) {
++  return `$${value.toFixed(2)}`;
+ }
+ 
+-export function sortRuns() {
+-  throw new Error("Not implemented");
++function renderCard(run) {
++  const li = document.createElement("li");
++  li.className = "run-card";
++
++  const header = document.createElement("div");
++  header.className = "run-header";
++
++  const idSpan = document.createElement("span");
++  idSpan.className = "run-id";
++  idSpan.textContent = run.id;
++
++  const outcomeSpan = document.createElement("span");
++  outcomeSpan.className = `run-outcome run-outcome--${run.outcome}`;
++  outcomeSpan.textContent = run.outcome === "pass" ? "Pass" : "Fail";
++
++  header.append(idSpan, outcomeSpan);
++
++  const title = document.createElement("h3");
++  title.textContent = `${run.assistant} · ${run.model}`;
++
++  const metrics = document.createElement("dl");
++  metrics.className = "run-metrics";
++
++  const scoreDt = document.createElement("dt");
++  scoreDt.textContent = "Score";
++  const scoreDd = document.createElement("dd");
++  scoreDd.textContent = String(run.score);
++
++  const timeDt = document.createElement("dt");
++  timeDt.textContent = "Time";
++  const timeDd = document.createElement("dd");
++  timeDd.textContent = formatDuration(run.elapsedSeconds);
++
++  const costDt = document.createElement("dt");
++  costDt.textContent = "Cost";
++  const costDd = document.createElement("dd");
++  costDd.textContent = Number.isFinite(run.costUsd)
++    ? formatCurrency(run.costUsd)
++    : "Subscription";
++
++  metrics.append(scoreDt, scoreDd, timeDt, timeDd, costDt, costDd);
++  li.append(header, title, metrics);
++
++  return li;
+ }
+ 
+-export function summarizeRuns() {
+-  throw new Error("Not implemented");
++function initExplorer() {
++  const assistantFilter = document.getElementById("assistant-filter");
++  const outcomeFilter = document.getElementById("outcome-filter");
++  const sortOrder = document.getElementById("sort-order");
++  const resetButton = document.getElementById("reset-filters");
++  const resultsList = document.getElementById("results-list");
++  const emptyState = document.getElementById("empty-state");
++  const status = document.getElementById("status");
++  const visibleCountEl = document.getElementById("visible-count");
++  const passRateEl = document.getElementById("pass-rate");
++  const medianTimeEl = document.getElementById("median-time");
++  const knownCostEl = document.getElementById("known-cost");
++
++  function update() {
++    const filters = {
++      assistant: assistantFilter.value,
++      outcome: outcomeFilter.value,
++    };
++    const order = sortOrder.value;
++
++    const filtered = filterRuns(sampleRuns, filters);
++    const sorted = sortRuns(filtered, order);
++    const summary = summarizeRuns(sorted);
++
++    visibleCountEl.textContent = String(summary.visibleCount);
++    passRateEl.textContent = `${summary.passRatePct.toFixed(1)}%`;
++    medianTimeEl.textContent = formatDuration(summary.medianElapsedSeconds);
++    knownCostEl.textContent = formatCurrency(summary.totalCostUsd);
++    knownCostEl.title = `${summary.costedRunCount} run${
++      summary.costedRunCount === 1 ? "" : "s"
++    } with known cost`;
++
++    resultsList.replaceChildren();
++    if (sorted.length === 0) {
++      emptyState.hidden = false;
++      status.textContent = "No runs match the current filters.";
++    } else {
++      emptyState.hidden = true;
++      status.textContent = `${sorted.length} run${
++        sorted.length === 1 ? "" : "s"
++      } visible.`;
++      for (const run of sorted) {
++        resultsList.appendChild(renderCard(run));
++      }
++    }
++  }
++
++  assistantFilter.addEventListener("change", update);
++  outcomeFilter.addEventListener("change", update);
++  sortOrder.addEventListener("change", update);
++  resetButton.addEventListener("click", () => {
++    assistantFilter.value = "all";
++    outcomeFilter.value = "all";
++    sortOrder.value = "score-desc";
++    update();
++  });
++
++  update();
+ }
+ 
+-// Implement browser rendering and interactions without external dependencies.
++if (typeof document !== "undefined") {
++  if (document.readyState === "loading") {
++    document.addEventListener("DOMContentLoaded", initExplorer);
++  } else {
++    initExplorer();
++  }
++}
+diff --git a/benchmark/fixtures/T4-run-explorer/student-tests.mjs b/benchmark/fixtures/T4-run-explorer/student-tests.mjs
+index 03ff864..c8fcd30 100644
+--- a/benchmark/fixtures/T4-run-explorer/student-tests.mjs
++++ b/benchmark/fixtures/T4-run-explorer/student-tests.mjs
+@@ -1,2 +1,93 @@
+-// Add at least two meaningful node:test cases for the run explorer.
+-// Do not copy or modify the committed run-explorer.test.mjs suite.
++import assert from "node:assert/strict";
++import test from "node:test";
++
++import { filterRuns, sortRuns, summarizeRuns } from "./run-explorer.mjs";
++
++const mixedRuns = Object.freeze([
++  Object.freeze({
++    id: "a",
++    assistant: "Codex",
++    model: "Sol",
++    outcome: "pass",
++    score: 90,
++    elapsedSeconds: 30,
++    costUsd: null,
++  }),
++  Object.freeze({
++    id: "b",
++    assistant: "OpenCode",
++    model: "Kimi",
++    outcome: "fail",
++    score: 80,
++    elapsedSeconds: 20,
++    costUsd: 0.01,
++  }),
++  Object.freeze({
++    id: "c",
++    assistant: "Claude Code",
++    model: "Fable",
++    outcome: "pass",
++    score: 85,
++    elapsedSeconds: 25,
++    costUsd: 0.02,
++  }),
++  Object.freeze({
++    id: "d",
++    assistant: "Codex",
++    model: "Sol",
++    outcome: "fail",
++    score: 70,
++    elapsedSeconds: 15,
++    costUsd: null,
++  }),
++]);
++
++test("sortRuns cost-asc orders known costs before nulls, then score, then id", () => {
++  const result = sortRuns(mixedRuns, "cost-asc");
++  assert.deepEqual(result.map((run) => run.id), ["b", "c", "a", "d"]);
++  assert.notEqual(result, mixedRuns);
++});
++
++test("summarizeRuns avoids floating-point residue in total cost", () => {
++  const result = summarizeRuns([
++    {
++      id: "x",
++      assistant: "Codex",
++      model: "Sol",
++      outcome: "pass",
++      score: 1,
++      elapsedSeconds: 1,
++      costUsd: 0.04,
++    },
++    {
++      id: "y",
++      assistant: "Codex",
++      model: "Sol",
++      outcome: "pass",
++      score: 2,
++      elapsedSeconds: 2,
++      costUsd: 0.02,
++    },
++    {
++      id: "z",
++      assistant: "Codex",
++      model: "Sol",
++      outcome: "pass",
++      score: 3,
++      elapsedSeconds: 3,
++      costUsd: null,
++    },
++  ]);
++  assert.equal(result.totalCostUsd, 0.06);
++  assert.equal(result.costedRunCount, 2);
++});
++
++test("summarizeRuns returns zeros for an empty array", () => {
++  assert.deepEqual(summarizeRuns([]), {
++    visibleCount: 0,
++    passRatePct: 0,
++    medianElapsedSeconds: 0,
++    totalCostUsd: 0,
++    costedRunCount: 0,
++  });
++});
+diff --git a/benchmark/fixtures/T4-run-explorer/styles.css b/benchmark/fixtures/T4-run-explorer/styles.css
+index e44b899..c0151c2 100644
+--- a/benchmark/fixtures/T4-run-explorer/styles.css
++++ b/benchmark/fixtures/T4-run-explorer/styles.css
+@@ -1,14 +1,317 @@
+ :root {
+   color-scheme: light;
+-  font-family: system-ui, sans-serif;
++  --font: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
++  --bg: #f7f8fa;
++  --surface: #ffffff;
++  --text: #1f2328;
++  --text-muted: #59636e;
++  --border: #d1d5da;
++  --accent: #0969da;
++  --accent-hover: #0550ae;
++  --pass: #1a7f37;
++  --pass-bg: #dafbe1;
++  --fail: #cf222e;
++  --fail-bg: #ffebe9;
++  --shadow: 0 1px 3px rgba(31, 35, 40, 0.08);
++}
++
++@media (prefers-color-scheme: dark) {
++  :root {
++    color-scheme: dark;
++    --bg: #0d1117;
++    --surface: #161b22;
++    --text: #e6edf3;
++    --text-muted: #8b949e;
++    --border: #30363d;
++    --accent: #58a6ff;
++    --accent-hover: #79b8ff;
++    --pass: #3fb950;
++    --pass-bg: rgba(46, 160, 67, 0.15);
++    --fail: #f85149;
++    --fail-bg: rgba(248, 81, 73, 0.15);
++    --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
++  }
++}
++
++* {
++  box-sizing: border-box;
+ }
+ 
+ body {
+   margin: 0;
++  font-family: var(--font);
++  background-color: var(--bg);
++  color: var(--text);
++  line-height: 1.5;
+ }
+ 
+ main {
++  max-width: 1100px;
++  margin: 0 auto;
++  padding: 2rem;
++}
++
++.eyebrow {
++  margin: 0 0 0.25rem;
++  font-size: 0.875rem;
++  font-weight: 600;
++  color: var(--accent);
++  text-transform: uppercase;
++  letter-spacing: 0.05em;
++}
++
++h1 {
++  margin: 0 0 0.5rem;
++  font-size: 2rem;
++  line-height: 1.2;
++}
++
++.explainer {
++  margin: 0 0 1.5rem;
++  color: var(--text-muted);
++  max-width: 70ch;
++}
++
++.controls {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 1rem;
++  align-items: flex-end;
++  background: var(--surface);
++  border: 1px solid var(--border);
++  border-radius: 0.75rem;
++  padding: 1rem;
++  margin-bottom: 1.5rem;
++  box-shadow: var(--shadow);
++}
++
++.filters {
++  display: flex;
++  flex-wrap: wrap;
++  gap: 1rem;
++  flex: 1 1 auto;
++}
++
++.field {
++  display: flex;
++  flex-direction: column;
++  gap: 0.25rem;
++  min-width: 180px;
++  flex: 1 1 220px;
++}
++
++label {
++  font-size: 0.875rem;
++  font-weight: 500;
++  color: var(--text-muted);
++}
++
++select {
++  appearance: none;
++  padding: 0.5rem 2rem 0.5rem 0.75rem;
++  border: 1px solid var(--border);
++  border-radius: 0.5rem;
++  background-color: var(--surface);
++  color: var(--text);
++  font: inherit;
++  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%2359636e' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M4 6l4 4 4-4'/%3E%3C/svg%3E");
++  background-repeat: no-repeat;
++  background-position: right 0.5rem center;
++  cursor: pointer;
++}
++
++select:hover {
++  border-color: var(--accent);
++}
++
++select:focus-visible {
++  outline: 2px solid var(--accent);
++  outline-offset: 2px;
++}
++
++button {
++  padding: 0.5rem 1rem;
++  border: 1px solid var(--border);
++  border-radius: 0.5rem;
++  background: var(--surface);
++  color: var(--text);
++  font: inherit;
++  font-weight: 500;
++  cursor: pointer;
++}
++
++button:hover {
++  background: var(--bg);
++  border-color: var(--accent);
++}
++
++button:focus-visible {
++  outline: 2px solid var(--accent);
++  outline-offset: 2px;
++}
++
++.summary {
++  display: grid;
++  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
++  gap: 1rem;
++  margin-bottom: 1.5rem;
++}
++
++.summary-item {
++  background: var(--surface);
++  border: 1px solid var(--border);
++  border-radius: 0.75rem;
++  padding: 1rem;
++  display: flex;
++  flex-direction: column;
++  gap: 0.25rem;
++  box-shadow: var(--shadow);
++}
++
++.summary-item > span:first-child {
++  font-size: 1.5rem;
++  font-weight: 700;
++}
++
++.summary-label {
++  font-size: 0.875rem;
++  color: var(--text-muted);
++}
++
++.summary-note {
++  color: var(--text-muted);
++}
++
++.status {
++  margin: 0 0 1rem;
++  color: var(--text-muted);
++}
++
++#results-list {
++  list-style: none;
++  margin: 0;
++  padding: 0;
++  display: grid;
++  gap: 1rem;
++}
++
++.run-card {
++  background: var(--surface);
++  border: 1px solid var(--border);
++  border-radius: 0.75rem;
++  padding: 1rem;
++  box-shadow: var(--shadow);
++}
++
++.run-card:hover {
++  border-color: var(--accent);
++}
++
++.run-header {
++  display: flex;
++  justify-content: space-between;
++  align-items: center;
++  margin-bottom: 0.75rem;
++  gap: 0.75rem;
++}
++
++.run-id {
++  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
++  font-size: 0.875rem;
++  color: var(--text-muted);
++  word-break: break-all;
++}
++
++.run-outcome {
++  display: inline-flex;
++  align-items: center;
++  padding: 0.25rem 0.75rem;
++  border-radius: 999px;
++  font-size: 0.875rem;
++  font-weight: 600;
++  text-transform: uppercase;
++  letter-spacing: 0.03em;
++  white-space: nowrap;
++}
++
++.run-outcome--pass {
++  background: var(--pass-bg);
++  color: var(--pass);
++}
++
++.run-outcome--fail {
++  background: var(--fail-bg);
++  color: var(--fail);
++}
++
++.run-card h3 {
++  margin: 0 0 0.75rem;
++  font-size: 1.125rem;
++}
++
++.run-metrics {
++  display: grid;
++  grid-template-columns: repeat(3, 1fr);
++  gap: 0.5rem 1rem;
++  margin: 0;
++}
++
++.run-metrics dt {
++  font-size: 0.75rem;
++  text-transform: uppercase;
++  letter-spacing: 0.05em;
++  color: var(--text-muted);
++}
++
++.run-metrics dd {
++  margin: 0;
++  font-size: 1rem;
++  font-weight: 500;
++}
++
++#empty-state {
+   padding: 2rem;
++  text-align: center;
++  color: var(--text-muted);
++  background: var(--surface);
++  border: 1px dashed var(--border);
++  border-radius: 0.75rem;
++}
++
++@media (max-width: 720px) {
++  main {
++    padding: 1rem;
++  }
++
++  .controls {
++    flex-direction: column;
++    align-items: stretch;
++  }
++
++  .filters {
++    flex-direction: column;
++  }
++
++  .field {
++    flex: 1 1 auto;
++    min-width: auto;
++  }
++
++  .run-metrics {
++    grid-template-columns: 1fr;
++  }
++
++  button {
++    width: 100%;
++  }
+ }
+ 
+-/* Implement the responsive run-explorer design. */
++@media (prefers-reduced-motion: reduce) {
++  *,
++  *::before,
++  *::after {
++    animation-duration: 0.01ms !important;
++    animation-iteration-count: 1 !important;
++    transition-duration: 0.01ms !important;
++  }
++}

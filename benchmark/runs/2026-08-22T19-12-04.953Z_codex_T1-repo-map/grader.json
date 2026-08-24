@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-22T19-12-04.953Z_codex_T1-repo-map",
+  "grading_status": "complete",
+  "acceptance_status": "pass",
+  "score": 92,
+  "maximum_score": 100,
+  "criteria": [
+    {
+      "id": "architecture",
+      "score": 24,
+      "maximum": 25,
+      "note": "Accurate purpose, stack, entry points, and separation between the study site and benchmark harness."
+    },
+    {
+      "id": "request-flow",
+      "score": 19,
+      "maximum": 20,
+      "note": "Clear Worker, vinext SSR, hydration, and localStorage flow with relevant paths and line references."
+    },
+    {
+      "id": "repository-evidence",
+      "score": 23,
+      "maximum": 25,
+      "note": "Important claims are well grounded in inspected files. The statement that graders live outside the repository is imprecise because grader evidence lives in ignored run directories inside the repository."
+    },
+    {
+      "id": "risks",
+      "score": 12,
+      "maximum": 15,
+      "note": "Content drift, unused scaffolding, and missing status data are useful findings. The response provides four concerns instead of the requested three and slightly overstates the grader-location issue."
+    },
+    {
+      "id": "change-plan",
+      "score": 9,
+      "maximum": 10,
+      "note": "The five steps are scoped and include accessibility, SSR testing, and contract-change awareness."
+    },
+    {
+      "id": "scope-and-format",
+      "score": 5,
+      "maximum": 5,
+      "note": "All required sections are present, the response is below 900 words, and the workspace stayed unchanged."
+    }
+  ],
+  "automatic_checks": {
+    "workspace_unchanged": true,
+    "required_sections_present": true,
+    "under_word_limit": true,
+    "forbidden_action_observed": false
+  },
+  "summary": "Accepted. The Codex harness with the shared DeepSeek model produced an accurate, well-cited repository map and a practical change plan."
+}

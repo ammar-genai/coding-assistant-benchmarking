@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "id": "visible-1",
+      "kind": "visible",
+      "command": "node --test benchmark/fixtures/T9-capacity-allocation/allocation-engine.test.mjs benchmark/fixtures/T9-capacity-allocation/student-tests.mjs",
+      "elapsed_ms": 140,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ allocates each desk independently by priority (1.921875ms)\n✔ uses submission time and then id as deterministic tie breakers (0.08525ms)\n✔ validates the entire request set before allocating (0.154417ms)\n✔ returns an empty array for an empty request list (1.284208ms)\n✔ allocates nothing when a desk has zero capacity (0.443375ms)\n✔ orders by priority, submission time, then id and returns rows in input order (0.113875ms)\n✔ accepts Date instances as submittedAt timestamps (0.076875ms)\n✔ handles fractional requested amounts and capacities exactly (0.08625ms)\n✔ does not mutate the input array, request records, or capacity object (0.105125ms)\n✔ rejects invalid inputs with TypeError (0.340708ms)\n✔ validation failures do not mutate inputs (0.079167ms)\nℹ tests 11\nℹ suites 0\nℹ pass 11\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 64.747625\n",
+      "stderr": ""
+    },
+    {
+      "id": "private-1",
+      "kind": "private",
+      "command": "[private suite: T9-capacity-allocation]",
+      "elapsed_ms": 114,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ preserves input order and does not mutate inputs (1.585291ms)\n✔ requires unique non-empty ids and a declared desk capacity (0.179667ms)\n✔ rejects invalid numeric fields and capacities atomically (0.078916ms)\n✔ uses full deterministic priority ordering within each desk (0.093167ms)\n✔ requires at least three meaningful student tests (2.470708ms)\nℹ tests 5\nℹ suites 0\nℹ pass 5\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 63.529041\n",
+      "stderr": ""
+    }
+  ],
+  "infrastructure_errors": []
+}

@@ -1,0 +1,75 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T17-55-02.091Z_distributed_T5-review-queue",
+  "status": "complete",
+  "acceptance_status": "pass",
+  "started_at": "2026-08-23T17:55:02.091Z",
+  "finished_at": "2026-08-23T18:03:58.795Z",
+  "elapsed_ms": 536704,
+  "stages": [
+    {
+      "stage": "codex-plan",
+      "status": "complete",
+      "elapsed_ms": 86071,
+      "read_only_changes": []
+    },
+    {
+      "stage": "claude-plan-review",
+      "status": "complete",
+      "elapsed_ms": 93772,
+      "read_only_changes": []
+    },
+    {
+      "stage": "opencode-worker",
+      "status": "complete",
+      "elapsed_ms": 112515,
+      "time_to_first_edit_ms": 84725,
+      "reported_cost_usd": 0.6175818,
+      "changed_paths": [
+        "benchmark/fixtures/T5-review-queue/README.md",
+        "benchmark/fixtures/T5-review-queue/review-api.mjs",
+        "benchmark/fixtures/T5-review-queue/review-page.mjs",
+        "benchmark/fixtures/T5-review-queue/review-store.mjs",
+        "benchmark/fixtures/T5-review-queue/student-tests.mjs"
+      ],
+      "visible_checks_passed": true
+    },
+    {
+      "stage": "codex-integration",
+      "status": "complete",
+      "elapsed_ms": 82567,
+      "changed_paths_during_stage": [],
+      "visible_checks_passed": true
+    },
+    {
+      "stage": "claude-final-review",
+      "status": "complete",
+      "elapsed_ms": 160346,
+      "read_only_changes": []
+    }
+  ],
+  "changed_paths": [
+    "benchmark/fixtures/T5-review-queue/README.md",
+    "benchmark/fixtures/T5-review-queue/review-api.mjs",
+    "benchmark/fixtures/T5-review-queue/review-page.mjs",
+    "benchmark/fixtures/T5-review-queue/review-store.mjs",
+    "benchmark/fixtures/T5-review-queue/student-tests.mjs"
+  ],
+  "out_of_scope_paths": [],
+  "read_only_violations": [],
+  "final_checks_passed": true,
+  "workflow_error": null,
+  "cleanup_error": null,
+  "artifacts": {
+    "manifest": "manifest.json",
+    "task_prompt": "task-prompt.md",
+    "lead_plan": "lead-plan.md",
+    "plan_review": "plan-review.md",
+    "worker_patch": "worker.patch",
+    "integrated_patch": "integrated.patch",
+    "final_review": "final-review.md",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "final-verification.json"
+  }
+}

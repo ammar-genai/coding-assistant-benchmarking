@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T18-22-22.767Z_codex_T6-rejected-promise-cache",
+  "task": {
+    "id": "T6-rejected-promise-cache",
+    "version": "1.0.0"
+  },
+  "assistant": "codex",
+  "assistant_version": "codex-cli 0.146.0-alpha.3.1",
+  "model": "gpt-5.6-sol",
+  "access_path": "subscription",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-12pNPr/checkout",
+    "git_commit": "303270e525acb8f9b189303ef52c4c08cbb0d946",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "9717e7ec3248b0901eb2ad8f3eeaa701e323342da75c7b1e01753fd9ae24e3a1",
+  "command": [
+    "codex",
+    "exec",
+    "--ephemeral",
+    "--json",
+    "--ignore-user-config",
+    "--sandbox",
+    "workspace-write",
+    "--cd",
+    "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-12pNPr/checkout",
+    "--model",
+    "gpt-5.6-sol",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-23T18:22:22.829Z",
+  "settings": {
+    "task_mode": "workspace-write",
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0
+  }
+}

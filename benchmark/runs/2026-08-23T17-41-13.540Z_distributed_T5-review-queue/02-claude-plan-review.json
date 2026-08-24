@@ -1,0 +1,13 @@
+{
+  "status": "timeout",
+  "elapsed_ms": 600255,
+  "exit_code": 143,
+  "signal": null,
+  "timed_out": true,
+  "changed_paths_during_stage": [],
+  "final_text": "I read the frozen suite and the stub files. Here's my review.",
+  "usage": null,
+  "model_usage": null,
+  "reported_cost_usd": null,
+  "permission_denials": []
+}

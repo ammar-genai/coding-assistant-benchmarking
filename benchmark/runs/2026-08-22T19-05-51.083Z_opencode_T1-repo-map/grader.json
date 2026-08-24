@@ -1,0 +1,53 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-22T19-05-51.083Z_opencode_T1-repo-map",
+  "grading_status": "complete",
+  "acceptance_status": "fail",
+  "score": 2,
+  "maximum_score": 100,
+  "criteria": [
+    {
+      "id": "architecture",
+      "score": 0,
+      "maximum": 25,
+      "note": "No repository architecture was provided."
+    },
+    {
+      "id": "request-flow",
+      "score": 0,
+      "maximum": 20,
+      "note": "No request flow was traced."
+    },
+    {
+      "id": "repository-evidence",
+      "score": 0,
+      "maximum": 25,
+      "note": "The assistant cited no repository paths and appears not to have inspected files."
+    },
+    {
+      "id": "risks",
+      "score": 0,
+      "maximum": 15,
+      "note": "No risks or unknowns were identified."
+    },
+    {
+      "id": "change-plan",
+      "score": 0,
+      "maximum": 10,
+      "note": "No change plan was supplied."
+    },
+    {
+      "id": "scope-and-format",
+      "score": 2,
+      "maximum": 5,
+      "note": "The workspace stayed unchanged and the answer was short, but none of the required sections were present."
+    }
+  ],
+  "automatic_checks": {
+    "workspace_unchanged": true,
+    "required_sections_present": false,
+    "under_word_limit": true,
+    "forbidden_action_observed": false
+  },
+  "summary": "The process completed, but the model ignored a specific task and requested clarification. This validates the harness, not the model's task performance."
+}

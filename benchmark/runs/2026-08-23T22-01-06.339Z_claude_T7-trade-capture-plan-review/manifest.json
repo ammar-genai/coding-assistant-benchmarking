@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T22-01-06.339Z_claude_T7-trade-capture-plan-review",
+  "task": {
+    "id": "T7-trade-capture-plan-review",
+    "version": "1.0.0"
+  },
+  "assistant": "claude",
+  "assistant_version": "2.1.241 (Claude Code)",
+  "model": "claude-opus-5",
+  "access_path": "subscription",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-40yaLF/checkout",
+    "git_commit": "d2cd28d6b7737660ff911d32166195b9015f6dd0",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "69b50d2458ede4ecf2c584b9b6e794517d0325bb1bd7ca0ff0f0fbfef96c3127",
+  "command": [
+    "claude",
+    "--print",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "--no-session-persistence",
+    "--setting-sources",
+    "project",
+    "--permission-mode",
+    "plan",
+    "--tools",
+    "Read,Glob,Grep",
+    "--model",
+    "claude-opus-5",
+    "--",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-23T22:01:06.432Z",
+  "settings": {
+    "task_mode": "read-only",
+    "max_wall_time_seconds": 900,
+    "max_human_interventions": 0
+  }
+}

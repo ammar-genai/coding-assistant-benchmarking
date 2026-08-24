@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T16-59-56.093Z_opencode_T4-run-explorer-v2",
+  "task": {
+    "id": "T4-run-explorer-v2",
+    "version": "1.0.1"
+  },
+  "assistant": "opencode",
+  "assistant_version": "1.18.21",
+  "model": "openrouter/qwen/qwen3.8-27b",
+  "access_path": "api",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-tgb7Rp/checkout",
+    "git_commit": "d72825c3870ae326de20ade957ed9ddccc282404",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "29ead71f698afec910207d63c9b09057990e9a3aaf1807f164ff7cc9694d3653",
+  "command": [
+    "opencode",
+    "run",
+    "--pure",
+    "--format",
+    "json",
+    "--agent",
+    "build",
+    "--dir",
+    "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-tgb7Rp/checkout",
+    "--model",
+    "openrouter/qwen/qwen3.8-27b",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-23T16:59:56.158Z",
+  "settings": {
+    "task_mode": "workspace-write",
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0
+  }
+}

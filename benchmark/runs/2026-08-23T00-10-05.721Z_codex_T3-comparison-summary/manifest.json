@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T00-10-05.721Z_codex_T3-comparison-summary",
+  "task": {
+    "id": "T3-comparison-summary",
+    "version": "1.0.1"
+  },
+  "assistant": "codex",
+  "assistant_version": "codex-cli 0.146.0-alpha.3.1",
+  "model": "subscription-default",
+  "access_path": "subscription",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-Ojbgvo/checkout",
+    "git_commit": "71d5f53d35d70d3c875de7b4b6e7a195d6a9797f",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "1707370f23c17ecf0829b8571a2960b57652426c4b299e0d0c7aa8368405fc78",
+  "command": [
+    "codex",
+    "exec",
+    "--ephemeral",
+    "--json",
+    "--ignore-user-config",
+    "--sandbox",
+    "workspace-write",
+    "--cd",
+    "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-Ojbgvo/checkout",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-23T00:10:05.758Z",
+  "settings": {
+    "task_mode": "workspace-write",
+    "max_wall_time_seconds": 900,
+    "max_human_interventions": 0
+  }
+}

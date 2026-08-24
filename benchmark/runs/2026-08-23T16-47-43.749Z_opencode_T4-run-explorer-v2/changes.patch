@@ -1,0 +1,851 @@
+diff --git a/benchmark/fixtures/T4-run-explorer/index.html b/benchmark/fixtures/T4-run-explorer/index.html
+index a19002a..de3efa6 100644
+--- a/benchmark/fixtures/T4-run-explorer/index.html
++++ b/benchmark/fixtures/T4-run-explorer/index.html
+@@ -8,10 +8,80 @@
+     <script type="module" src="./run-explorer.mjs"></script>
+   </head>
+   <body>
+-    <main>
+-      <p>Benchmark evidence</p>
+-      <h1>Run explorer</h1>
+-      <p>Build the interactive comparison interface described in the task.</p>
++    <main class="page">
++      <header class="intro">
++        <p class="intro__eyebrow">Benchmark evidence</p>
++        <h1 class="intro__title">Run explorer</h1>
++        <p class="intro__lede">
++          Browse the seeded benchmark runs below. These are sample records for
++          interface development, not final study results. Narrow the subset
++          with the filters, change the sort order, and the summaries update to
++          describe the runs currently shown.
++        </p>
++      </header>
++
++      <section class="panel" aria-label="Filter and sort controls">
++        <div class="field">
++          <label for="assistant-filter">Assistant</label>
++          <select id="assistant-filter">
++            <option value="all">All assistants</option>
++            <option value="Codex">Codex</option>
++            <option value="Claude Code">Claude Code</option>
++            <option value="OpenCode">OpenCode</option>
++          </select>
++        </div>
++        <div class="field">
++          <label for="outcome-filter">Outcome</label>
++          <select id="outcome-filter">
++            <option value="all">All outcomes</option>
++            <option value="pass">Pass</option>
++            <option value="fail">Fail</option>
++          </select>
++        </div>
++        <div class="field">
++          <label for="sort-order">Sort by</label>
++          <select id="sort-order">
++            <option value="score-desc">Score (high to low)</option>
++            <option value="time-asc">Time (fastest)</option>
++            <option value="cost-asc">Cost (known first)</option>
++          </select>
++        </div>
++        <button type="button" id="reset-filters">Reset filters</button>
++      </section>
++
++      <section class="summaries" aria-label="Summary of visible runs">
++        <div class="summary-card">
++          <span class="summary-card__label">Visible runs</span>
++          <output class="summary-card__value" id="visible-count">0</output>
++        </div>
++        <div class="summary-card">
++          <span class="summary-card__label">Pass rate</span>
++          <output class="summary-card__value" id="pass-rate">0.0%</output>
++        </div>
++        <div class="summary-card">
++          <span class="summary-card__label">Median elapsed</span>
++          <output class="summary-card__value" id="median-time">0 s</output>
++        </div>
++        <div class="summary-card">
++          <span class="summary-card__label">Known cost</span>
++          <output class="summary-card__value" id="known-cost">$0.00</output>
++          <span class="summary-card__note" id="known-cost-note">
++            Unknown subscription costs are excluded.
++          </span>
++        </div>
++      </section>
++
++      <section class="results" aria-label="Matching runs">
++        <p class="status" id="result-status" role="status" aria-live="polite"></p>
++        <ul class="results__list" id="results-list"></ul>
++        <div class="empty-state" id="empty-state" hidden>
++          <p class="empty-state__title">No runs match the current filters.</p>
++          <p>
++            Pick a different assistant or outcome, or reset the filters to see
++            every sample run.
++          </p>
++        </div>
++      </section>
+     </main>
+   </body>
+ </html>
+diff --git a/benchmark/fixtures/T4-run-explorer/run-explorer.mjs b/benchmark/fixtures/T4-run-explorer/run-explorer.mjs
+index 3a98d63..f4e5e1a 100644
+--- a/benchmark/fixtures/T4-run-explorer/run-explorer.mjs
++++ b/benchmark/fixtures/T4-run-explorer/run-explorer.mjs
+@@ -55,16 +55,249 @@ export const sampleRuns = Object.freeze([
+   }),
+ ]);
+ 
+-export function filterRuns() {
+-  throw new Error("Not implemented");
++const ALL = "all";
++
++export function filterRuns(runs, filters) {
++  if (!Array.isArray(runs)) {
++    throw new TypeError("filterRuns expects runs to be an array");
++  }
++  const { assistant = ALL, outcome = ALL } = filters ?? {};
++  return runs.filter(
++    (run) =>
++      (assistant === ALL || run.assistant === assistant) &&
++      (outcome === ALL || run.outcome === outcome),
++  );
++}
++
++function compareIds(a, b) {
++  if (a.id === b.id) {
++    return 0;
++  }
++  return a.id < b.id ? -1 : 1;
++}
++
++function knownCostUsd(run) {
++  return typeof run.costUsd === "number" && Number.isFinite(run.costUsd)
++    ? run.costUsd
++    : null;
++}
++
++const COMPARATORS = {
++  "score-desc": (a, b) =>
++    b.score - a.score || a.elapsedSeconds - b.elapsedSeconds || compareIds(a, b),
++  "time-asc": (a, b) =>
++    a.elapsedSeconds - b.elapsedSeconds || b.score - a.score || compareIds(a, b),
++  "cost-asc": (a, b) => {
++    const aCost = knownCostUsd(a);
++    const bCost = knownCostUsd(b);
++    if (aCost === null && bCost === null) {
++      return b.score - a.score || compareIds(a, b);
++    }
++    if (aCost === null) {
++      return 1;
++    }
++    if (bCost === null) {
++      return -1;
++    }
++    return aCost - bCost || b.score - a.score || compareIds(a, b);
++  },
++};
++
++export function sortRuns(runs, order) {
++  if (!Array.isArray(runs)) {
++    throw new TypeError("sortRuns expects runs to be an array");
++  }
++  const comparator = COMPARATORS[order];
++  if (comparator === undefined) {
++    throw new TypeError(`Unsupported sort order: ${String(order)}`);
++  }
++  return [...runs].sort(comparator);
++}
++
++export function summarizeRuns(runs) {
++  if (!Array.isArray(runs)) {
++    throw new TypeError("summarizeRuns expects runs to be an array");
++  }
++  const visibleCount = runs.length;
++  if (visibleCount === 0) {
++    return {
++      visibleCount: 0,
++      passRatePct: 0,
++      medianElapsedSeconds: 0,
++      totalCostUsd: 0,
++      costedRunCount: 0,
++    };
++  }
++
++  const passCount = runs.reduce(
++    (count, run) => count + (run.outcome === "pass" ? 1 : 0),
++    0,
++  );
++  const passRatePct = Math.round((passCount / visibleCount) * 1000) / 10;
++
++  const elapsedTimes = runs
++    .map((run) => run.elapsedSeconds)
++    .sort((a, b) => a - b);
++  const middle = Math.floor(elapsedTimes.length / 2);
++  const medianElapsedSeconds =
++    elapsedTimes.length % 2 === 1
++      ? elapsedTimes[middle]
++      : (elapsedTimes[middle - 1] + elapsedTimes[middle]) / 2;
++
++  let costCents = 0;
++  let costedRunCount = 0;
++  for (const run of runs) {
++    const cost = knownCostUsd(run);
++    if (cost !== null) {
++      costCents += Math.round(cost * 100);
++      costedRunCount += 1;
++    }
++  }
++
++  return {
++    visibleCount,
++    passRatePct,
++    medianElapsedSeconds,
++    totalCostUsd: costCents / 100,
++    costedRunCount,
++  };
+ }
+ 
+-export function sortRuns() {
+-  throw new Error("Not implemented");
++// Browser rendering and interactions (no external dependencies). The module is
++// also imported by node:test, so DOM access is guarded at the bottom.
++
++function formatUsd(value) {
++  return `$${value.toFixed(2)}`;
++}
++
++function formatSeconds(value) {
++  return `${value} s`;
+ }
+ 
+-export function summarizeRuns() {
+-  throw new Error("Not implemented");
++function createStat(termText, valueText) {
++  const wrapper = document.createElement("div");
++  wrapper.className = "run-card__stat";
++  const term = document.createElement("dt");
++  term.textContent = termText;
++  const value = document.createElement("dd");
++  value.textContent = valueText;
++  wrapper.append(term, value);
++  return wrapper;
+ }
+ 
+-// Implement browser rendering and interactions without external dependencies.
++function createRunCard(run) {
++  const card = document.createElement("li");
++  card.className = "run-card";
++
++  const head = document.createElement("div");
++  head.className = "run-card__head";
++
++  const identity = document.createElement("div");
++  identity.className = "run-card__identity";
++  const assistant = document.createElement("h2");
++  assistant.className = "run-card__assistant";
++  assistant.textContent = run.assistant;
++  const model = document.createElement("p");
++  model.className = "run-card__model";
++  model.textContent = run.model;
++  identity.append(assistant, model);
++
++  const outcome = document.createElement("span");
++  const passed = run.outcome === "pass";
++  outcome.className = passed ? "outcome outcome--pass" : "outcome outcome--fail";
++  outcome.textContent = passed ? "Pass" : "Fail";
++
++  head.append(identity, outcome);
++
++  const stats = document.createElement("dl");
++  stats.className = "run-card__stats";
++  const cost = knownCostUsd(run);
++  stats.append(
++    createStat("Score", String(run.score)),
++    createStat("Elapsed", formatSeconds(run.elapsedSeconds)),
++    createStat("Cost", cost === null ? "Subscription" : formatUsd(cost)),
++  );
++
++  card.append(head, stats);
++  return card;
++}
++
++function initRunExplorer() {
++  const assistantFilter = document.getElementById("assistant-filter");
++  const outcomeFilter = document.getElementById("outcome-filter");
++  const sortOrder = document.getElementById("sort-order");
++  const resetButton = document.getElementById("reset-filters");
++  const resultsList = document.getElementById("results-list");
++  const emptyState = document.getElementById("empty-state");
++  const status = document.getElementById("result-status");
++  const visibleCount = document.getElementById("visible-count");
++  const passRate = document.getElementById("pass-rate");
++  const medianTime = document.getElementById("median-time");
++  const knownCost = document.getElementById("known-cost");
++  const knownCostNote = document.getElementById("known-cost-note");
++
++  const elements = [
++    assistantFilter,
++    outcomeFilter,
++    sortOrder,
++    resetButton,
++    resultsList,
++    emptyState,
++    status,
++    visibleCount,
++    passRate,
++    medianTime,
++    knownCost,
++    knownCostNote,
++  ];
++  if (elements.some((element) => element === null)) {
++    return;
++  }
++
++  function render() {
++    const visible = sortRuns(
++      filterRuns(sampleRuns, {
++        assistant: assistantFilter.value,
++        outcome: outcomeFilter.value,
++      }),
++      sortOrder.value,
++    );
++    const summary = summarizeRuns(visible);
++
++    visibleCount.textContent = String(summary.visibleCount);
++    passRate.textContent = `${summary.passRatePct.toFixed(1)}%`;
++    medianTime.textContent = formatSeconds(summary.medianElapsedSeconds);
++    knownCost.textContent = formatUsd(summary.totalCostUsd);
++    const priced = summary.costedRunCount;
++    knownCostNote.textContent = `From ${priced} priced ${
++      priced === 1 ? "run" : "runs"
++    }; unknown subscription costs are excluded.`;
++
++    status.textContent =
++      summary.visibleCount === 0
++        ? "No runs match the current filters."
++        : `Showing ${summary.visibleCount} of ${sampleRuns.length} sample runs.`;
++
++    resultsList.replaceChildren();
++    for (const run of visible) {
++      resultsList.append(createRunCard(run));
++    }
++    emptyState.hidden = summary.visibleCount !== 0;
++  }
++
++  for (const select of [assistantFilter, outcomeFilter, sortOrder]) {
++    select.addEventListener("change", render);
++  }
++  resetButton.addEventListener("click", () => {
++    assistantFilter.value = ALL;
++    outcomeFilter.value = ALL;
++    sortOrder.value = "score-desc";
++    render();
++  });
++
++  render();
++}
++
++if (typeof document !== "undefined") {
++  initRunExplorer();
++}
+diff --git a/benchmark/fixtures/T4-run-explorer/student-tests.mjs b/benchmark/fixtures/T4-run-explorer/student-tests.mjs
+index 03ff864..7707fa2 100644
+--- a/benchmark/fixtures/T4-run-explorer/student-tests.mjs
++++ b/benchmark/fixtures/T4-run-explorer/student-tests.mjs
+@@ -1,2 +1,148 @@
+-// Add at least two meaningful node:test cases for the run explorer.
+-// Do not copy or modify the committed run-explorer.test.mjs suite.
++import assert from "node:assert/strict";
++import test from "node:test";
++
++import {
++  filterRuns,
++  sampleRuns,
++  sortRuns,
++  summarizeRuns,
++} from "./run-explorer.mjs";
++
++function makeRun(overrides) {
++  return Object.freeze({
++    id: "run-0",
++    assistant: "Codex",
++    model: "Model",
++    outcome: "pass",
++    score: 50,
++    elapsedSeconds: 10,
++    costUsd: null,
++    ...overrides,
++  });
++}
++
++test("filterRuns rejects non-array input and matches case-sensitively", () => {
++  const runs = [makeRun({ id: "a", assistant: "Codex", outcome: "pass" })];
++
++  assert.throws(
++    () => filterRuns(null, { assistant: "all", outcome: "all" }),
++    TypeError,
++  );
++  assert.throws(
++    () => filterRuns("Codex", { assistant: "all", outcome: "all" }),
++    TypeError,
++  );
++  assert.throws(
++    () => filterRuns({ length: 1 }, { assistant: "all", outcome: "all" }),
++    TypeError,
++  );
++
++  // Exact, case-sensitive matching: lowercase "codex" matches nothing.
++  assert.equal(filterRuns(runs, { assistant: "codex", outcome: "all" }).length, 0);
++
++  // "all" disables both filters and still returns a new array.
++  const all = filterRuns(runs, { assistant: "all", outcome: "all" });
++  assert.deepEqual(all.map((run) => run.id), ["a"]);
++  assert.notEqual(all, runs);
++});
++
++test("sortRuns rejects unsupported orders and non-array input", () => {
++  const runs = [makeRun({ id: "a" })];
++
++  assert.throws(() => sortRuns(null, "score-desc"), TypeError);
++  assert.throws(() => sortRuns(runs, "score-asc"), TypeError);
++  assert.throws(() => sortRuns(runs, ""), TypeError);
++  assert.throws(() => sortRuns(runs, undefined), TypeError);
++});
++
++test("sortRuns time-asc breaks equal elapsed times by score then id", () => {
++  const runs = [
++    makeRun({ id: "b-tie-low", score: 80, elapsedSeconds: 12 }),
++    makeRun({ id: "a-tie-high", score: 90, elapsedSeconds: 12 }),
++    makeRun({ id: "c-quickest", score: 40, elapsedSeconds: 4 }),
++  ];
++
++  const result = sortRuns(runs, "time-asc");
++  assert.deepEqual(
++    result.map((run) => run.id),
++    ["c-quickest", "a-tie-high", "b-tie-low"],
++  );
++  // Input order is untouched.
++  assert.deepEqual(
++    runs.map((run) => run.id),
++    ["b-tie-low", "a-tie-high", "c-quickest"],
++  );
++});
++
++test("sortRuns cost-asc puts known costs first, then nulls by score", () => {
++  const runs = [
++    makeRun({ id: "sub-high", score: 99, costUsd: null }),
++    makeRun({ id: "pricey", score: 70, costUsd: 0.2 }),
++    makeRun({ id: "cheap", score: 60, costUsd: 0.02 }),
++    makeRun({ id: "sub-low", score: 50, costUsd: null }),
++  ];
++
++  const result = sortRuns(runs, "cost-asc");
++  assert.deepEqual(
++    result.map((run) => run.id),
++    ["cheap", "pricey", "sub-high", "sub-low"],
++  );
++});
++
++test("summarizeRuns returns zeros for an empty array and throws for non-arrays", () => {
++  assert.deepEqual(summarizeRuns([]), {
++    visibleCount: 0,
++    passRatePct: 0,
++    medianElapsedSeconds: 0,
++    totalCostUsd: 0,
++    costedRunCount: 0,
++  });
++  assert.throws(() => summarizeRuns(undefined), TypeError);
++  assert.throws(() => summarizeRuns(42), TypeError);
++});
++
++test("summarizeRuns averages the middle pair for an even count", () => {
++  const runs = [
++    makeRun({ id: "a", outcome: "pass", elapsedSeconds: 10 }),
++    makeRun({ id: "b", outcome: "fail", elapsedSeconds: 21 }),
++    makeRun({ id: "c", outcome: "fail", elapsedSeconds: 30 }),
++    makeRun({ id: "d", outcome: "pass", elapsedSeconds: 45 }),
++  ];
++
++  const summary = summarizeRuns(runs);
++  assert.equal(summary.visibleCount, 4);
++  assert.equal(summary.passRatePct, 50);
++  assert.equal(summary.medianElapsedSeconds, 25.5); // (21 + 30) / 2
++});
++
++test("summarizeRuns avoids floating-point residue and rounds pass rate", () => {
++  const runs = [
++    makeRun({ id: "a", outcome: "pass", costUsd: 0.1 }),
++    makeRun({ id: "b", outcome: "fail", costUsd: 0.2 }),
++    makeRun({ id: "c", outcome: "fail", costUsd: null }),
++  ];
++
++  const summary = summarizeRuns(runs);
++  assert.equal(summary.totalCostUsd, 0.3); // not 0.30000000000000004
++  assert.equal(summary.costedRunCount, 2);
++  assert.equal(summary.passRatePct, 33.3); // 1/3 rounded to one decimal
++});
++
++test("filter, sort, and summarize compose over the seeded sample runs", () => {
++  const openCode = filterRuns(sampleRuns, {
++    assistant: "OpenCode",
++    outcome: "all",
++  });
++  const sorted = sortRuns(openCode, "time-asc");
++  assert.deepEqual(
++    sorted.map((run) => run.id),
++    ["oc-qwen-01", "oc-kimi-01"],
++  );
++  assert.deepEqual(summarizeRuns(openCode), {
++    visibleCount: 2,
++    passRatePct: 50,
++    medianElapsedSeconds: 43.5,
++    totalCostUsd: 0.19,
++    costedRunCount: 2,
++  });
++});
+diff --git a/benchmark/fixtures/T4-run-explorer/styles.css b/benchmark/fixtures/T4-run-explorer/styles.css
+index e44b899..78fc512 100644
+--- a/benchmark/fixtures/T4-run-explorer/styles.css
++++ b/benchmark/fixtures/T4-run-explorer/styles.css
+@@ -1,14 +1,338 @@
+ :root {
+   color-scheme: light;
+-  font-family: system-ui, sans-serif;
++  --bg: #f3f5fa;
++  --surface: #ffffff;
++  --ink: #1b2432;
++  --muted: #556170;
++  --accent: #2b5cd7;
++  --accent-strong: #1f46ad;
++  --border: #d9dfeb;
++  --pass-bg: #e2f4e8;
++  --pass-ink: #14532d;
++  --fail-bg: #fce8e6;
++  --fail-ink: #8c2318;
++  --radius: 0.75rem;
++  --shadow: 0 1px 2px rgb(27 36 50 / 0.07), 0 6px 18px rgb(27 36 50 / 0.06);
++  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
++}
++
++*,
++*::before,
++*::after {
++  box-sizing: border-box;
+ }
+ 
+ body {
+   margin: 0;
++  background: var(--bg);
++  color: var(--ink);
++  line-height: 1.55;
++}
++
++.page {
++  max-width: 1100px;
++  margin: 0 auto;
++  padding: 2.5rem 1.5rem 3rem;
++  display: grid;
++  gap: 1.75rem;
++}
++
++/* Introduction */
++
++.intro__eyebrow {
++  margin: 0 0 0.25rem;
++  font-size: 0.8rem;
++  font-weight: 700;
++  letter-spacing: 0.12em;
++  text-transform: uppercase;
++  color: var(--accent);
++}
++
++.intro__title {
++  margin: 0;
++  font-size: clamp(1.9rem, 1.4rem + 2vw, 2.6rem);
++  line-height: 1.1;
++}
++
++.intro__lede {
++  margin: 0.75rem 0 0;
++  max-width: 68ch;
++  color: var(--muted);
++}
++
++/* Filter panel */
++
++.panel {
++  display: grid;
++  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
++  gap: 1rem;
++  align-items: end;
++  padding: 1.25rem;
++  background: var(--surface);
++  border: 1px solid var(--border);
++  border-radius: var(--radius);
++  box-shadow: var(--shadow);
++}
++
++.field {
++  display: grid;
++  gap: 0.4rem;
++}
++
++.field label {
++  font-size: 0.85rem;
++  font-weight: 600;
++}
++
++select,
++button {
++  font: inherit;
++  border-radius: 0.5rem;
++  transition:
++    border-color 150ms ease,
++    background-color 150ms ease,
++    color 150ms ease,
++    box-shadow 150ms ease,
++    transform 150ms ease;
++}
++
++select {
++  width: 100%;
++  padding: 0.55rem 0.7rem;
++  border: 1px solid var(--border);
++  background: var(--surface);
++  color: var(--ink);
++  cursor: pointer;
++}
++
++select:hover {
++  border-color: var(--accent);
+ }
+ 
+-main {
++button {
++  padding: 0.55rem 1.1rem;
++  border: 1px solid var(--accent);
++  background: var(--accent);
++  color: #ffffff;
++  font-weight: 600;
++  cursor: pointer;
++  white-space: nowrap;
++}
++
++button:hover {
++  background: var(--accent-strong);
++  border-color: var(--accent-strong);
++}
++
++button:active {
++  transform: translateY(1px);
++}
++
++select:focus-visible,
++button:focus-visible {
++  outline: 3px solid var(--accent);
++  outline-offset: 2px;
++}
++
++/* Summary cards */
++
++.summaries {
++  display: grid;
++  grid-template-columns: repeat(4, minmax(0, 1fr));
++  gap: 1rem;
++}
++
++.summary-card {
++  display: grid;
++  gap: 0.2rem;
++  align-content: start;
++  padding: 1rem 1.15rem;
++  background: var(--surface);
++  border: 1px solid var(--border);
++  border-radius: var(--radius);
++  box-shadow: var(--shadow);
++}
++
++.summary-card__label {
++  font-size: 0.78rem;
++  font-weight: 700;
++  letter-spacing: 0.06em;
++  text-transform: uppercase;
++  color: var(--muted);
++}
++
++.summary-card__value {
++  font-size: 1.7rem;
++  font-weight: 700;
++  line-height: 1.2;
++}
++
++.summary-card__note {
++  font-size: 0.8rem;
++  color: var(--muted);
++}
++
++/* Results */
++
++.results {
++  display: grid;
++  gap: 1rem;
++}
++
++.status {
++  margin: 0;
++  min-height: 1.4em;
++  color: var(--muted);
++  font-size: 0.95rem;
++}
++
++.results__list {
++  list-style: none;
++  margin: 0;
++  padding: 0;
++  display: grid;
++  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
++  gap: 1rem;
++}
++
++.run-card {
++  display: grid;
++  gap: 0.9rem;
++  padding: 1.1rem 1.25rem;
++  background: var(--surface);
++  border: 1px solid var(--border);
++  border-radius: var(--radius);
++  box-shadow: var(--shadow);
++  transition:
++    border-color 150ms ease,
++    transform 150ms ease,
++    box-shadow 150ms ease;
++}
++
++.run-card:hover {
++  border-color: var(--accent);
++  transform: translateY(-2px);
++}
++
++.run-card__head {
++  display: flex;
++  justify-content: space-between;
++  align-items: flex-start;
++  gap: 0.75rem;
++}
++
++.run-card__assistant {
++  margin: 0;
++  font-size: 1.1rem;
++}
++
++.run-card__model {
++  margin: 0.15rem 0 0;
++  color: var(--muted);
++  font-size: 0.9rem;
++  overflow-wrap: break-word;
++}
++
++.outcome {
++  flex-shrink: 0;
++  padding: 0.2rem 0.65rem;
++  border-radius: 999px;
++  font-size: 0.8rem;
++  font-weight: 700;
++  letter-spacing: 0.02em;
++}
++
++.outcome--pass {
++  background: var(--pass-bg);
++  color: var(--pass-ink);
++}
++
++.outcome--fail {
++  background: var(--fail-bg);
++  color: var(--fail-ink);
++}
++
++.run-card__stats {
++  margin: 0;
++  display: flex;
++  flex-wrap: wrap;
++  gap: 1.25rem;
++}
++
++.run-card__stat {
++  display: grid;
++  gap: 0.1rem;
++}
++
++.run-card__stat dt {
++  font-size: 0.75rem;
++  font-weight: 600;
++  letter-spacing: 0.05em;
++  text-transform: uppercase;
++  color: var(--muted);
++}
++
++.run-card__stat dd {
++  margin: 0;
++  font-weight: 600;
++}
++
++/* Empty state */
++
++.empty-state {
+   padding: 2rem;
++  background: var(--surface);
++  border: 1px dashed var(--border);
++  border-radius: var(--radius);
++  text-align: center;
++  color: var(--muted);
++}
++
++.empty-state[hidden] {
++  display: none;
++}
++
++.empty-state p {
++  margin: 0;
++}
++
++.empty-state p + p {
++  margin-top: 0.35rem;
++}
++
++.empty-state__title {
++  font-weight: 700;
++  color: var(--ink);
++}
++
++/* Narrow screens: stack controls and results, avoid horizontal scrolling. */
++
++@media (max-width: 720px) {
++  .page {
++    padding: 1.5rem 1rem 2.5rem;
++    gap: 1.25rem;
++  }
++
++  .panel {
++    grid-template-columns: 1fr;
++    align-items: stretch;
++  }
++
++  .summaries {
++    grid-template-columns: repeat(2, minmax(0, 1fr));
++  }
++
++  .results__list {
++    grid-template-columns: 1fr;
++  }
+ }
+ 
+-/* Implement the responsive run-explorer design. */
++@media (prefers-reduced-motion: reduce) {
++  *,
++  *::before,
++  *::after {
++    transition-duration: 0.01ms !important;
++    animation-duration: 0.01ms !important;
++    animation-iteration-count: 1 !important;
++  }
++}

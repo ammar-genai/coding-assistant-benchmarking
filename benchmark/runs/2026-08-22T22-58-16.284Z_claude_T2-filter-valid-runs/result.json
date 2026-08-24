@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-22T22-58-16.284Z_claude_T2-filter-valid-runs",
+  "status": "complete",
+  "acceptance_status": "pass",
+  "started_at": "2026-08-22T22:58:16.321Z",
+  "finished_at": "2026-08-22T22:58:39.969Z",
+  "elapsed_ms": 23648,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "workspace_changed": true,
+  "changed_paths": [
+    "benchmark/fixtures/T2-run-filter/select-comparison-runs.mjs"
+  ],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "verification.json"
+  },
+  "notes": []
+}

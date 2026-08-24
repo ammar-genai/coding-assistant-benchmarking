@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-22T19-17-21.591Z_opencode_T1-repo-map",
+  "grading_status": "complete",
+  "acceptance_status": "pass",
+  "score": 94,
+  "maximum_score": 100,
+  "comparison_eligible": true,
+  "criteria": [
+    { "id": "architecture", "score": 24, "maximum": 25, "note": "Accurate purpose, stack, entry points, and directory map." },
+    { "id": "request-flow", "score": 19, "maximum": 20, "note": "Explains both the site request path and the benchmark execution path with concrete references." },
+    { "id": "repository-evidence", "score": 24, "maximum": 25, "note": "Claims consistently cite inspected paths and useful line numbers." },
+    { "id": "risks", "score": 13, "maximum": 15, "note": "Three specific evidence-based risks; the CLI failure concern is plausible but partly speculative." },
+    { "id": "change-plan", "score": 9, "maximum": 10, "note": "Five ordered steps include accessibility, automated verification, browser checking, and frozen-file protection." },
+    { "id": "scope-and-format", "score": 5, "maximum": 5, "note": "Exact sections, concise answer, no forbidden action, and zero workspace changes." }
+  ],
+  "automatic_checks": {
+    "workspace_unchanged": true,
+    "required_sections_present": true,
+    "under_word_limit": true,
+    "forbidden_action_observed": false,
+    "isolated_worktree": true
+  },
+  "summary": "Accepted and comparison eligible. OpenCode with DeepSeek produced a concise, accurate, strongly cited repository map from an isolated checkout."
+}

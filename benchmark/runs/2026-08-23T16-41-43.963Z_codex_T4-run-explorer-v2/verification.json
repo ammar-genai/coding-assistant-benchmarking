@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "id": "visible-1",
+      "kind": "visible",
+      "command": "node --test benchmark/fixtures/T4-run-explorer/run-explorer.test.mjs benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+      "elapsed_ms": 159,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ filters by assistant and outcome without mutating the input (1.181959ms)\n✔ sorts score ties by faster elapsed time and then run ID (0.108292ms)\n✔ summarizes the visible runs (0.113917ms)\n✔ ships the required accessible, responsive interface hooks (3.250375ms)\n✔ rejects invalid run collections and unsupported sort orders (0.74625ms)\n✔ cost sorting puts numeric costs first and applies score and ID ties (0.768041ms)\n✔ summaries handle empty input, even medians, and decimal cost residue (0.117792ms)\n✔ filter matching is exact and case-sensitive while preserving record identity (0.084083ms)\nℹ tests 8\nℹ suites 0\nℹ pass 8\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 74.352292\n",
+      "stderr": ""
+    },
+    {
+      "id": "private-1",
+      "kind": "private",
+      "command": "[private suite: T4-run-explorer-v2]",
+      "elapsed_ms": 125,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ rejects non-array inputs (0.7095ms)\n✔ supports all filters and returns a fresh array (0.625875ms)\n✔ sorts time ascending with score and ID tie breakers (0.070875ms)\n✔ sorts known costs first and leaves subscription costs last (0.07575ms)\n✔ summarizes empty and even-sized sets (0.102167ms)\n✔ uses safe DOM construction and includes meaningful student tests (2.658709ms)\n✔ provides required summary landmarks and reduced-motion support (0.355ms)\nℹ tests 7\nℹ suites 0\nℹ pass 7\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 69.617291\n",
+      "stderr": ""
+    }
+  ],
+  "infrastructure_errors": []
+}

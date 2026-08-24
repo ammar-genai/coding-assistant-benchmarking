@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T19-23-23.578Z_opencode_T6-rejected-promise-cache",
+  "status": "complete",
+  "acceptance_status": "pass",
+  "started_at": "2026-08-23T19:23:23.655Z",
+  "finished_at": "2026-08-23T19:24:18.770Z",
+  "elapsed_ms": 55115,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "workspace_changed": true,
+  "changed_paths": [
+    "benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md",
+    "benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs",
+    "benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs"
+  ],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "verification.json"
+  },
+  "notes": []
+}

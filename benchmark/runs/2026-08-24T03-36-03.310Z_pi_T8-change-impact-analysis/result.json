@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-24T03-36-03.310Z_pi_T8-change-impact-analysis",
+  "status": "complete",
+  "acceptance_status": "pending",
+  "started_at": "2026-08-24T03:36:03.434Z",
+  "finished_at": "2026-08-24T03:38:45.140Z",
+  "elapsed_ms": 161706,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "workspace_changed": false,
+  "changed_paths": [],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "verification.json"
+  },
+  "notes": []
+}

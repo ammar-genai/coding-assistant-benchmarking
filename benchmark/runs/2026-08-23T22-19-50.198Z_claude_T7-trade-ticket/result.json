@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T22-19-50.198Z_claude_T7-trade-ticket",
+  "status": "complete",
+  "acceptance_status": "fail",
+  "started_at": "2026-08-23T22:19:50.294Z",
+  "finished_at": "2026-08-23T22:37:56.091Z",
+  "elapsed_ms": 1085797,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "workspace_changed": true,
+  "changed_paths": [
+    "app/trade-capture/components/trade-ticket.tsx"
+  ],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "verification.json"
+  },
+  "notes": [
+    "One or more verification checks failed."
+  ]
+}

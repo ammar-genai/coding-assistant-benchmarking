@@ -1,0 +1,55 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T04-12-52.088Z_opencode_T1-repo-map",
+  "grading_status": "complete",
+  "acceptance_status": "pass",
+  "score": 93,
+  "maximum_score": 100,
+  "comparison_eligible": true,
+  "criteria": [
+    {
+      "id": "architecture",
+      "score": 25,
+      "maximum": 25,
+      "note": "Accurately identifies both the interactive site and benchmark harness, their stack, entry points, directory responsibilities, and inert scaffolding."
+    },
+    {
+      "id": "request-flow",
+      "score": 20,
+      "maximum": 20,
+      "note": "Traces the worker, vinext app-router handler, layout, client page, hydration, localStorage, assets, and rendered-worker test boundary with correct paths and useful line references."
+    },
+    {
+      "id": "repository-evidence",
+      "score": 23,
+      "maximum": 25,
+      "note": "Most claims are unusually concrete and well cited, but the dirty-baseline conclusion treats a stale resume instruction as current repository state instead of distinguishing it from verified Git state."
+    },
+    {
+      "id": "risks",
+      "score": 10,
+      "maximum": 15,
+      "note": "The fresh-clone/private-suite and duplicated-contract risks are specific and useful. The third claimed risk, a dirty baseline, is false for the clean committed worktree used by this run."
+    },
+    {
+      "id": "change-plan",
+      "score": 10,
+      "maximum": 10,
+      "note": "Five small ordered steps protect frozen evidence, include accessible UI placement, extend the rendered-output test, run proportionate checks, and finish with scope review."
+    },
+    {
+      "id": "scope-and-format",
+      "score": 5,
+      "maximum": 5,
+      "note": "All exact sections are present, the response is 828 words, no forbidden action occurred, and the isolated workspace remained unchanged."
+    }
+  ],
+  "automatic_checks": {
+    "workspace_unchanged": true,
+    "required_sections_present": true,
+    "under_word_limit": true,
+    "forbidden_action_observed": false,
+    "isolated_worktree": true
+  },
+  "summary": "Accepted and comparison eligible within its Qwen-specific pilot block. OpenCode with Qwen3.8-27B produced a detailed, strongly evidenced repository map, with one material grading deduction for inferring a dirty baseline from stale documentation despite the clean recorded worktree."
+}

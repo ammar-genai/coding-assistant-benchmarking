@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "id": "visible-1",
+      "kind": "visible",
+      "command": "node --test benchmark/fixtures/T6-rejected-promise-cache/config-cache.test.mjs benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs",
+      "elapsed_ms": 139,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ caches successful loads and returns isolated copies (1.10225ms)\n✔ coalesces concurrent cache misses for one tenant (0.106875ms)\n✔ retries the origin after a transient load failure (0.264666ms)\n✔ the API recovers on the request after a transient origin failure (0.176709ms)\n✔ keeps tenants separate and supports targeted invalidation (0.113958ms)\n✔ retries after a transient origin failure and the API recovers (1.274791ms)\n✔ a stale failure of a replaced load does not delete the replacement (1.819208ms)\n✔ invalid origin responses are not cached and are retried (0.123709ms)\n✔ a failure for one tenant does not evict another tenant's cached config (0.093625ms)\nℹ tests 9\nℹ suites 0\nℹ pass 9\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 65.497375\n",
+      "stderr": ""
+    },
+    {
+      "id": "private-1",
+      "kind": "private",
+      "command": "[private suite: T6-rejected-promise-cache]",
+      "elapsed_ms": 113,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ evicts a rejected load and retries successfully (1.24675ms)\n✔ coalesces concurrent failures but allows the next read to retry (0.110667ms)\n✔ does not let a late failure delete an overlapping replacement (0.100708ms)\n✔ invalid origin data does not poison the tenant cache (0.09275ms)\n✔ a failed tenant does not disturb a successful tenant (0.49175ms)\n✔ keeps successful caching, copy isolation, and invalidation (0.095292ms)\n✔ preserves API status and headers while recovering (0.197416ms)\n✔ student tests contain meaningful regression coverage (2.160292ms)\nℹ tests 8\nℹ suites 0\nℹ pass 8\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 64.352959\n",
+      "stderr": ""
+    }
+  ],
+  "infrastructure_errors": []
+}

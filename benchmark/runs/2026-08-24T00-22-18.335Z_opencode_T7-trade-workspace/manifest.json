@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-24T00-22-18.335Z_opencode_T7-trade-workspace",
+  "task": {
+    "id": "T7-trade-workspace",
+    "version": "1.0.0"
+  },
+  "assistant": "opencode",
+  "assistant_version": "1.18.21",
+  "model": "openrouter/moonshotai/kimi-k3",
+  "access_path": "api",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-kZFwBF/checkout",
+    "git_commit": "47ef930e132d1fa9b576cc5e01f6b58802ee0d53",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "bb07d759aa5f1990b8ad44aeedd2abf32f572b66c8fff8b90a8e146b2b14bb8c",
+  "command": [
+    "opencode",
+    "run",
+    "--pure",
+    "--format",
+    "json",
+    "--agent",
+    "build",
+    "--dir",
+    "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-kZFwBF/checkout",
+    "--model",
+    "openrouter/moonshotai/kimi-k3",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-24T00:22:18.463Z",
+  "settings": {
+    "task_mode": "workspace-write",
+    "max_wall_time_seconds": 1800,
+    "max_human_interventions": 0
+  }
+}

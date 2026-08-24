@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-22T19-18-05.039Z_pi_T1-repo-map",
+  "grading_status": "complete",
+  "acceptance_status": "pass",
+  "score": 92,
+  "maximum_score": 100,
+  "comparison_eligible": true,
+  "criteria": [
+    { "id": "architecture", "score": 23, "maximum": 25, "note": "Strong directory and entry-point map; calling the UI an accordion and emphasizing Tailwind slightly overstates the implementation." },
+    { "id": "request-flow", "score": 19, "maximum": 20, "note": "Accurate Worker-to-vinext-to-Next SSR and localStorage hydration path." },
+    { "id": "repository-evidence", "score": 22, "maximum": 25, "note": "Claims are grounded in inspected paths, though the final report has fewer line references than the strongest response." },
+    { "id": "risks", "score": 14, "maximum": 15, "note": "Three clearly separated, evidence-based risks with explicit inferences." },
+    { "id": "change-plan", "score": 9, "maximum": 10, "note": "A coherent five-step derived-state plan with persistence, test, and browser verification." },
+    { "id": "scope-and-format", "score": 5, "maximum": 5, "note": "Exact sections, under the limit, read-only tools only, and zero workspace changes." }
+  ],
+  "automatic_checks": {
+    "workspace_unchanged": true,
+    "required_sections_present": true,
+    "under_word_limit": true,
+    "forbidden_action_observed": false,
+    "isolated_worktree": true
+  },
+  "summary": "Accepted and comparison eligible. Pi with DeepSeek produced a strong repository map and the most clearly structured risk section so far."
+}

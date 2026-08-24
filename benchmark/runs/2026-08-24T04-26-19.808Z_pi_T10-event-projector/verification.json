@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "id": "visible-1",
+      "kind": "visible",
+      "command": "node --test benchmark/fixtures/T10-event-projector/event-projector.test.mjs benchmark/fixtures/T10-event-projector/student-tests.mjs",
+      "elapsed_ms": 135,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ serializes concurrent events for one trade (1.227209ms)\n✔ a persistence rejection does not commit state or poison later work (0.256125ms)\n✔ unrelated trades progress concurrently instead of sharing one queue (1.116917ms)\n✔ duplicate or stale version returns current snapshot without persisting (0.231708ms)\n✔ a version gap rejects without changing state (0.238666ms)\n✔ a cancelled trade is terminal and rejects later new versions (0.141667ms)\n✔ CREATED with invalid notional rejects without persisting (0.104416ms)\n✔ AMENDED with an invalid field rejects and leaves prior state intact (0.394875ms)\n✔ an unsupported event type rejects with TypeError (0.171791ms)\n✔ snapshots and store arguments are isolated from internal state (0.208834ms)\nℹ tests 10\nℹ suites 0\nℹ pass 10\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 64.255958\n",
+      "stderr": ""
+    },
+    {
+      "id": "private-1",
+      "kind": "private",
+      "command": "[private suite: T10-event-projector]",
+      "elapsed_ms": 113,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ different trades are not serialized behind each other (1.14175ms)\n✔ duplicate or stale versions are ignored without persistence (0.090084ms)\n✔ version gaps and invalid first events are rejected (0.254792ms)\n✔ cancelled trades are terminal (0.106375ms)\n✔ snapshots and callback values cannot mutate committed state (0.083208ms)\n✔ requires meaningful tests and a completed incident report (2.552375ms)\nℹ tests 6\nℹ suites 0\nℹ pass 6\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 63.596792\n",
+      "stderr": ""
+    }
+  ],
+  "infrastructure_errors": []
+}

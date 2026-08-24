@@ -1,0 +1,19 @@
+{
+  "status": "complete",
+  "elapsed_ms": 82567,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "changed_paths_during_stage": [],
+  "final_text": "The run review queue is complete and contract-compliant.\n\n- Accepted worker code: in-memory copy-safe store, synchronous validated API, escaped accessible HTML page, five meaningful student tests, and operator documentation.\n- Integration changes: none. Review found no concrete defects requiring edits.\n- Verification: exact requested command passed all 9 tests with 0 failures.\n- Scope check: only the five allowed files are modified; `review-queue.test.mjs` remains unchanged.\n- `git diff --check` passed.\n\nRemaining concern: storage is intentionally process-local and resets on restart, as documented.",
+  "usage": {
+    "input_tokens": 116443,
+    "cached_input_tokens": 98048,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 2988,
+    "reasoning_output_tokens": 1890
+  },
+  "tool_calls": {
+    "command_execution": 3
+  }
+}

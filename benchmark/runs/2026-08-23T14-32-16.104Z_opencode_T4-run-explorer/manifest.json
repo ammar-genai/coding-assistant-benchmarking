@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T14-32-16.104Z_opencode_T4-run-explorer",
+  "task": {
+    "id": "T4-run-explorer",
+    "version": "1.0.0"
+  },
+  "assistant": "opencode",
+  "assistant_version": "1.18.21",
+  "model": "ollama/kimi-k2.7-code:cloud",
+  "access_path": "ollama-cloud",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-09KaDP/checkout",
+    "git_commit": "8907158740ccca5d644e1e92a12ae6cf0b0ac249",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "29ead71f698afec910207d63c9b09057990e9a3aaf1807f164ff7cc9694d3653",
+  "command": [
+    "opencode",
+    "run",
+    "--pure",
+    "--format",
+    "json",
+    "--agent",
+    "build",
+    "--dir",
+    "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-09KaDP/checkout",
+    "--model",
+    "ollama/kimi-k2.7-code:cloud",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-23T14:32:16.144Z",
+  "settings": {
+    "task_mode": "workspace-write",
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0
+  }
+}

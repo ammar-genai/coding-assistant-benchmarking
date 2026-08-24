@@ -1,0 +1,49 @@
+{
+  "results": [
+    {
+      "id": "visible-1",
+      "kind": "visible",
+      "command": "node --test tests/trade-domain.test.mjs",
+      "elapsed_ms": 194,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ calculates current face, principal, and signed exposure (1.243416ms)\n✔ uses rounded cents for allocation tolerance (0.061625ms)\n✔ summarizes an empty desk (0.063167ms)\n✔ validates required fields, product rules, and rounded allocation boundaries (0.114167ms)\n✔ lifecycle actions are immutable, deterministic, and enforce transitions (0.20975ms)\n✔ seed trades are immutable, synthetic, complete, and excluded when cancelled (0.102792ms)\nℹ tests 6\nℹ suites 0\nℹ pass 6\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 112.613375\n",
+      "stderr": ""
+    },
+    {
+      "id": "visible-2",
+      "kind": "visible",
+      "command": "npm run typecheck",
+      "elapsed_ms": 371,
+      "exit_code": 2,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "\n> coding-assistant-study-plan@0.1.0 typecheck\n> tsc --noEmit\n\nerror TS2688: Cannot find type definition file for '@cloudflare/workers-types'.\n  The file is in the program because:\n    Entry point of type library '@cloudflare/workers-types' specified in compilerOptions\n",
+      "stderr": ""
+    },
+    {
+      "id": "visible-3",
+      "kind": "visible",
+      "command": "npm run lint",
+      "elapsed_ms": 294,
+      "exit_code": 2,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "\n> coding-assistant-study-plan@0.1.0 lint\n> eslint . --ignore-pattern dist --ignore-pattern .next\n\n",
+      "stderr": "\nOops! Something went wrong! :(\n\nESLint: 9.39.4\n\nError [ERR_MODULE_NOT_FOUND]: Cannot find package 'eslint' imported from /private/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-Lpgwiw/checkout/eslint.config.mjs\n    at Object.getPackageJSONURL (node:internal/modules/package_json_reader:301:9)\n    at packageResolve (node:internal/modules/esm/resolve:764:81)\n    at moduleResolve (node:internal/modules/esm/resolve:855:18)\n    at defaultResolve (node:internal/modules/esm/resolve:988:11)\n    at #cachedDefaultResolve (node:internal/modules/esm/loader:700:20)\n    at #resolveAndMaybeBlockOnLoaderThread (node:internal/modules/esm/loader:717:38)\n    at ModuleLoader.resolveSync (node:internal/modules/esm/loader:749:52)\n    at #resolve (node:internal/modules/esm/loader:682:17)\n    at ModuleLoader.getOrCreateModuleJob (node:internal/modules/esm/loader:602:35)\n    at ModuleJob.syncLink (node:internal/modules/esm/module_job:162:33)\n"
+    },
+    {
+      "id": "private-1",
+      "kind": "private",
+      "command": "[private suite: T7-trade-domain]",
+      "elapsed_ms": 159,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ validates required fields, bounds, identifiers, dates, and product modifiers (0.722083ms)\n✔ treats a missing client ID as a warning and allocations within one cent as balanced (0.576291ms)\n✔ preserves identity and audit history through lifecycle transitions (0.217417ms)\n✔ summaries preserve signed exposure and exclude cancelled records (0.130459ms)\n✔ provides six deterministic synthetic seed trades covering every product (0.098625ms)\nℹ tests 5\nℹ suites 0\nℹ pass 5\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 106.2675\n",
+      "stderr": ""
+    }
+  ],
+  "infrastructure_errors": []
+}

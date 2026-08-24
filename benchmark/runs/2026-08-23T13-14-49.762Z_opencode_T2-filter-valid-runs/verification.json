@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "id": "visible-1",
+      "kind": "visible",
+      "command": "node --test benchmark/fixtures/T2-run-filter/select-comparison-runs.test.mjs",
+      "elapsed_ms": 133,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ keeps only completed, accepted, comparison-eligible runs (1.0205ms)\n✔ preserves input order, object identity, and the input array (0.081292ms)\nℹ tests 2\nℹ suites 0\nℹ pass 2\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 69.198542\n",
+      "stderr": ""
+    },
+    {
+      "id": "private-1",
+      "kind": "private",
+      "command": "[private suite: T2-filter-valid-runs]",
+      "elapsed_ms": 122,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ allows a missing comparison_eligible value (1.114208ms)\n✔ requires completion and acceptance even when comparison_eligible is true (0.05575ms)\n✔ an explicit comparison exclusion wins over otherwise valid fields (0.037708ms)\n✔ preserves eligible record order and identity without mutating frozen data (0.068041ms)\n✔ retains the existing input validation contract (0.171833ms)\nℹ tests 5\nℹ suites 0\nℹ pass 5\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 68.460542\n",
+      "stderr": ""
+    }
+  ],
+  "infrastructure_errors": []
+}

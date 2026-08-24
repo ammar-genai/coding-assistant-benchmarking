@@ -1,0 +1,897 @@
+diff --git a/benchmark/fixtures/T4-run-explorer/index.html b/benchmark/fixtures/T4-run-explorer/index.html
+index a19002a..ccda685 100644
+--- a/benchmark/fixtures/T4-run-explorer/index.html
++++ b/benchmark/fixtures/T4-run-explorer/index.html
+@@ -3,15 +3,110 @@
+   <head>
+     <meta charset="utf-8" />
+     <meta name="viewport" content="width=device-width, initial-scale=1" />
++    <meta
++      name="description"
++      content="Explore and compare sample coding-assistant benchmark runs."
++    />
+     <title>Benchmark run explorer</title>
+     <link rel="stylesheet" href="./styles.css" />
+     <script type="module" src="./run-explorer.mjs"></script>
+   </head>
+   <body>
+     <main>
+-      <p>Benchmark evidence</p>
+-      <h1>Run explorer</h1>
+-      <p>Build the interactive comparison interface described in the task.</p>
++      <header class="intro">
++        <div>
++          <p class="eyebrow">Benchmark evidence</p>
++          <h1>Run explorer</h1>
++          <p class="lede">
++            Compare a small set of sample records across assistants. These examples
++            demonstrate the explorer and are not final study results.
++          </p>
++        </div>
++        <div class="sample-badge" aria-label="Fixture data">
++          <span aria-hidden="true"></span>
++          Sample dataset
++        </div>
++      </header>
++
++      <section class="filter-panel" aria-labelledby="filter-heading">
++        <div class="section-heading">
++          <div>
++            <p class="section-kicker">Refine the evidence</p>
++            <h2 id="filter-heading">View controls</h2>
++          </div>
++          <button type="button" id="reset-filters">Reset filters</button>
++        </div>
++
++        <div class="controls">
++          <div class="control">
++            <label for="assistant-filter">Assistant</label>
++            <select id="assistant-filter">
++              <option value="all">All assistants</option>
++              <option value="Codex">Codex</option>
++              <option value="Claude Code">Claude Code</option>
++              <option value="OpenCode">OpenCode</option>
++            </select>
++          </div>
++          <div class="control">
++            <label for="outcome-filter">Outcome</label>
++            <select id="outcome-filter">
++              <option value="all">All outcomes</option>
++              <option value="pass">Pass</option>
++              <option value="fail">Fail</option>
++            </select>
++          </div>
++          <div class="control">
++            <label for="sort-order">Sort by</label>
++            <select id="sort-order">
++              <option value="score-desc">Score (high to low)</option>
++              <option value="time-asc">Time (fastest)</option>
++              <option value="cost-asc">Cost (known first)</option>
++            </select>
++          </div>
++        </div>
++      </section>
++
++      <section class="summary" aria-labelledby="summary-heading">
++        <div class="summary-heading">
++          <p class="section-kicker">Current subset</p>
++          <h2 id="summary-heading">At a glance</h2>
++        </div>
++        <dl class="summary-grid">
++          <div>
++            <dt>Visible runs</dt>
++            <dd id="visible-count">0</dd>
++          </div>
++          <div>
++            <dt>Pass rate</dt>
++            <dd id="pass-rate">0%</dd>
++          </div>
++          <div>
++            <dt>Median time</dt>
++            <dd id="median-time">0s</dd>
++          </div>
++          <div>
++            <dt>Known cost</dt>
++            <dd id="known-cost">$0.00</dd>
++            <p id="known-cost-note">0 costed runs; subscriptions excluded</p>
++          </div>
++        </dl>
++      </section>
++
++      <section class="results" aria-labelledby="results-heading">
++        <div class="results-heading">
++          <div>
++            <p class="section-kicker">Run details</p>
++            <h2 id="results-heading">Matching records</h2>
++          </div>
++          <p id="results-status" class="status" aria-live="polite"></p>
++        </div>
++        <ol id="results-list" class="results-list"></ol>
++        <div id="empty-state" class="empty-state" hidden>
++          <div aria-hidden="true">0</div>
++          <h3>No matching runs</h3>
++          <p>Try another assistant or outcome, or reset the filters.</p>
++        </div>
++      </section>
+     </main>
+   </body>
+ </html>
+diff --git a/benchmark/fixtures/T4-run-explorer/run-explorer.mjs b/benchmark/fixtures/T4-run-explorer/run-explorer.mjs
+index 3a98d63..2b36459 100644
+--- a/benchmark/fixtures/T4-run-explorer/run-explorer.mjs
++++ b/benchmark/fixtures/T4-run-explorer/run-explorer.mjs
+@@ -55,16 +55,177 @@ export const sampleRuns = Object.freeze([
+   }),
+ ]);
+ 
+-export function filterRuns() {
+-  throw new Error("Not implemented");
++function requireRunsArray(runs) {
++  if (!Array.isArray(runs)) {
++    throw new TypeError("runs must be an array");
++  }
+ }
+ 
+-export function sortRuns() {
+-  throw new Error("Not implemented");
++export function filterRuns(runs, filters) {
++  requireRunsArray(runs);
++
++  return runs.filter(
++    (run) =>
++      (filters.assistant === "all" || run.assistant === filters.assistant) &&
++      (filters.outcome === "all" || run.outcome === filters.outcome),
++  );
++}
++
++export function sortRuns(runs, order) {
++  requireRunsArray(runs);
++
++  const byId = (left, right) => (left.id < right.id ? -1 : left.id > right.id ? 1 : 0);
++  const comparators = {
++    "score-desc": (left, right) =>
++      right.score - left.score || left.elapsedSeconds - right.elapsedSeconds || byId(left, right),
++    "time-asc": (left, right) =>
++      left.elapsedSeconds - right.elapsedSeconds || right.score - left.score || byId(left, right),
++    "cost-asc": (left, right) => {
++      const leftKnown = Number.isFinite(left.costUsd);
++      const rightKnown = Number.isFinite(right.costUsd);
++
++      if (leftKnown !== rightKnown) return leftKnown ? -1 : 1;
++      if (leftKnown && left.costUsd !== right.costUsd) return left.costUsd - right.costUsd;
++      return right.score - left.score || byId(left, right);
++    },
++  };
++  const comparator = comparators[order];
++
++  if (!comparator) {
++    throw new TypeError(`Unsupported sort order: ${order}`);
++  }
++
++  return [...runs].sort(comparator);
++}
++
++export function summarizeRuns(runs) {
++  requireRunsArray(runs);
++
++  if (runs.length === 0) {
++    return {
++      visibleCount: 0,
++      passRatePct: 0,
++      medianElapsedSeconds: 0,
++      totalCostUsd: 0,
++      costedRunCount: 0,
++    };
++  }
++
++  const passCount = runs.filter((run) => run.outcome === "pass").length;
++  const elapsed = runs.map((run) => run.elapsedSeconds).sort((left, right) => left - right);
++  const middle = Math.floor(elapsed.length / 2);
++  const medianElapsedSeconds =
++    elapsed.length % 2 === 0 ? (elapsed[middle - 1] + elapsed[middle]) / 2 : elapsed[middle];
++  const knownCosts = runs.map((run) => run.costUsd).filter(Number.isFinite);
++  const totalCostUsd = Number(
++    knownCosts.reduce((total, cost) => total + cost, 0).toFixed(12),
++  );
++
++  return {
++    visibleCount: runs.length,
++    passRatePct: Math.round((passCount / runs.length) * 1000) / 10,
++    medianElapsedSeconds,
++    totalCostUsd,
++    costedRunCount: knownCosts.length,
++  };
++}
++
++function appendTextElement(parent, tagName, className, text) {
++  const element = document.createElement(tagName);
++  element.className = className;
++  element.textContent = text;
++  parent.append(element);
++  return element;
+ }
+ 
+-export function summarizeRuns() {
+-  throw new Error("Not implemented");
++function createRunCard(run, position) {
++  const item = document.createElement("li");
++  item.className = "run-card";
++
++  const rank = appendTextElement(item, "span", "run-rank", String(position).padStart(2, "0"));
++  rank.setAttribute("aria-label", `Position ${position}`);
++
++  const identity = document.createElement("div");
++  identity.className = "run-identity";
++  appendTextElement(identity, "p", "assistant-name", run.assistant);
++  appendTextElement(identity, "p", "model-name", run.model);
++  appendTextElement(identity, "p", "run-id", run.id);
++  item.append(identity);
++
++  const outcome = appendTextElement(item, "span", `outcome outcome-${run.outcome}`, run.outcome);
++  outcome.setAttribute("aria-label", `Outcome: ${run.outcome}`);
++
++  const metrics = document.createElement("dl");
++  metrics.className = "run-metrics";
++  const values = [
++    ["Score", `${run.score} / 100`],
++    ["Elapsed", `${run.elapsedSeconds}s`],
++    ["Cost", Number.isFinite(run.costUsd) ? `$${run.costUsd.toFixed(2)} USD` : "Subscription"],
++  ];
++
++  for (const [label, value] of values) {
++    const metric = document.createElement("div");
++    appendTextElement(metric, "dt", "metric-label", label);
++    appendTextElement(metric, "dd", "metric-value", value);
++    metrics.append(metric);
++  }
++  item.append(metrics);
++
++  return item;
++}
++
++function initializeExplorer() {
++  const assistantFilter = document.querySelector("#assistant-filter");
++  const outcomeFilter = document.querySelector("#outcome-filter");
++  const sortOrder = document.querySelector("#sort-order");
++  const resetButton = document.querySelector("#reset-filters");
++  const resultsList = document.querySelector("#results-list");
++  const emptyState = document.querySelector("#empty-state");
++  const resultsStatus = document.querySelector("#results-status");
++  const visibleCount = document.querySelector("#visible-count");
++  const passRate = document.querySelector("#pass-rate");
++  const medianTime = document.querySelector("#median-time");
++  const knownCost = document.querySelector("#known-cost");
++  const knownCostNote = document.querySelector("#known-cost-note");
++
++  function render() {
++    const filtered = filterRuns(sampleRuns, {
++      assistant: assistantFilter.value,
++      outcome: outcomeFilter.value,
++    });
++    const visibleRuns = sortRuns(filtered, sortOrder.value);
++    const summary = summarizeRuns(visibleRuns);
++
++    visibleCount.textContent = String(summary.visibleCount);
++    passRate.textContent = `${summary.passRatePct}%`;
++    medianTime.textContent = `${summary.medianElapsedSeconds}s`;
++    knownCost.textContent = `$${summary.totalCostUsd.toFixed(2)}`;
++    knownCostNote.textContent = `${summary.costedRunCount} costed ${
++      summary.costedRunCount === 1 ? "run" : "runs"
++    }; subscriptions excluded`;
++    resultsStatus.textContent = `${summary.visibleCount} ${
++      summary.visibleCount === 1 ? "run matches" : "runs match"
++    } the current filters.`;
++
++    resultsList.replaceChildren(
++      ...visibleRuns.map((run, index) => createRunCard(run, index + 1)),
++    );
++    emptyState.hidden = visibleRuns.length !== 0;
++  }
++
++  for (const select of [assistantFilter, outcomeFilter, sortOrder]) {
++    select.addEventListener("change", render);
++  }
++  resetButton.addEventListener("click", () => {
++    assistantFilter.value = "all";
++    outcomeFilter.value = "all";
++    sortOrder.value = "score-desc";
++    render();
++  });
++
++  render();
+ }
+ 
+-// Implement browser rendering and interactions without external dependencies.
++if (typeof document !== "undefined") {
++  initializeExplorer();
++}
+diff --git a/benchmark/fixtures/T4-run-explorer/student-tests.mjs b/benchmark/fixtures/T4-run-explorer/student-tests.mjs
+index 03ff864..13294d4 100644
+--- a/benchmark/fixtures/T4-run-explorer/student-tests.mjs
++++ b/benchmark/fixtures/T4-run-explorer/student-tests.mjs
+@@ -1,2 +1,69 @@
+-// Add at least two meaningful node:test cases for the run explorer.
+-// Do not copy or modify the committed run-explorer.test.mjs suite.
++import assert from "node:assert/strict";
++import test from "node:test";
++
++import { filterRuns, sortRuns, summarizeRuns } from "./run-explorer.mjs";
++
++const run = (overrides) => ({
++  id: "base",
++  assistant: "Codex",
++  model: "Sol",
++  outcome: "pass",
++  score: 90,
++  elapsedSeconds: 10,
++  costUsd: null,
++  ...overrides,
++});
++
++test("rejects invalid run collections and unsupported sort orders", () => {
++  assert.throws(() => filterRuns(null, { assistant: "all", outcome: "all" }), TypeError);
++  assert.throws(() => sortRuns({}, "score-desc"), TypeError);
++  assert.throws(() => summarizeRuns("runs"), TypeError);
++  assert.throws(() => sortRuns([], "newest"), TypeError);
++});
++
++test("cost sorting puts numeric costs first and applies score and ID ties", () => {
++  const runs = [
++    run({ id: "unknown-low", score: 50 }),
++    run({ id: "paid-b", score: 92, costUsd: 0.1 }),
++    run({ id: "paid-a", score: 92, costUsd: 0.1 }),
++    run({ id: "paid-cheap", score: 70, costUsd: 0.02 }),
++    run({ id: "unknown-high", score: 95 }),
++  ];
++
++  assert.deepEqual(sortRuns(runs, "cost-asc").map(({ id }) => id), [
++    "paid-cheap",
++    "paid-a",
++    "paid-b",
++    "unknown-high",
++    "unknown-low",
++  ]);
++});
++
++test("summaries handle empty input, even medians, and decimal cost residue", () => {
++  assert.deepEqual(summarizeRuns([]), {
++    visibleCount: 0,
++    passRatePct: 0,
++    medianElapsedSeconds: 0,
++    totalCostUsd: 0,
++    costedRunCount: 0,
++  });
++
++  const summary = summarizeRuns([
++    run({ id: "a", elapsedSeconds: 2, costUsd: 0.1 }),
++    run({ id: "b", elapsedSeconds: 8, costUsd: 0.2, outcome: "fail" }),
++  ]);
++  assert.equal(summary.medianElapsedSeconds, 5);
++  assert.equal(summary.passRatePct, 50);
++  assert.equal(summary.totalCostUsd, 0.3);
++  assert.equal(summary.costedRunCount, 2);
++});
++
++test("filter matching is exact and case-sensitive while preserving record identity", () => {
++  const codex = run({ id: "codex" });
++  const runs = [codex, run({ id: "lowercase", assistant: "codex" })];
++  const result = filterRuns(runs, { assistant: "Codex", outcome: "pass" });
++
++  assert.deepEqual(result, [codex]);
++  assert.notEqual(result, runs);
++  assert.equal(result[0], codex);
++});
+diff --git a/benchmark/fixtures/T4-run-explorer/styles.css b/benchmark/fixtures/T4-run-explorer/styles.css
+index e44b899..ed3c674 100644
+--- a/benchmark/fixtures/T4-run-explorer/styles.css
++++ b/benchmark/fixtures/T4-run-explorer/styles.css
+@@ -1,14 +1,506 @@
+ :root {
+   color-scheme: light;
+-  font-family: system-ui, sans-serif;
++  font-family:
++    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
++  color: #17201d;
++  background: #f2f0ea;
++  font-synthesis: none;
++  --ink: #17201d;
++  --muted: #65706b;
++  --line: #d7d9d2;
++  --panel: #fbfaf6;
++  --green: #1d6752;
++  --green-soft: #dcebe4;
++  --red: #9a4039;
++  --red-soft: #f5dfdc;
++  --focus: #226eaf;
++}
++
++* {
++  box-sizing: border-box;
+ }
+ 
+ body {
++  min-width: 320px;
++  min-height: 100vh;
+   margin: 0;
++  background:
++    radial-gradient(circle at 10% -10%, rgba(202, 220, 208, 0.7), transparent 32rem),
++    #f2f0ea;
++}
++
++button,
++select {
++  font: inherit;
+ }
+ 
+ main {
+-  padding: 2rem;
++  width: min(1180px, calc(100% - 48px));
++  margin: 0 auto;
++  padding: 72px 0 80px;
++}
++
++.intro {
++  display: flex;
++  align-items: flex-start;
++  justify-content: space-between;
++  gap: 40px;
++  margin-bottom: 44px;
++}
++
++.eyebrow,
++.section-kicker {
++  margin: 0 0 10px;
++  color: var(--green);
++  font-size: 0.72rem;
++  font-weight: 750;
++  letter-spacing: 0.14em;
++  text-transform: uppercase;
++}
++
++h1,
++h2,
++h3,
++p {
++  margin-top: 0;
++}
++
++h1 {
++  max-width: 700px;
++  margin-bottom: 16px;
++  font-family: Georgia, "Times New Roman", serif;
++  font-size: clamp(3.25rem, 7vw, 6rem);
++  font-weight: 500;
++  letter-spacing: -0.055em;
++  line-height: 0.95;
++}
++
++.lede {
++  max-width: 650px;
++  margin-bottom: 0;
++  color: #52605a;
++  font-size: 1.05rem;
++  line-height: 1.65;
++}
++
++.sample-badge {
++  display: flex;
++  flex: 0 0 auto;
++  align-items: center;
++  gap: 9px;
++  margin-top: 27px;
++  padding: 9px 13px;
++  border: 1px solid #bcc9c1;
++  border-radius: 999px;
++  background: rgba(251, 250, 246, 0.65);
++  color: #3d534a;
++  font-size: 0.78rem;
++  font-weight: 700;
++  letter-spacing: 0.02em;
++}
++
++.sample-badge span {
++  width: 7px;
++  height: 7px;
++  border-radius: 50%;
++  background: #39836a;
++  box-shadow: 0 0 0 4px rgba(57, 131, 106, 0.13);
++}
++
++.filter-panel {
++  margin-bottom: 28px;
++  padding: 25px 28px 28px;
++  border: 1px solid #2d3a35;
++  border-radius: 16px;
++  background: #202b27;
++  color: #f7f5ee;
++  box-shadow: 0 18px 40px rgba(30, 44, 38, 0.11);
++}
++
++.section-heading,
++.results-heading {
++  display: flex;
++  align-items: flex-end;
++  justify-content: space-between;
++  gap: 24px;
++}
++
++.filter-panel .section-heading {
++  align-items: center;
++  margin-bottom: 23px;
++}
++
++.filter-panel .section-kicker {
++  color: #92c4b1;
++}
++
++h2 {
++  margin-bottom: 0;
++  font-size: 1.25rem;
++  letter-spacing: -0.02em;
++}
++
++#reset-filters {
++  padding: 8px 0;
++  border: 0;
++  border-bottom: 1px solid #7c9188;
++  color: #d7e2dd;
++  background: transparent;
++  cursor: pointer;
++  font-size: 0.84rem;
++  font-weight: 650;
++  transition: color 150ms ease, border-color 150ms ease;
++}
++
++#reset-filters:hover {
++  border-color: #fff;
++  color: #fff;
++}
++
++.controls {
++  display: grid;
++  grid-template-columns: repeat(3, minmax(0, 1fr));
++  gap: 14px;
++}
++
++.control label {
++  display: block;
++  margin-bottom: 8px;
++  color: #b8c8c1;
++  font-size: 0.75rem;
++  font-weight: 650;
++  letter-spacing: 0.045em;
++  text-transform: uppercase;
++}
++
++.control select {
++  width: 100%;
++  min-height: 48px;
++  padding: 0 42px 0 14px;
++  border: 1px solid #56665f;
++  border-radius: 8px;
++  color: #fbfaf6;
++  background-color: #2b3732;
++  cursor: pointer;
++  transition: border-color 150ms ease, background-color 150ms ease;
++}
++
++.control select:hover {
++  border-color: #8ca198;
++  background-color: #33413b;
++}
++
++button:focus-visible,
++select:focus-visible {
++  outline: 3px solid #84c5ff;
++  outline-offset: 3px;
++}
++
++.summary {
++  display: grid;
++  grid-template-columns: minmax(150px, 0.75fr) minmax(0, 3.25fr);
++  gap: 28px;
++  margin-bottom: 52px;
++  padding: 28px 0 30px;
++  border-bottom: 1px solid #bfc4bd;
++}
++
++.summary-grid {
++  display: grid;
++  grid-template-columns: repeat(4, minmax(0, 1fr));
++  margin: 0;
++}
++
++.summary-grid > div {
++  min-width: 0;
++  padding: 4px 22px;
++  border-left: 1px solid var(--line);
++}
++
++.summary-grid dt {
++  color: var(--muted);
++  font-size: 0.73rem;
++  font-weight: 700;
++  letter-spacing: 0.07em;
++  text-transform: uppercase;
++}
++
++.summary-grid dd {
++  margin: 7px 0 0;
++  font-family: Georgia, "Times New Roman", serif;
++  font-size: clamp(1.75rem, 3vw, 2.5rem);
++  font-variant-numeric: tabular-nums;
++  letter-spacing: -0.04em;
++}
++
++#known-cost-note {
++  margin: 4px 0 0;
++  color: var(--muted);
++  font-size: 0.7rem;
++  line-height: 1.35;
++}
++
++.results-heading {
++  margin-bottom: 20px;
++}
++
++.status {
++  margin: 0;
++  color: var(--muted);
++  font-size: 0.86rem;
++}
++
++.results-list {
++  display: grid;
++  gap: 10px;
++  margin: 0;
++  padding: 0;
++  list-style: none;
++}
++
++.run-card {
++  display: grid;
++  grid-template-columns: 48px minmax(190px, 1.15fr) 90px minmax(330px, 1.85fr);
++  align-items: center;
++  gap: 20px;
++  padding: 19px 22px;
++  border: 1px solid var(--line);
++  border-radius: 11px;
++  background: var(--panel);
++  box-shadow: 0 1px 0 rgba(22, 31, 27, 0.03);
++  transition: border-color 160ms ease, box-shadow 160ms ease, transform 160ms ease;
++}
++
++.run-card:hover {
++  border-color: #a9b7af;
++  box-shadow: 0 10px 25px rgba(32, 43, 39, 0.07);
++  transform: translateY(-1px);
++}
++
++.run-rank {
++  color: #89928d;
++  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
++  font-size: 0.75rem;
++}
++
++.assistant-name {
++  margin-bottom: 3px;
++  font-size: 1rem;
++  font-weight: 750;
++}
++
++.model-name {
++  margin-bottom: 4px;
++  color: #55615c;
++  font-size: 0.85rem;
++}
++
++.run-id {
++  margin-bottom: 0;
++  color: #929994;
++  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
++  font-size: 0.67rem;
++}
++
++.outcome {
++  justify-self: start;
++  padding: 6px 10px;
++  border-radius: 999px;
++  font-size: 0.72rem;
++  font-weight: 800;
++  letter-spacing: 0.06em;
++  text-transform: uppercase;
++}
++
++.outcome-pass {
++  color: var(--green);
++  background: var(--green-soft);
++}
++
++.outcome-fail {
++  color: var(--red);
++  background: var(--red-soft);
++}
++
++.run-metrics {
++  display: grid;
++  grid-template-columns: 0.8fr 1fr 1.2fr;
++  margin: 0;
++}
++
++.run-metrics > div {
++  padding-left: 20px;
++  border-left: 1px solid var(--line);
++}
++
++.metric-label {
++  margin-bottom: 4px;
++  color: var(--muted);
++  font-size: 0.68rem;
++  font-weight: 700;
++  letter-spacing: 0.055em;
++  text-transform: uppercase;
++}
++
++.metric-value {
++  margin: 0;
++  font-size: 0.91rem;
++  font-weight: 680;
++  font-variant-numeric: tabular-nums;
++}
++
++.empty-state {
++  padding: 58px 24px;
++  border: 1px dashed #b9beb7;
++  border-radius: 12px;
++  background: rgba(251, 250, 246, 0.55);
++  text-align: center;
++}
++
++.empty-state[hidden] {
++  display: none;
++}
++
++.empty-state div {
++  display: grid;
++  width: 44px;
++  height: 44px;
++  margin: 0 auto 16px;
++  place-items: center;
++  border: 1px solid #b7c1bb;
++  border-radius: 50%;
++  color: var(--green);
++  font-family: Georgia, "Times New Roman", serif;
++  font-size: 1.35rem;
++}
++
++.empty-state h3 {
++  margin-bottom: 7px;
++  font-size: 1.05rem;
++}
++
++.empty-state p {
++  margin-bottom: 0;
++  color: var(--muted);
++  font-size: 0.9rem;
++}
++
++@media (max-width: 900px) {
++  .summary {
++    grid-template-columns: 1fr;
++    gap: 20px;
++  }
++
++  .summary-grid > div:first-child {
++    padding-left: 0;
++    border-left: 0;
++  }
++
++  .run-card {
++    grid-template-columns: 36px minmax(160px, 1fr) 80px;
++  }
++
++  .run-metrics {
++    grid-column: 2 / -1;
++  }
++}
++
++@media (max-width: 720px) {
++  main {
++    width: min(100% - 32px, 620px);
++    padding: 42px 0 56px;
++  }
++
++  .intro {
++    display: block;
++    margin-bottom: 32px;
++  }
++
++  h1 {
++    font-size: clamp(3rem, 16vw, 4.75rem);
++  }
++
++  .sample-badge {
++    display: inline-flex;
++    margin-top: 22px;
++  }
++
++  .filter-panel {
++    padding: 22px 20px 20px;
++  }
++
++  .controls {
++    grid-template-columns: 1fr;
++  }
++
++  .summary-grid {
++    grid-template-columns: repeat(2, minmax(0, 1fr));
++    row-gap: 24px;
++  }
++
++  .summary-grid > div,
++  .summary-grid > div:first-child {
++    padding: 0 14px;
++    border-left: 1px solid var(--line);
++  }
++
++  .summary-grid > div:nth-child(odd) {
++    padding-left: 0;
++    border-left: 0;
++  }
++
++  .results-heading {
++    display: block;
++  }
++
++  .status {
++    margin-top: 10px;
++  }
++
++  .run-card {
++    grid-template-columns: 34px minmax(0, 1fr) auto;
++    gap: 15px;
++    padding: 18px 16px;
++  }
++
++  .run-metrics {
++    grid-column: 2 / -1;
++  }
++
++  .run-metrics > div {
++    padding-left: 12px;
++  }
++}
++
++@media (max-width: 440px) {
++  .filter-panel .section-heading {
++    align-items: flex-start;
++  }
++
++  #reset-filters {
++    flex: 0 0 auto;
++  }
++
++  .run-card {
++    grid-template-columns: minmax(0, 1fr) auto;
++  }
++
++  .run-rank {
++    display: none;
++  }
++
++  .run-metrics {
++    grid-column: 1 / -1;
++  }
+ }
+ 
+-/* Implement the responsive run-explorer design. */
++@media (prefers-reduced-motion: reduce) {
++  *,
++  *::before,
++  *::after {
++    scroll-behavior: auto !important;
++    transition-duration: 0.01ms !important;
++    animation-duration: 0.01ms !important;
++    animation-iteration-count: 1 !important;
++  }
++}

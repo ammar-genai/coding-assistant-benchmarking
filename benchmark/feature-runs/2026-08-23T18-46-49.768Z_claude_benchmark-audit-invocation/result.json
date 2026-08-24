@@ -1,0 +1,71 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T18-46-49.768Z_claude_benchmark-audit-invocation",
+  "status": "complete",
+  "acceptance_status": "pass",
+  "started_at": "2026-08-23T18:46:49.768Z",
+  "finished_at": "2026-08-23T18:47:12.689Z",
+  "elapsed_ms": 22921,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "automatic_checks": {
+    "process_complete": true,
+    "workspace_unchanged": true,
+    "get_task_contract_once": true,
+    "summarize_run_once": true,
+    "no_unexpected_tools": true,
+    "four_required_headings": true
+  },
+  "tool_calls": [
+    "Skill",
+    "mcp__benchmark-audit__get_task_contract",
+    "mcp__benchmark-audit__summarize_run"
+  ],
+  "required_tool_call_counts": {
+    "get_task_contract": 1,
+    "summarize_run": 1
+  },
+  "unexpected_tool_calls": [],
+  "final_response": "Both MCP calls were denied by the permission mode (`don't ask`), so no tool data was returned. Per the task constraints I can't substitute shell, file, or Git inspection, and I won't retry the same calls verbatim. Reporting against the required structure with what that leaves:\n\n## Verdict\n\n**Insufficient evidence.** No audit data was obtained. `mcp__benchmark-audit__get_task_contract` and `mcp__benchmark-audit__summarize_run` were each invoked once and both were denied before execution (\"Permission to use ... has been denied because Claude Code is running in don't ask mode\"). This is a harness permission outcome, not a finding about the run — the run `2026-08-23T18-22-22.767Z_codex_T6-rejected-promise-cache` is neither pass, fail, nor invalid on this evidence.\n\n## Evidence\n\nNone available. Every field this section was to report is unretrieved:\n\n- Baseline commit: not retrieved.\n- Prompt-match flags (both): not retrieved.\n- Changed paths and out-of-scope paths: not retrieved.\n- Visible verification summary: not retrieved.\n- Private verification summary: not retrieved.\n- Artifact presence: not retrieved.\n\nThe frozen scope, checks, prompt digest, and rubric for `T6-rejected-promise-cache` were likewise not retrieved, so there is no contract to compare a run against.\n\n## Telemetry\n\nNone available.\n\n- Assistant: not retrieved.\n- Model: not retrieved.\n- Access path: not retrieved.\n- Elapsed time: not retrieved.\n\nIndependently of the denial: comparable token totals and metered-cost totals are not supplied by these two MCP results. Even on a successful call, `summarize_run` returns manifest, scope, prompt-integrity, artifact, and verification facts — cost and token accounting would have to come from another source and must not be inferred from these fields.\n\n## Limitations\n\nNothing was inspected in this session. I did not read prompts, transcripts, patches, logs, private tests, or any repository file; the skill's `workflow.md` was also not read, since this pilot restricted me to the two MCP tools. No conclusion about the correctness, scope compliance, prompt integrity, or verification status of the run is supported, and no comparison against the other T6 lane runs is possible.\n\n**To proceed**, I need permission for the two read-only tools `mcp__benchmark-audit__get_task_contract` and `mcp__benchmark-audit__summarize_run` — either by approving them for this session or by running in a mode that prompts rather than auto-denies. Say the word once that's set and I'll rerun both calls and produce the real audit. If you'd rather I fall back to local saved artifacts under `benchmark/tasks` and `benchmark/runs` using file tools, that would work too, but it steps outside the \"MCP tools only\" constraint of this pilot, so I'd want you to confirm that change explicitly.",
+  "required_headings_present": [
+    "Verdict",
+    "Evidence",
+    "Telemetry",
+    "Limitations"
+  ],
+  "usage": {
+    "input_tokens": 6,
+    "cache_creation_input_tokens": 9731,
+    "cache_read_input_tokens": 17336,
+    "output_tokens": 1464,
+    "output_tokens_details": {
+      "thinking_tokens": 206
+    },
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 9731,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "not_available",
+    "iterations": [
+      {
+        "input_tokens": 2,
+        "output_tokens": 1057,
+        "cache_read_input_tokens": 8829,
+        "cache_creation_input_tokens": 902,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 902
+        },
+        "type": "message"
+      }
+    ],
+    "speed": "standard"
+  },
+  "subscription_cli_telemetry_usd": 0.143868
+}

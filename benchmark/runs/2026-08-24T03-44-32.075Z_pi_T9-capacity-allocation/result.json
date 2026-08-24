@@ -1,0 +1,27 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-24T03-44-32.075Z_pi_T9-capacity-allocation",
+  "status": "timeout",
+  "acceptance_status": "not-graded",
+  "started_at": "2026-08-24T03:44:32.208Z",
+  "finished_at": "2026-08-24T04:01:50.011Z",
+  "elapsed_ms": 1037803,
+  "exit_code": 143,
+  "signal": null,
+  "timed_out": true,
+  "workspace_changed": true,
+  "changed_paths": [
+    "benchmark/fixtures/T9-capacity-allocation/allocation-engine.mjs",
+    "benchmark/fixtures/T9-capacity-allocation/student-tests.mjs"
+  ],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "verification.json"
+  },
+  "notes": []
+}

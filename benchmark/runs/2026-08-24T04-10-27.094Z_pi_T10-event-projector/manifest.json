@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-24T04-10-27.094Z_pi_T10-event-projector",
+  "task": {
+    "id": "T10-event-projector",
+    "version": "1.0.0"
+  },
+  "assistant": "pi",
+  "assistant_version": "0.84.2",
+  "model": "openrouter/anthropic/claude-fable-5",
+  "access_path": "unknown",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-ljIylL/checkout",
+    "git_commit": "a36716140a0fb331c4f37584448d44b0937f936e",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "bfaf673092f78a753b36b00cfb6f23832f868660a8738ee332ecb1b24df83399",
+  "command": [
+    "pi",
+    "--print",
+    "--mode",
+    "json",
+    "--no-session",
+    "--no-extensions",
+    "--no-skills",
+    "--no-prompt-templates",
+    "--no-themes",
+    "--approve",
+    "--tools",
+    "read,grep,find,ls,edit,write,bash",
+    "--model",
+    "openrouter/anthropic/claude-fable-5",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-24T04:10:27.239Z",
+  "settings": {
+    "task_mode": "workspace-write",
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0
+  }
+}

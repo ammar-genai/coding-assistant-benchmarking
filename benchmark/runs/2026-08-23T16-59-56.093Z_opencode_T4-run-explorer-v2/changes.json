@@ -1,0 +1,8 @@
+{
+  "changed_paths": [
+    "benchmark/fixtures/T4-run-explorer/index.html",
+    "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
+    "benchmark/fixtures/T4-run-explorer/styles.css"
+  ],
+  "out_of_scope_paths": []
+}

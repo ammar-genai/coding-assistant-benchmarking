@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-22T19-13-45.765Z_claude_T1-repo-map",
+  "task": {
+    "id": "T1-repo-map",
+    "version": "1.0.0"
+  },
+  "assistant": "claude",
+  "assistant_version": "2.1.240 (Claude Code)",
+  "model": "ollama/deepseek-v4-flash:cloud",
+  "access_path": "ollama-cloud",
+  "repository": {
+    "path": "/Users/ammarbinayaz/Documents/coding-assistant-benchmarking",
+    "git_commit": "69b35454d20d7899868087d2ac21674aa647bfe8",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "80a78377fc3d68564306811a74ea22c8d5d30c3aeeb3f3a4f95c85b33c6d12a3",
+  "command": [
+    "ollama",
+    "launch",
+    "claude",
+    "--model",
+    "deepseek-v4-flash:cloud",
+    "--yes",
+    "--",
+    "--print",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "--no-session-persistence",
+    "--setting-sources",
+    "project",
+    "--permission-mode",
+    "plan",
+    "--tools",
+    "Read,Glob,Grep",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-22T19:13:45.765Z",
+  "settings": {
+    "task_mode": "read-only",
+    "max_wall_time_seconds": 600,
+    "max_human_interventions": 0
+  }
+}

@@ -1,0 +1,42 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T00-14-15.447Z_claude_T3-comparison-summary",
+  "task": {
+    "id": "T3-comparison-summary",
+    "version": "1.0.1"
+  },
+  "assistant": "claude",
+  "assistant_version": "2.1.240 (Claude Code)",
+  "model": "subscription-default",
+  "access_path": "subscription",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-mL9V6l/checkout",
+    "git_commit": "71d5f53d35d70d3c875de7b4b6e7a195d6a9797f",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "1707370f23c17ecf0829b8571a2960b57652426c4b299e0d0c7aa8368405fc78",
+  "command": [
+    "claude",
+    "--print",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "--no-session-persistence",
+    "--setting-sources",
+    "project",
+    "--permission-mode",
+    "acceptEdits",
+    "--tools",
+    "Read,Glob,Grep,Edit,Write,Bash",
+    "--allowedTools",
+    "Bash(node --test benchmark/fixtures/T3-comparison-summary/comparison-summary.test.mjs benchmark/fixtures/T3-comparison-summary/student-tests.mjs)",
+    "--",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-23T00:14:15.496Z",
+  "settings": {
+    "task_mode": "workspace-write",
+    "max_wall_time_seconds": 900,
+    "max_human_interventions": 0
+  }
+}

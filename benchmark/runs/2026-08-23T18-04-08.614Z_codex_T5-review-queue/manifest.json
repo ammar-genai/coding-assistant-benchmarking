@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T18-04-08.614Z_codex_T5-review-queue",
+  "task": {
+    "id": "T5-review-queue",
+    "version": "1.0.0"
+  },
+  "assistant": "codex",
+  "assistant_version": "codex-cli 0.146.0-alpha.3.1",
+  "model": "gpt-5.6-sol",
+  "access_path": "subscription",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-xOTtWZ/checkout",
+    "git_commit": "d53fbaba03ce3fdb363453aec50e305fa539a521",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "1c562b4223cd4fb632c1856e40e446fee758281c4cb08822324bd117a59d6f22",
+  "command": [
+    "codex",
+    "exec",
+    "--ephemeral",
+    "--json",
+    "--ignore-user-config",
+    "--sandbox",
+    "workspace-write",
+    "--cd",
+    "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-xOTtWZ/checkout",
+    "--model",
+    "gpt-5.6-sol",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-23T18:04:08.675Z",
+  "settings": {
+    "task_mode": "workspace-write",
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0
+  }
+}

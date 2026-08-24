@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "id": "visible-1",
+      "kind": "visible",
+      "command": "node --test benchmark/fixtures/T4-run-explorer/run-explorer.test.mjs benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+      "elapsed_ms": 137,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ filters by assistant and outcome without mutating the input (1.132459ms)\n✔ sorts score ties by faster elapsed time and then run ID (0.119ms)\n✔ summarizes the visible runs (0.272542ms)\n✔ ships the required accessible, responsive interface hooks (3.126167ms)\n✔ filterRuns rejects non-array input and matches case-sensitively (1.647042ms)\n✔ sortRuns rejects unsupported orders and non-array input (0.120917ms)\n✔ sortRuns time-asc breaks equal elapsed times by score then id (0.0835ms)\n✔ sortRuns cost-asc puts known costs first, then nulls by score (0.082ms)\n✔ summarizeRuns returns zeros for an empty array and throws for non-arrays (0.11775ms)\n✔ summarizeRuns averages the middle pair for an even count (0.070958ms)\n✔ summarizeRuns avoids floating-point residue and rounds pass rate (0.054666ms)\n✔ filter, sort, and summarize compose over the seeded sample runs (0.064583ms)\nℹ tests 12\nℹ suites 0\nℹ pass 12\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 72.316875\n",
+      "stderr": ""
+    },
+    {
+      "id": "private-1",
+      "kind": "private",
+      "command": "[private suite: T4-run-explorer-v2]",
+      "elapsed_ms": 121,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ rejects non-array inputs (0.833042ms)\n✔ supports all filters and returns a fresh array (0.668167ms)\n✔ sorts time ascending with score and ID tie breakers (0.071125ms)\n✔ sorts known costs first and leaves subscription costs last (0.068709ms)\n✔ summarizes empty and even-sized sets (0.093709ms)\n✔ uses safe DOM construction and includes meaningful student tests (2.70775ms)\n✔ provides required summary landmarks and reduced-motion support (0.427292ms)\nℹ tests 7\nℹ suites 0\nℹ pass 7\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 69.509667\n",
+      "stderr": ""
+    }
+  ],
+  "infrastructure_errors": []
+}

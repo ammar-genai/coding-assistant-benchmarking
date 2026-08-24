@@ -1,0 +1,33 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T22-12-10.984Z_codex_T7-trade-domain",
+  "status": "complete",
+  "acceptance_status": "fail",
+  "started_at": "2026-08-23T22:12:11.092Z",
+  "finished_at": "2026-08-23T22:14:52.238Z",
+  "elapsed_ms": 161146,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "workspace_changed": true,
+  "changed_paths": [
+    "app/trade-capture/domain/lifecycle.ts",
+    "app/trade-capture/domain/seed.ts",
+    "app/trade-capture/domain/validation.ts",
+    "tests/trade-domain.test.mjs",
+    "tsconfig.tsbuildinfo"
+  ],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "verification.json"
+  },
+  "notes": [
+    "Out-of-scope changes: tsconfig.tsbuildinfo",
+    "One or more verification checks failed."
+  ]
+}

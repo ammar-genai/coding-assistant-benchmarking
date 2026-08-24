@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T21-56-20.470Z_codex_T7-trade-capture-plan",
+  "task": {
+    "id": "T7-trade-capture-plan",
+    "version": "1.0.0"
+  },
+  "assistant": "codex",
+  "assistant_version": "codex-cli 0.146.0-alpha.3.1",
+  "model": "gpt-5.6-sol",
+  "access_path": "subscription",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-orpoba/checkout",
+    "git_commit": "7c991c2ae60d9203e98d3ec6368eadd5bb56b45f",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "7c90d0c4505216addc624430a1d58897d3b89093ff73a483e8c2d3e5978495cf",
+  "command": [
+    "codex",
+    "exec",
+    "--ephemeral",
+    "--json",
+    "--ignore-user-config",
+    "--sandbox",
+    "read-only",
+    "--cd",
+    "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-orpoba/checkout",
+    "--model",
+    "gpt-5.6-sol",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-23T21:56:20.562Z",
+  "settings": {
+    "task_mode": "read-only",
+    "max_wall_time_seconds": 900,
+    "max_human_interventions": 0
+  }
+}

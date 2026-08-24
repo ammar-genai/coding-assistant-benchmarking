@@ -1,0 +1,31 @@
+{
+  "status": "complete",
+  "elapsed_ms": 112515,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "changed_paths_during_stage": [
+    "benchmark/fixtures/T5-review-queue/README.md",
+    "benchmark/fixtures/T5-review-queue/review-api.mjs",
+    "benchmark/fixtures/T5-review-queue/review-page.mjs",
+    "benchmark/fixtures/T5-review-queue/review-store.mjs",
+    "benchmark/fixtures/T5-review-queue/student-tests.mjs"
+  ],
+  "final_text": "All 9 tests pass (4 committed + 5 added). Only the five allowed files were modified.\n\n## Design summary\n\n**`review-store.mjs`** — `createReviewStore({ now } = {})` wraps a private `Map` keyed by `runId`. It throws `TypeError` for a non-function `now`, a non-object/array input, or non-string fields. `save` validates input fully *before* calling `now()` exactly once, and throws `TypeError` on a non-empty-string violation without mutating the map (updates stay atomic). Inserts share one timestamp for `createdAt`/`updatedAt`; updates preserve `createdAt`. Stored reviews contain exactly the six contract keys, and every input is copied in and every result copied out, so neither caller-side nor returned-value mutation can leak into stored state. `list` sorts with `<`/`>` (locale-independent): `updatedAt` descending, `runId` ascending on ties.\n\n**`review-api.mjs`** — `createReviewApi(store)` validates the store has callable `save`/`get`/`list` (else `TypeError`) and returns the `handleReviewRequest` function directly. One `respond` helper builds a fresh `{ status, headers, body }` per call, so a 405's `allow` header can never poison later responses. POST accumulates *all* field problems (sorted unknown-field names as a `body` error, type errors, then trimmed format/length/note-required checks) and never calls `save` on invalid data; 201 insert / 200 update. GET collection computes a global summary from one unfiltered `list()` and filters only `reviews`; invalid `?decision=` (including empty) → standard validation error. Detail route decodes one non-empty segment with a `try/catch` guard. Malformed request objects/URLs → `invalid_request`; recognized routes with wrong methods → 405 with `allow` (`GET, POST` / `GET`); everything else → `not_found`.\n\n**`review-page.mjs`** — complete HTML document with an attribute-free `<main>`, one `<h1>`, explanation, all four escaped summary values, a static `aria-live=\"polite\"` status region, a POST form with exact labels (`<label for=\"run-id\">Run ID</label>` etc.) and note-required guidance linked via `aria-describedby`, and a table with `<caption>Saved run reviews</caption>`, five `scope=\"col\"` headers, and a `colspan=\"5\"` `No reviews yet.` empty state. Every dynamic value passes through an escaper covering `& < > \" '`, and caller data never appears in tag or attribute positions.\n\n## Tests added (5, no skips/todos)\n\n1. Store tie-break ordering, decision filtering, and copy isolation in **both** directions (mutated input after `save`, mutated `list` results).\n2. Store `TypeError` paths: non-function clock, null/array input, non-string field, empty-string clock result — verifying a failed update leaves stored state untouched.\n3. API update flow (200, preserved `createdAt`), exact sorted unknown-field message (`Unknown fields: alpha, zeta`), missing-body error, and confirmation invalid posts never reach the store.\n4. API routing: global summary under a filter, invalid filter, detail 404, both 405 `allow` values, no `allow` leakage into the next response, exact response key shape, unknown-route 404, and `invalid_request` for null/numeric-URL requests.\n5. Page escaping with `<script>`, `<img onerror>`, and attribute-injection payloads in the message, all four summary values, and all review fields — asserting raw markup is absent and escaped forms are present.\n\n## Verification\n\n```\nnode --test benchmark/fixtures/T5-review-queue/review-queue.test.mjs benchmark/fixtures/T5-review-queue/student-tests.mjs\n→ tests 9, pass 9, fail 0\n```\n\n## Remaining concern\n\nThe contract references a private hidden suite that cannot be inspected or executed here. Undocumented edges — exact field-error message wording, tolerance of a trailing slash on `/api/reviews/`, and percent-decoding of detail ids — follow the plan-reviewed interpretation of the written contract, but only the visible suite's behavior is confirmed.",
+  "usage": {
+    "input_tokens": 38807,
+    "output_tokens": 9149,
+    "reasoning_tokens": 18247,
+    "cache_read_tokens": 300736,
+    "cache_write_tokens": 0,
+    "total_tokens": 366939
+  },
+  "reported_cost_usd": 0.6175818,
+  "tool_calls": {
+    "read": 10,
+    "glob": 2,
+    "bash": 3,
+    "write": 5
+  },
+  "time_to_first_edit_ms": 84725
+}

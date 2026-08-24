@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "id": "visible-1",
+      "kind": "visible",
+      "command": "node --test benchmark/fixtures/T4-run-explorer/run-explorer.test.mjs benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+      "elapsed_ms": 161,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ filters by assistant and outcome without mutating the input (1.35625ms)\n✔ sorts score ties by faster elapsed time and then run ID (0.146042ms)\n✔ summarizes the visible runs (0.154208ms)\n✔ ships the required accessible, responsive interface hooks (2.966375ms)\n✔ renders each visible record with its assistant, model, outcome, score, time, and cost (3.773875ms)\n✔ filters, sorts, empties, and resets through the controls (1.356167ms)\n✔ rejects non-array input across every pure function (0.270375ms)\n✔ matches filter values exactly and treats 'all' as disabled (0.07ms)\n✔ cost sorting puts known costs first and breaks ties by score then ID (0.094417ms)\n✔ rejects unsupported sort orders (0.099042ms)\n✔ averages the middle pair and totals costs without float residue (0.0655ms)\n✔ summarizes an empty subset as zeros with the exact field set (0.13475ms)\n✔ keeps frozen source records and their order untouched (0.097709ms)\n✔ renders run data through DOM APIs instead of innerHTML (1.249834ms)\nℹ tests 14\nℹ suites 0\nℹ pass 14\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 78.481541\n",
+      "stderr": ""
+    },
+    {
+      "id": "private-1",
+      "kind": "private",
+      "command": "[private suite: T4-run-explorer-v2]",
+      "elapsed_ms": 127,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ rejects non-array inputs (0.740041ms)\n✔ supports all filters and returns a fresh array (0.616833ms)\n✔ sorts time ascending with score and ID tie breakers (0.084708ms)\n✔ sorts known costs first and leaves subscription costs last (0.077458ms)\n✔ summarizes empty and even-sized sets (0.102208ms)\n✔ uses safe DOM construction and includes meaningful student tests (2.912417ms)\n✔ provides required summary landmarks and reduced-motion support (0.784708ms)\nℹ tests 7\nℹ suites 0\nℹ pass 7\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 71.168542\n",
+      "stderr": ""
+    }
+  ],
+  "infrastructure_errors": []
+}

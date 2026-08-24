@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-24T00-22-18.335Z_opencode_T7-trade-workspace",
+  "status": "timeout",
+  "acceptance_status": "not-graded",
+  "started_at": "2026-08-24T00:22:18.463Z",
+  "finished_at": "2026-08-24T00:52:18.723Z",
+  "elapsed_ms": 1800260,
+  "exit_code": null,
+  "signal": "SIGTERM",
+  "timed_out": true,
+  "workspace_changed": false,
+  "changed_paths": [],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "verification.json"
+  },
+  "notes": [
+    "The assistant did not change the workspace."
+  ]
+}

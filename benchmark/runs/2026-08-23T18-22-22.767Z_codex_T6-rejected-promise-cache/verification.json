@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "id": "visible-1",
+      "kind": "visible",
+      "command": "node --test benchmark/fixtures/T6-rejected-promise-cache/config-cache.test.mjs benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs",
+      "elapsed_ms": 141,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ caches successful loads and returns isolated copies (1.326375ms)\n✔ coalesces concurrent cache misses for one tenant (0.118875ms)\n✔ retries the origin after a transient load failure (0.285333ms)\n✔ the API recovers on the request after a transient origin failure (0.181042ms)\n✔ keeps tenants separate and supports targeted invalidation (0.122458ms)\n✔ all waiters share a failed load and the next read retries (1.391166ms)\n✔ a late failure does not delete a replacement created after clear (0.264375ms)\n✔ invalid origin data is evicted without disturbing successful tenants (0.1625ms)\nℹ tests 8\nℹ suites 0\nℹ pass 8\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 64.178833\n",
+      "stderr": ""
+    },
+    {
+      "id": "private-1",
+      "kind": "private",
+      "command": "[private suite: T6-rejected-promise-cache]",
+      "elapsed_ms": 113,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ evicts a rejected load and retries successfully (1.218ms)\n✔ coalesces concurrent failures but allows the next read to retry (0.113583ms)\n✔ does not let a late failure delete an overlapping replacement (0.102583ms)\n✔ invalid origin data does not poison the tenant cache (0.086625ms)\n✔ a failed tenant does not disturb a successful tenant (0.392375ms)\n✔ keeps successful caching, copy isolation, and invalidation (0.090916ms)\n✔ preserves API status and headers while recovering (0.19175ms)\n✔ student tests contain meaningful regression coverage (2.317833ms)\nℹ tests 8\nℹ suites 0\nℹ pass 8\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 64.673625\n",
+      "stderr": ""
+    }
+  ],
+  "infrastructure_errors": []
+}

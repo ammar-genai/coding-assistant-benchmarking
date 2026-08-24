@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { headers } from "next/headers";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -13,36 +12,29 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-const title = "Coding Assistant Benchmark | Plan and Results";
+const title = "Coding Intelligence Field Study | Assistants, Models, Orchestration";
 const description =
-  "A reproducible comparison of Codex, Claude Code, OpenCode, frontier models, hosted open models, and distributed coding workflows.";
+  "An evidence-backed field study of Codex, Claude Code, OpenCode, frontier and open-weight models, neutral harnesses, and distributed AI development.";
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
+const siteOrigin = process.env.NEXT_PUBLIC_SITE_ORIGIN ?? "http://localhost:3000";
+const imageUrl = new URL(`${basePath}/og.png`, siteOrigin).toString();
 
-export async function generateMetadata(): Promise<Metadata> {
-  const requestHeaders = await headers();
-  const host = requestHeaders.get("x-forwarded-host") ?? requestHeaders.get("host") ?? "localhost";
-  const forwardedProtocol = requestHeaders.get("x-forwarded-proto");
-  const protocol = forwardedProtocol === "http" || host.startsWith("localhost")
-    ? "http"
-    : "https";
-  const imageUrl = new URL("/og.png", `${protocol}://${host}`).toString();
-
-  return {
+export const metadata: Metadata = {
+  title,
+  description,
+  openGraph: {
     title,
     description,
-    openGraph: {
-      title,
-      description,
-      type: "website",
-      images: [{ url: imageUrl, width: 1731, height: 909 }],
-    },
-    twitter: {
-      card: "summary_large_image",
-      title,
-      description,
-      images: [imageUrl],
-    },
-  };
-}
+    type: "website",
+    images: [{ url: imageUrl, width: 1717, height: 916 }],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title,
+    description,
+    images: [imageUrl],
+  },
+};
 
 export default function RootLayout({
   children,

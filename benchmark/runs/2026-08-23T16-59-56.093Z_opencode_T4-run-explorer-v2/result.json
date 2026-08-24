@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T16-59-56.093Z_opencode_T4-run-explorer-v2",
+  "status": "timeout",
+  "acceptance_status": "not-graded",
+  "started_at": "2026-08-23T16:59:56.158Z",
+  "finished_at": "2026-08-23T17:19:56.447Z",
+  "elapsed_ms": 1200289,
+  "exit_code": null,
+  "signal": "SIGTERM",
+  "timed_out": true,
+  "workspace_changed": true,
+  "changed_paths": [
+    "benchmark/fixtures/T4-run-explorer/index.html",
+    "benchmark/fixtures/T4-run-explorer/run-explorer.mjs",
+    "benchmark/fixtures/T4-run-explorer/styles.css"
+  ],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "verification.json"
+  },
+  "notes": []
+}

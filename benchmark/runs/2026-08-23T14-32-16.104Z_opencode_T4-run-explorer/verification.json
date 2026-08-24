@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "id": "visible-1",
+      "kind": "visible",
+      "command": "node --test benchmark/fixtures/T4-run-explorer/run-explorer.test.mjs benchmark/fixtures/T4-run-explorer/student-tests.mjs",
+      "elapsed_ms": 137,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ filters by assistant and outcome without mutating the input (1.192583ms)\n✔ sorts score ties by faster elapsed time and then run ID (0.104292ms)\n✔ summarizes the visible runs (0.120042ms)\n✔ ships the required accessible, responsive interface hooks (3.416959ms)\n✔ empty inputs return zeroed summaries (1.120292ms)\n✔ sort cost-asc puts known costs before null and breaks ties by score and id (0.12475ms)\nℹ tests 6\nℹ suites 0\nℹ pass 6\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 70.844084\n",
+      "stderr": ""
+    },
+    {
+      "id": "private-1",
+      "kind": "private",
+      "command": "[private suite: T4-run-explorer]",
+      "elapsed_ms": 129,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ rejects non-array inputs (0.723125ms)\n✔ supports all filters and returns a fresh array (0.563417ms)\n✔ sorts time ascending with score and ID tie breakers (6.072042ms)\n✔ sorts known costs first and leaves subscription costs last (0.091792ms)\n✔ summarizes empty and even-sized sets (0.092791ms)\n✔ uses safe DOM construction and includes meaningful student tests (3.236833ms)\n✔ provides visible outcome text without relying on color alone (0.479292ms)\nℹ tests 7\nℹ suites 0\nℹ pass 7\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 77.265041\n",
+      "stderr": ""
+    }
+  ],
+  "infrastructure_errors": []
+}

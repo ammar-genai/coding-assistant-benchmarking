@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T22-19-50.198Z_claude_T7-trade-ticket",
+  "task": {
+    "id": "T7-trade-ticket",
+    "version": "1.0.0"
+  },
+  "assistant": "claude",
+  "assistant_version": "2.1.241 (Claude Code)",
+  "model": "claude-sonnet-5",
+  "access_path": "subscription",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-jm7RJ1/checkout",
+    "git_commit": "47ef930e132d1fa9b576cc5e01f6b58802ee0d53",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "0362227f57ed1baaeb77dc409014e7fe5194c9d6feabe6e51d98d0e28c930557",
+  "command": [
+    "claude",
+    "--print",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "--no-session-persistence",
+    "--setting-sources",
+    "project",
+    "--permission-mode",
+    "acceptEdits",
+    "--tools",
+    "Read,Glob,Grep,Edit,Write,Bash",
+    "--allowedTools",
+    "Bash(npm run typecheck)",
+    "Bash(npm run lint)",
+    "--model",
+    "claude-sonnet-5",
+    "--",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-23T22:19:50.294Z",
+  "settings": {
+    "task_mode": "workspace-write",
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0
+  }
+}

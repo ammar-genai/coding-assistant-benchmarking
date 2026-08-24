@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T17-41-13.540Z_distributed_T5-review-queue",
+  "status": "failed",
+  "acceptance_status": "fail",
+  "started_at": "2026-08-23T17:41:13.540Z",
+  "finished_at": "2026-08-23T17:52:31.432Z",
+  "elapsed_ms": 677892,
+  "stages": [
+    {
+      "stage": "codex-plan",
+      "status": "complete",
+      "elapsed_ms": 76778,
+      "read_only_changes": []
+    },
+    {
+      "stage": "claude-plan-review",
+      "status": "timeout",
+      "elapsed_ms": 600255,
+      "read_only_changes": []
+    }
+  ],
+  "changed_paths": [],
+  "out_of_scope_paths": [],
+  "read_only_violations": [],
+  "final_checks_passed": false,
+  "workflow_error": "Error: Plan-review stage did not complete cleanly; paid worker stage was not started.\n    at file:///Users/ammarbinayaz/Documents/coding-assistant-benchmarking/scripts/benchmark-workflow-run.mjs:534:11\n    at process.processTicksAndRejections (node:internal/process/task_queues:104:5)",
+  "cleanup_error": null,
+  "artifacts": {
+    "manifest": "manifest.json",
+    "task_prompt": "task-prompt.md",
+    "lead_plan": "lead-plan.md",
+    "plan_review": "plan-review.md",
+    "worker_patch": "worker.patch",
+    "integrated_patch": "integrated.patch",
+    "final_review": "final-review.md",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "final-verification.json"
+  }
+}

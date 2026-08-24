@@ -1,0 +1,8 @@
+{
+  "changed_paths": [
+    "benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md",
+    "benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs",
+    "benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs"
+  ],
+  "out_of_scope_paths": []
+}

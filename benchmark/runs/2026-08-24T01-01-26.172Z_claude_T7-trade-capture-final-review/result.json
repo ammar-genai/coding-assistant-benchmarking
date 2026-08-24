@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-24T01-01-26.172Z_claude_T7-trade-capture-final-review",
+  "status": "complete",
+  "acceptance_status": "pending",
+  "started_at": "2026-08-24T01:01:26.273Z",
+  "finished_at": "2026-08-24T01:07:03.039Z",
+  "elapsed_ms": 336766,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "workspace_changed": false,
+  "changed_paths": [],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "verification.json"
+  },
+  "notes": []
+}

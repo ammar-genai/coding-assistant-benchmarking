@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "id": "visible-1",
+      "kind": "visible",
+      "command": "node --test benchmark/fixtures/T3-comparison-summary/comparison-summary.test.mjs benchmark/fixtures/T3-comparison-summary/student-tests.mjs",
+      "elapsed_ms": 158,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ summarizes eligible runs by assistant in stable order (1.168416ms)\n✔ breaks a best-score tie with elapsed time (0.071958ms)\n✔ renders the exact Markdown table format (0.0935ms)\n✔ renders an explicit empty state below the table header (0.035667ms)\n✔ ignores ineligible runs and does not validate their fields (1.111417ms)\n✔ breaks a tie using run_id when score and elapsed time are equal (0.07275ms)\n✔ averages median elapsed time for an even number of runs (0.046875ms)\n✔ summarizeAssistants throws TypeError for invalid eligible data (0.148125ms)\n✔ renderComparisonTable throws TypeError for invalid summary fields (0.076333ms)\nℹ tests 9\nℹ suites 0\nℹ pass 9\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 76.936875\n",
+      "stderr": ""
+    },
+    {
+      "id": "private-1",
+      "kind": "private",
+      "command": "[private suite: T3-comparison-summary]",
+      "elapsed_ms": 124,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ defaults a missing comparison_eligible field to eligible (1.073375ms)\n✔ filters before validating record fields (0.046709ms)\n✔ rejects invalid eligible records and invalid top-level inputs (0.196625ms)\n✔ uses numeric medians for odd and even run counts (0.086458ms)\n✔ uses run_id as the final best-run tie breaker (0.061042ms)\n✔ sorts assistant names by normal JavaScript string comparison (0.0595ms)\n✔ does not mutate frozen input data (0.073083ms)\n✔ renders escaping, decimal seconds, and the exact empty state (0.097292ms)\n✔ validates supplied summary records (0.076458ms)\n✔ requires at least two real assistant-authored tests (2.816834ms)\nℹ tests 10\nℹ suites 0\nℹ pass 10\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 69.450541\n",
+      "stderr": ""
+    }
+  ],
+  "infrastructure_errors": []
+}

@@ -1,0 +1,81 @@
+{
+  "schema_version": "1.0",
+  "phase": "phase-2",
+  "type": "access-checks",
+  "counted_quality_runs": false,
+  "prompt": "Reply with exactly: PHASE2_ACCESS_OK",
+  "tools_enabled": false,
+  "results": [
+    {
+      "label": "sol",
+      "requested_route": "openrouter/openai/gpt-5.6-sol",
+      "requested_model": "openai/gpt-5.6-sol",
+      "passed": true,
+      "input": 388,
+      "output": 9,
+      "cache_read": 0,
+      "cache_write": 0,
+      "reasoning": 0,
+      "total_tokens": 397,
+      "reported_cost_usd": 0.001105
+    },
+    {
+      "label": "fable",
+      "requested_route": "openrouter/anthropic/claude-fable-5",
+      "requested_model": "anthropic/claude-fable-5",
+      "passed": true,
+      "input": 2,
+      "output": 16,
+      "cache_read": 0,
+      "cache_write": 638,
+      "reasoning": 0,
+      "total_tokens": 656,
+      "reported_cost_usd": 0.008795
+    },
+    {
+      "label": "kimi",
+      "requested_route": "openrouter/moonshotai/kimi-k3",
+      "requested_model": "moonshotai/kimi-k3",
+      "passed": true,
+      "input": 521,
+      "output": 37,
+      "cache_read": 0,
+      "cache_write": 0,
+      "reasoning": 22,
+      "total_tokens": 558,
+      "reported_cost_usd": 0.002118
+    },
+    {
+      "label": "qwen",
+      "requested_route": "openrouter/qwen/qwen3.8-27b",
+      "requested_model": "qwen/qwen3.8-27b",
+      "passed": true,
+      "input": 406,
+      "output": 140,
+      "cache_read": 0,
+      "cache_write": 0,
+      "reasoning": 157,
+      "total_tokens": 546,
+      "reported_cost_usd": 0.0006307
+    },
+    {
+      "label": "glm",
+      "requested_route": "openrouter/z-ai/glm-5.2",
+      "requested_model": "z-ai/glm-5.2",
+      "passed": true,
+      "input": 395,
+      "output": 22,
+      "cache_read": 0,
+      "cache_write": 0,
+      "reasoning": 15,
+      "total_tokens": 417,
+      "reported_cost_usd": 0.000448362
+    }
+  ],
+  "total_reported_cost_usd": 0.013097062,
+  "fable_fallback_used": false,
+  "notes": [
+    "OpenRouter did not expose a distinct served-model field in these Pi events.",
+    "All exact requested model IDs were echoed by Pi and returned the fixed response."
+  ]
+}

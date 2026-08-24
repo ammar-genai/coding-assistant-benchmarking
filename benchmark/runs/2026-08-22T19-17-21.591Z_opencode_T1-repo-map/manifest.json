@@ -1,0 +1,37 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-22T19-17-21.591Z_opencode_T1-repo-map",
+  "task": {
+    "id": "T1-repo-map",
+    "version": "1.0.0"
+  },
+  "assistant": "opencode",
+  "assistant_version": "1.18.21",
+  "model": "ollama/deepseek-v4-flash:cloud",
+  "access_path": "ollama-cloud",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-c30U4X/checkout",
+    "git_commit": "40184837ac9d497053b4cc35f9ffc7c99768932c",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "80a78377fc3d68564306811a74ea22c8d5d30c3aeeb3f3a4f95c85b33c6d12a3",
+  "command": [
+    "opencode",
+    "run",
+    "--format",
+    "json",
+    "--agent",
+    "plan",
+    "--dir",
+    "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-c30U4X/checkout",
+    "--model",
+    "ollama/deepseek-v4-flash:cloud",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-22T19:17:21.632Z",
+  "settings": {
+    "task_mode": "read-only",
+    "max_wall_time_seconds": 600,
+    "max_human_interventions": 0
+  }
+}

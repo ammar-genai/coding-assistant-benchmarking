@@ -1,0 +1,7 @@
+{
+  "changed_paths": [
+    "benchmark/fixtures/T9-capacity-allocation/allocation-engine.mjs",
+    "benchmark/fixtures/T9-capacity-allocation/student-tests.mjs"
+  ],
+  "out_of_scope_paths": []
+}

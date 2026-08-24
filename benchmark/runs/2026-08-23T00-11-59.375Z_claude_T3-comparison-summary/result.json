@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T00-11-59.375Z_claude_T3-comparison-summary",
+  "status": "failed",
+  "acceptance_status": "not-graded",
+  "started_at": "2026-08-23T00:11:59.412Z",
+  "finished_at": "2026-08-23T00:12:00.263Z",
+  "elapsed_ms": 851,
+  "exit_code": 1,
+  "signal": null,
+  "timed_out": false,
+  "workspace_changed": false,
+  "changed_paths": [],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "verification.json"
+  },
+  "notes": [
+    "The assistant did not change the workspace."
+  ]
+}

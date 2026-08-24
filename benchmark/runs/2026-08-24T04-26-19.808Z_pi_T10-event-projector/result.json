@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-24T04-26-19.808Z_pi_T10-event-projector",
+  "status": "complete",
+  "acceptance_status": "pass",
+  "started_at": "2026-08-24T04:26:19.940Z",
+  "finished_at": "2026-08-24T04:30:15.388Z",
+  "elapsed_ms": 235448,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "workspace_changed": true,
+  "changed_paths": [
+    "benchmark/fixtures/T10-event-projector/INCIDENT.md",
+    "benchmark/fixtures/T10-event-projector/event-projector.mjs",
+    "benchmark/fixtures/T10-event-projector/student-tests.mjs"
+  ],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "verification.json"
+  },
+  "notes": []
+}

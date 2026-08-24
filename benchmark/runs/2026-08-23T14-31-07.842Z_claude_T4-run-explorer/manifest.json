@@ -1,0 +1,48 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T14-31-07.842Z_claude_T4-run-explorer",
+  "task": {
+    "id": "T4-run-explorer",
+    "version": "1.0.0"
+  },
+  "assistant": "claude",
+  "assistant_version": "2.1.241 (Claude Code)",
+  "model": "ollama/kimi-k2.7-code:cloud",
+  "access_path": "ollama-cloud",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-VewvEL/checkout",
+    "git_commit": "8907158740ccca5d644e1e92a12ae6cf0b0ac249",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "29ead71f698afec910207d63c9b09057990e9a3aaf1807f164ff7cc9694d3653",
+  "command": [
+    "ollama",
+    "launch",
+    "claude",
+    "--model",
+    "kimi-k2.7-code:cloud",
+    "--yes",
+    "--",
+    "--print",
+    "--output-format",
+    "stream-json",
+    "--verbose",
+    "--no-session-persistence",
+    "--setting-sources",
+    "project",
+    "--permission-mode",
+    "acceptEdits",
+    "--tools",
+    "Read,Glob,Grep,Edit,Write,Bash",
+    "--allowedTools",
+    "Bash(node --test benchmark/fixtures/T4-run-explorer/run-explorer.test.mjs benchmark/fixtures/T4-run-explorer/student-tests.mjs)",
+    "--",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-23T14:31:07.895Z",
+  "settings": {
+    "task_mode": "workspace-write",
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0
+  }
+}

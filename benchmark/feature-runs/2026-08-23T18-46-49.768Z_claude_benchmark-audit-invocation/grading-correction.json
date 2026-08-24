@@ -1,0 +1,18 @@
+{
+  "original_automatic_acceptance_status": "pass",
+  "corrected_acceptance_status": "fail",
+  "reason": "The original feature runner counted attempted MCP tool calls but did not inspect their error results. Claude Code exposed and connected both tools, then dontAsk permission mode denied each call before the MCP server executed it.",
+  "evidence": {
+    "mcp_server_status": "connected",
+    "skill_discovered": true,
+    "get_task_contract_attempts": 1,
+    "get_task_contract_successes": 0,
+    "summarize_run_attempts": 1,
+    "summarize_run_successes": 0,
+    "permission_denials": 2,
+    "workspace_unchanged": true,
+    "final_verdict": "insufficient evidence"
+  },
+  "rerun_performed": false,
+  "runner_correction": "Future runs require both tool attempts to return without an error before automatic acceptance can pass."
+}

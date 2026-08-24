@@ -1,0 +1,356 @@
+diff --git a/benchmark/fixtures/T3-comparison-summary/render-comparison-table.mjs b/benchmark/fixtures/T3-comparison-summary/render-comparison-table.mjs
+index 40fbc04..ff77caf 100644
+--- a/benchmark/fixtures/T3-comparison-summary/render-comparison-table.mjs
++++ b/benchmark/fixtures/T3-comparison-summary/render-comparison-table.mjs
+@@ -1,10 +1,58 @@
+ /**
+  * Render assistant summaries as a stable Markdown table.
+  */
++
++const HEADER = "| Assistant | Runs | Best score | Best run | Median time |";
++const DIVIDER = "|---|---:|---:|---|---:|";
++
++/**
++ * A summary must satisfy the render contract before it can be displayed.
++ */
++function isValidSummary(summary) {
++  if (summary === null || typeof summary !== "object" || Array.isArray(summary)) {
++    return false;
++  }
++  if (typeof summary.assistant !== "string" || summary.assistant.length === 0) {
++    return false;
++  }
++  if (typeof summary.best_run_id !== "string" || summary.best_run_id.length === 0) {
++    return false;
++  }
++  if (!Number.isInteger(summary.run_count) || summary.run_count <= 0) {
++    return false;
++  }
++  if (!Number.isFinite(summary.best_score) || summary.best_score < 0 || summary.best_score > 100) {
++    return false;
++  }
++  if (!Number.isFinite(summary.median_elapsed_ms) || summary.median_elapsed_ms < 0) {
++    return false;
++  }
++  return true;
++}
++
++function escapeCell(value) {
++  return value.replaceAll("|", "\\|");
++}
++
+ export function renderComparisonTable(summaries) {
+   if (!Array.isArray(summaries)) {
+     throw new TypeError("summaries must be an array");
+   }
+ 
+-  return "";
++  if (summaries.length === 0) {
++    return [HEADER, DIVIDER, "", "_No eligible runs._"].join("\n");
++  }
++
++  const rows = [HEADER, DIVIDER];
++  for (const summary of summaries) {
++    if (!isValidSummary(summary)) {
++      throw new TypeError("summary has invalid fields");
++    }
++    const seconds = (summary.median_elapsed_ms / 1000).toFixed(3);
++    rows.push(
++      `| ${escapeCell(summary.assistant)} | ${summary.run_count} | ${summary.best_score} | ${escapeCell(summary.best_run_id)} | ${seconds} s |`,
++    );
++  }
++
++  return rows.join("\n");
+ }
+diff --git a/benchmark/fixtures/T3-comparison-summary/student-tests.mjs b/benchmark/fixtures/T3-comparison-summary/student-tests.mjs
+index 27384fc..1c58f53 100644
+--- a/benchmark/fixtures/T3-comparison-summary/student-tests.mjs
++++ b/benchmark/fixtures/T3-comparison-summary/student-tests.mjs
+@@ -1,2 +1,179 @@
+-// Add at least two meaningful node:test cases for the feature contract.
+-// Do not copy or modify the committed comparison-summary.test.mjs suite.
++// Student-authored tests for the T3 comparison-summary contract.
++// These cover edge cases not exercised by the committed comparison-summary.test.mjs suite.
++import assert from "node:assert/strict";
++import test from "node:test";
++
++import { renderComparisonTable } from "./render-comparison-table.mjs";
++import { summarizeAssistants } from "./summarize-assistants.mjs";
++
++test("summarizeAssistants: case-sensitive grouping, run_id tie-break, and even median", () => {
++  const runs = [
++    {
++      run_id: "run-b",
++      assistant: "OpenCode",
++      status: "complete",
++      acceptance_status: "pass",
++      score: 80,
++      elapsed_ms: 100,
++    },
++    {
++      run_id: "run-a",
++      assistant: "OpenCode",
++      status: "complete",
++      acceptance_status: "pass",
++      score: 80,
++      elapsed_ms: 100,
++    },
++    {
++      run_id: "run-c",
++      assistant: "OpenCode",
++      status: "complete",
++      acceptance_status: "pass",
++      score: 60,
++      elapsed_ms: 200,
++    },
++    {
++      run_id: "run-d",
++      assistant: "OpenCode",
++      status: "complete",
++      acceptance_status: "pass",
++      score: 60,
++      elapsed_ms: 300,
++    },
++    {
++      run_id: "lower-1",
++      assistant: "opencode",
++      status: "complete",
++      acceptance_status: "pass",
++      score: 50,
++      elapsed_ms: 10,
++    },
++  ];
++
++  const result = summarizeAssistants(runs);
++
++  assert.deepEqual(result, [
++    {
++      assistant: "OpenCode",
++      run_count: 4,
++      best_score: 80,
++      best_run_id: "run-a", // same score and elapsed as run-b; smaller run_id wins
++      median_elapsed_ms: 150, // even count: (100 + 200) / 2
++    },
++    {
++      assistant: "opencode",
++      run_count: 1,
++      best_score: 50,
++      best_run_id: "lower-1",
++      median_elapsed_ms: 10,
++    },
++  ]);
++
++  // The input array and its records must not be mutated.
++  assert.deepEqual(
++    runs.map((run) => run.run_id),
++    ["run-b", "run-a", "run-c", "run-d", "lower-1"],
++  );
++});
++
++test("summarizeAssistants: invalid eligible data throws, ineligible data is ignored", () => {
++  assert.throws(() => summarizeAssistants("not-an-array"), TypeError);
++
++  const runs = [
++    {
++      run_id: "bad-score",
++      assistant: "Codex",
++      status: "complete",
++      acceptance_status: "pass",
++      score: 150, // out of range for an eligible run
++      elapsed_ms: 10,
++    },
++    {
++      run_id: "failed-invalid",
++      assistant: "Codex",
++      status: "failed", // ineligible, so its invalid fields must not matter
++      acceptance_status: "pass",
++      score: -5,
++      elapsed_ms: -100,
++      comparison_eligible: true,
++    },
++    {
++      run_id: "good",
++      assistant: "Codex",
++      status: "complete",
++      acceptance_status: "pass",
++      score: 75,
++      elapsed_ms: 25,
++    },
++  ];
++
++  assert.throws(() => summarizeAssistants(runs), TypeError);
++  assert.deepEqual(summarizeAssistants(runs.slice(1)), [
++    {
++      assistant: "Codex",
++      run_count: 1,
++      best_score: 75,
++      best_run_id: "good",
++      median_elapsed_ms: 25,
++    },
++  ]);
++});
++
++test("renderComparisonTable: preserves order, escapes pipes, formats seconds", () => {
++  const summaries = [
++    {
++      assistant: "Beta|One",
++      run_count: 3,
++      best_score: 90,
++      best_run_id: "id|b",
++      median_elapsed_ms: 1250,
++    },
++    {
++      assistant: "Alpha",
++      run_count: 1,
++      best_score: 100,
++      best_run_id: "id-a",
++      median_elapsed_ms: 500,
++    },
++  ];
++
++  // Supplied order is preserved even though "Alpha" sorts before "Beta".
++  assert.equal(
++    renderComparisonTable(summaries),
++    [
++      "| Assistant | Runs | Best score | Best run | Median time |",
++      "|---|---:|---:|---|---:|",
++      "| Beta\\|One | 3 | 90 | id\\|b | 1.250 s |",
++      "| Alpha | 1 | 100 | id-a | 0.500 s |",
++    ].join("\n"),
++  );
++});
++
++test("renderComparisonTable: rejects invalid summary fields", () => {
++  assert.throws(() => renderComparisonTable("nope"), TypeError);
++
++  const base = {
++    assistant: "Pi",
++    run_count: 2,
++    best_score: 90,
++    best_run_id: "pi-run",
++    median_elapsed_ms: 100,
++  };
++
++  assert.throws(
++    () => renderComparisonTable([{ ...base, run_count: 0 }]),
++    TypeError,
++  );
++  assert.throws(
++    () => renderComparisonTable([{ ...base, best_score: 101 }]),
++    TypeError,
++  );
++  assert.throws(
++    () => renderComparisonTable([{ ...base, median_elapsed_ms: -1 }]),
++    TypeError,
++  );
++  assert.throws(
++    () => renderComparisonTable([{ ...base, assistant: "" }]),
++    TypeError,
++  );
++});
+diff --git a/benchmark/fixtures/T3-comparison-summary/summarize-assistants.mjs b/benchmark/fixtures/T3-comparison-summary/summarize-assistants.mjs
+index 3fe2216..91810ae 100644
+--- a/benchmark/fixtures/T3-comparison-summary/summarize-assistants.mjs
++++ b/benchmark/fixtures/T3-comparison-summary/summarize-assistants.mjs
+@@ -1,10 +1,100 @@
+ /**
+  * Build one comparison summary per assistant from raw benchmark run records.
+  */
++
++/**
++ * A run is eligible for comparison only when it completed, its answer passed,
++ * and it was not explicitly excluded.
++ */
++function isEligible(run) {
++  return (
++    run !== null &&
++    typeof run === "object" &&
++    run.status === "complete" &&
++    run.acceptance_status === "pass" &&
++    run.comparison_eligible !== false
++  );
++}
++
++/**
++ * Enforce the data contract on an eligible run. Invalid fields on an
++ * ineligible run are irrelevant and never reach this check.
++ */
++function validateEligibleRun(run) {
++  if (typeof run.run_id !== "string" || run.run_id.length === 0) {
++    throw new TypeError("run_id must be a non-empty string");
++  }
++  if (typeof run.assistant !== "string" || run.assistant.length === 0) {
++    throw new TypeError("assistant must be a non-empty string");
++  }
++  if (!Number.isFinite(run.score) || run.score < 0 || run.score > 100) {
++    throw new TypeError("score must be a finite number from 0 through 100");
++  }
++  if (!Number.isFinite(run.elapsed_ms) || run.elapsed_ms < 0) {
++    throw new TypeError("elapsed_ms must be a finite number greater than or equal to zero");
++  }
++}
++
++/**
++ * Returns true when `a` is a better result than `b`: higher score, then lower
++ * elapsed time, then lexicographically smaller run_id.
++ */
++function isBetter(a, b) {
++  if (a.score !== b.score) return a.score > b.score;
++  if (a.elapsed_ms !== b.elapsed_ms) return a.elapsed_ms < b.elapsed_ms;
++  return a.run_id < b.run_id;
++}
++
++/**
++ * Median of numeric values after a numeric sort. For an even count, average the
++ * two middle values. The input array is not mutated.
++ */
++function median(times) {
++  const sorted = [...times].sort((x, y) => x - y);
++  const middle = sorted.length >> 1;
++  if (sorted.length % 2 === 1) return sorted[middle];
++  return (sorted[middle - 1] + sorted[middle]) / 2;
++}
++
+ export function summarizeAssistants(runs) {
+   if (!Array.isArray(runs)) {
+     throw new TypeError("runs must be an array");
+   }
+ 
+-  return [];
++  const groups = new Map();
++
++  for (const run of runs) {
++    if (!isEligible(run)) continue;
++    validateEligibleRun(run);
++
++    let group = groups.get(run.assistant);
++    if (group === undefined) {
++      group = { runs: [] };
++      groups.set(run.assistant, group);
++    }
++    group.runs.push(run);
++  }
++
++  const summaries = [];
++  for (const [assistant, group] of groups) {
++    let best = group.runs[0];
++    for (const run of group.runs) {
++      if (isBetter(run, best)) best = run;
++    }
++    summaries.push({
++      assistant,
++      run_count: group.runs.length,
++      best_score: best.score,
++      best_run_id: best.run_id,
++      median_elapsed_ms: median(group.runs.map((run) => run.elapsed_ms)),
++    });
++  }
++
++  summaries.sort((a, b) => {
++    if (a.assistant < b.assistant) return -1;
++    if (a.assistant > b.assistant) return 1;
++    return 0;
++  });
++
++  return summaries;
+ }

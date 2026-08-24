@@ -1,0 +1,8 @@
+{
+  "changed_paths": [
+    "benchmark/fixtures/T10-event-projector/INCIDENT.md",
+    "benchmark/fixtures/T10-event-projector/event-projector.mjs",
+    "benchmark/fixtures/T10-event-projector/student-tests.mjs"
+  ],
+  "out_of_scope_paths": []
+}

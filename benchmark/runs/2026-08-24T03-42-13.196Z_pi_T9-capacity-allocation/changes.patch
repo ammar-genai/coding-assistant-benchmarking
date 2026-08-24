@@ -1,0 +1,280 @@
+diff --git a/benchmark/fixtures/T9-capacity-allocation/allocation-engine.mjs b/benchmark/fixtures/T9-capacity-allocation/allocation-engine.mjs
+index bb661a7..4f760f3 100644
+--- a/benchmark/fixtures/T9-capacity-allocation/allocation-engine.mjs
++++ b/benchmark/fixtures/T9-capacity-allocation/allocation-engine.mjs
+@@ -1,16 +1,126 @@
++// Deterministic desk-capacity allocation.
++//
++// Each desk is allocated independently. Within a desk, requests are served in
++// this deterministic order:
++//   1. higher `priority` first,
++//   2. earlier `submittedAt` first,
++//   3. lexicographically smaller `id` first.
++//
++// Each request receives at most its `requested` amount and each desk uses at
++// most its declared capacity. Results are returned in the original input order.
++// The inputs (array, request records, and capacity object) are never mutated.
++
++function toTimestamp(submittedAt) {
++  if (submittedAt instanceof Date) {
++    return submittedAt.getTime();
++  }
++  if (typeof submittedAt === "string" || typeof submittedAt === "number") {
++    return new Date(submittedAt).getTime();
++  }
++  return NaN;
++}
++
+ function validateInputs(requests, capacityByDesk) {
+-  if (!Array.isArray(requests)) throw new TypeError("requests must be an array");
+-  if (!capacityByDesk || typeof capacityByDesk !== "object" || Array.isArray(capacityByDesk)) {
++  if (!Array.isArray(requests)) {
++    throw new TypeError("requests must be an array");
++  }
++  if (
++    capacityByDesk === null ||
++    typeof capacityByDesk !== "object" ||
++    Array.isArray(capacityByDesk)
++  ) {
+     throw new TypeError("capacityByDesk must be an object");
+   }
++
++  const seenIds = new Set();
++  for (let i = 0; i < requests.length; i++) {
++    const request = requests[i];
++    const where = `requests[${i}]`;
++    if (request === null || typeof request !== "object" || Array.isArray(request)) {
++      throw new TypeError(`${where} must be a request object`);
++    }
++
++    const { id, desk, requested, priority, submittedAt } = request;
++
++    if (typeof id !== "string" || id.length === 0) {
++      throw new TypeError(`${where}.id must be a non-empty string`);
++    }
++    if (seenIds.has(id)) {
++      throw new TypeError(`${where}.id "${id}" is not unique`);
++    }
++    seenIds.add(id);
++
++    if (typeof desk !== "string" || desk.length === 0) {
++      throw new TypeError(`${where}.desk must be a non-empty string`);
++    }
++    if (typeof requested !== "number" || !Number.isFinite(requested) || requested <= 0) {
++      throw new TypeError(`${where}.requested must be a positive finite number`);
++    }
++    if (!Number.isInteger(priority)) {
++      throw new TypeError(`${where}.priority must be an integer`);
++    }
++    if (Number.isNaN(toTimestamp(submittedAt))) {
++      throw new TypeError(`${where}.submittedAt must be a valid timestamp`);
++    }
++  }
++
++  // Every desk referenced by a request must have a finite, non-negative capacity.
++  for (const request of requests) {
++    const desk = request.desk;
++    if (!Object.prototype.hasOwnProperty.call(capacityByDesk, desk)) {
++      throw new TypeError(`capacityByDesk is missing capacity for desk "${desk}"`);
++    }
++    const capacity = capacityByDesk[desk];
++    if (typeof capacity !== "number" || !Number.isFinite(capacity) || capacity < 0) {
++      throw new TypeError(
++        `capacity for desk "${desk}" must be a finite, non-negative number`,
++      );
++    }
++  }
+ }
+ 
+ export function allocateCapacity(requests, capacityByDesk) {
+   validateInputs(requests, capacityByDesk);
+ 
+-  return requests.map((request) => ({
++  // Remaining capacity per desk, copied from the input without mutating it.
++  const remaining = new Map();
++  for (const request of requests) {
++    if (!remaining.has(request.desk)) {
++      remaining.set(request.desk, capacityByDesk[request.desk]);
++    }
++  }
++
++  // Build a working list of entries so the original array/records are untouched.
++  const order = requests.map((request, index) => ({
++    index,
+     id: request.id,
+-    allocated: request.requested,
+-    unfilled: 0,
++    desk: request.desk,
++    wanted: request.requested,
++    priority: request.priority,
++    ts: toTimestamp(request.submittedAt),
+   }));
++
++  // priority desc, then submittedAt asc, then id asc.
++  order.sort((a, b) => {
++    if (a.priority !== b.priority) return b.priority - a.priority;
++    if (a.ts !== b.ts) return a.ts - b.ts;
++    if (a.id < b.id) return -1;
++    if (a.id > b.id) return 1;
++    return 0;
++  });
++
++  // Allocate in deterministic order, but write results at the original index.
++  const result = new Array(requests.length);
++  for (const entry of order) {
++    const available = remaining.get(entry.desk);
++    const allocated = Math.min(entry.wanted, available);
++    remaining.set(entry.desk, available - allocated);
++    result[entry.index] = {
++      id: entry.id,
++      allocated,
++      unfilled: entry.wanted - allocated,
++    };
++  }
++
++  return result;
+ }
+diff --git a/benchmark/fixtures/T9-capacity-allocation/student-tests.mjs b/benchmark/fixtures/T9-capacity-allocation/student-tests.mjs
+index b351efd..03dfdda 100644
+--- a/benchmark/fixtures/T9-capacity-allocation/student-tests.mjs
++++ b/benchmark/fixtures/T9-capacity-allocation/student-tests.mjs
+@@ -1,7 +1,136 @@
+-// Replace this placeholder with at least three meaningful node:test cases.
+ import assert from "node:assert/strict";
+ import test from "node:test";
+ 
+-test("replace this placeholder with allocation contract tests", () => {
+-  assert.fail("Add at least three meaningful tests");
++import { allocateCapacity } from "./allocation-engine.mjs";
++
++const T0 = "2026-01-01T00:00:00Z";
++const T1 = "2026-01-01T00:01:00Z";
++
++test("returns an empty array for an empty request list", () => {
++  assert.deepEqual(allocateCapacity([], { ABS: 10 }), []);
++});
++
++test("allocates nothing when a desk has zero capacity", () => {
++  const requests = [
++    { id: "a", desk: "ABS", requested: 10, priority: 1, submittedAt: T0 },
++    { id: "b", desk: "ABS", requested: 5, priority: 2, submittedAt: T0 },
++  ];
++
++  assert.deepEqual(allocateCapacity(requests, { ABS: 0 }), [
++    { id: "a", allocated: 0, unfilled: 10 },
++    { id: "b", allocated: 0, unfilled: 5 },
++  ]);
++});
++
++test("orders by priority, submission time, then id and returns rows in input order", () => {
++  // Two independent desks. Desk A exercises priority then submission time.
++  // Desk B exercises the id tie breaker at equal priority and submission time.
++  const requests = [
++    { id: "r3", desk: "A", requested: 25, priority: 1, submittedAt: T0 },
++    { id: "r1", desk: "A", requested: 10, priority: 5, submittedAt: T0 },
++    { id: "r2", desk: "A", requested: 10, priority: 5, submittedAt: T1 },
++    { id: "s2", desk: "B", requested: 5, priority: 2, submittedAt: T0 },
++    { id: "s1", desk: "B", requested: 40, priority: 2, submittedAt: T0 },
++  ];
++
++  assert.deepEqual(allocateCapacity(requests, { A: 30, B: 30 }), [
++    { id: "r3", allocated: 10, unfilled: 15 }, // priority 1, last on desk A
++    { id: "r1", allocated: 10, unfilled: 0 }, // priority 5, earlier submission
++    { id: "r2", allocated: 10, unfilled: 0 }, // priority 5, later submission
++    { id: "s2", allocated: 0, unfilled: 5 }, // id tie breaker: s1 served first
++    { id: "s1", allocated: 30, unfilled: 10 },
++  ]);
++});
++
++test("accepts Date instances as submittedAt timestamps", () => {
++  const requests = [
++    { id: "a", desk: "ABS", requested: 10, priority: 1, submittedAt: new Date(T0) },
++    { id: "b", desk: "ABS", requested: 10, priority: 2, submittedAt: new Date(T0) },
++  ];
++
++  assert.deepEqual(allocateCapacity(requests, { ABS: 15 }), [
++    { id: "a", allocated: 5, unfilled: 5 },
++    { id: "b", allocated: 10, unfilled: 0 },
++  ]);
++});
++
++test("handles fractional requested amounts and capacities exactly", () => {
++  const requests = [
++    { id: "a", desk: "ABS", requested: 2.5, priority: 1, submittedAt: T0 },
++    { id: "b", desk: "ABS", requested: 3.5, priority: 2, submittedAt: T0 },
++  ];
++
++  assert.deepEqual(allocateCapacity(requests, { ABS: 5 }), [
++    { id: "a", allocated: 1.5, unfilled: 1 },
++    { id: "b", allocated: 3.5, unfilled: 0 },
++  ]);
++});
++
++test("does not mutate the input array, request records, or capacity object", () => {
++  const requests = [
++    { id: "a", desk: "ABS", requested: 70, priority: 1, submittedAt: T0 },
++    { id: "b", desk: "ABS", requested: 60, priority: 3, submittedAt: T1 },
++  ];
++  const capacityByDesk = { ABS: 100 };
++
++  const firstRef = requests[0];
++  const beforeRequests = JSON.parse(JSON.stringify(requests));
++  const beforeCapacity = JSON.parse(JSON.stringify(capacityByDesk));
++
++  const result = allocateCapacity(requests, capacityByDesk);
++
++  // Inputs keep their values and identity.
++  assert.deepEqual(requests, beforeRequests);
++  assert.deepEqual(capacityByDesk, beforeCapacity);
++  assert.equal(requests[0], firstRef);
++  assert.equal(requests[0].requested, 70);
++  // A fresh array is returned.
++  assert.notEqual(result, requests);
++});
++
++test("rejects invalid inputs with TypeError", () => {
++  const base = {
++    id: "a",
++    desk: "ABS",
++    requested: 10,
++    priority: 1,
++    submittedAt: T0,
++  };
++  const cap = { ABS: 10 };
++  const withOverrides = (overrides) => ({ ...base, ...overrides });
++
++  assert.throws(() => allocateCapacity("nope", cap), TypeError);
++  assert.throws(() => allocateCapacity([], null), TypeError);
++  assert.throws(() => allocateCapacity([], []), TypeError);
++  assert.throws(() => allocateCapacity([withOverrides({ id: "" })], cap), TypeError);
++  assert.throws(() => allocateCapacity([withOverrides({ id: 5 })], cap), TypeError);
++  assert.throws(() => allocateCapacity([withOverrides({ desk: "" })], cap), TypeError);
++  assert.throws(() => allocateCapacity([withOverrides({ requested: 0 })], cap), TypeError);
++  assert.throws(() => allocateCapacity([withOverrides({ requested: Infinity })], cap), TypeError);
++  assert.throws(() => allocateCapacity([withOverrides({ priority: 1.5 })], cap), TypeError);
++  assert.throws(() => allocateCapacity([withOverrides({ submittedAt: "nope" })], cap), TypeError);
++  assert.throws(() => allocateCapacity([withOverrides({ submittedAt: null })], cap), TypeError);
++  assert.throws(() => allocateCapacity([base], {}), TypeError); // missing desk capacity
++  assert.throws(() => allocateCapacity([base], { ABS: -1 }), TypeError); // negative capacity
++  assert.throws(() => allocateCapacity([base], { ABS: NaN }), TypeError); // NaN capacity
++  assert.throws(
++    () => allocateCapacity([base, { ...base }], cap), // duplicate ids
++    TypeError,
++  );
++});
++
++test("validation failures do not mutate inputs", () => {
++  const requests = [
++    { id: "a", desk: "ABS", requested: 10, priority: 1, submittedAt: T0 },
++    { id: "a", desk: "ABS", requested: 10, priority: 1, submittedAt: T0 },
++  ];
++  const capacityByDesk = { ABS: 10 };
++
++  const beforeRequests = JSON.parse(JSON.stringify(requests));
++  const beforeCapacity = JSON.parse(JSON.stringify(capacityByDesk));
++
++  assert.throws(() => allocateCapacity(requests, capacityByDesk), TypeError);
++
++  assert.deepEqual(requests, beforeRequests);
++  assert.deepEqual(capacityByDesk, beforeCapacity);
+ });

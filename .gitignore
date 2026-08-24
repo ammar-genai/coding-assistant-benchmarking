@@ -39,8 +39,11 @@ next-env.d.ts
 *.tsbuildinfo
 /dist/
 /.wrangler/
+/.tmp/
 /outputs/
 /work/
+/output/presentation/*.inspect.ndjson
+/output/presentation/coding-intelligence-field-study/
 /benchmark/runs/*
 !/benchmark/runs/.gitkeep
 /benchmark/feature-runs/*

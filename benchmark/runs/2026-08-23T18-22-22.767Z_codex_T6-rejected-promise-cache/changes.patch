@@ -1,0 +1,172 @@
+diff --git a/benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md b/benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md
+index 5c0c8ea..5a7b10f 100644
+--- a/benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md
++++ b/benchmark/fixtures/T6-rejected-promise-cache/INCIDENT.md
+@@ -2,24 +2,59 @@
+ 
+ ## Summary
+ 
+-Complete after diagnosing the failure.
++A transient timeout left a rejected origin-load promise in the in-process
++configuration cache. Later reads reused that rejection instead of trying the
++origin again. The cache now removes a failed load while retaining successful
++entries and protecting any newer replacement for the same tenant.
+ 
+ ## User impact
+ 
+-Complete after diagnosing the failure.
++Configuration reads for the affected tenant returned 503 after the origin had
++recovered. In the recorded incident, all three requests for `acme` failed, and
++the second and third requests had no opportunity to recover because the
++application made only one origin load.
+ 
+ ## Root cause and evidence
+ 
+-Complete after diagnosing the failure.
++`getConfig` stored the in-flight promise in `entries` so concurrent misses could
++share one load. It never removed that promise if the load or validation
++rejected. Because a rejected promise remains settled and truthy, every later
++lookup found the same entry and immediately replayed the original error.
++
++The log records a miss and timeout for `cfg-781`, followed by two
++`cache=hit` responses with the same `origin_timeout`. Its final line confirms
++three requests but only one origin load. The implementation matched that
++timeline: the only deletion paths were explicit `clear` calls, while the load
++chain had no failure cleanup. The committed retry tests also failed because a
++second read reused the first rejected promise.
+ 
+ ## Why the logs were misleading
+ 
+-Complete after diagnosing the failure.
++The healthy probe tested the origin independently; it did not prove that the
++application issued a new load. Meanwhile, `cache=hit` can sound like a valid
++configuration was cached. Here it meant only that a promise entry existed, and
++that promise contained the earlier rejection. Those signals can wrongly point
++an investigation toward an intermittent upstream or an HTTP cache even though
++the poison was in the process-local promise map.
+ 
+ ## Fix and regression coverage
+ 
+-Complete after diagnosing the failure.
++The load chain now catches both origin failures and invalid origin results. It
++deletes the entry only when the map still contains that exact promise, then
++rethrows the original error to all current waiters. This permits the next read
++to load again without adding automatic retries or evicting successful values.
++The identity check prevents an old load that fails late from deleting a newer
++entry installed after an explicit clear.
++
++The added regression tests cover shared failure for concurrent waiters followed
++by recovery, the clear-and-replace late-failure race, and retry after invalid
++origin data while a successful tenant remains cached. The committed suite also
++covers copy isolation, normalized tenant keys, coalescing, tenant separation,
++targeted invalidation, and API recovery with the required 503 retry response.
+ 
+ ## Remaining risk
+ 
+-Complete after diagnosing the failure.
++Successful entries have no expiry or size bound. They remain until explicitly
++cleared or the process restarts, so freshness and memory growth still depend on
++the caller's invalidation policy; this repair intentionally does not change
++that existing cache contract.
+diff --git a/benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs b/benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs
+index c2c316c..2345c01 100644
+--- a/benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs
++++ b/benchmark/fixtures/T6-rejected-promise-cache/config-cache.mjs
+@@ -51,7 +51,13 @@ export function createConfigCache(loadFromOrigin) {
+     if (!pending) {
+       pending = Promise.resolve()
+         .then(() => loadFromOrigin(key))
+-        .then(normalizeConfig);
++        .then(normalizeConfig)
++        .catch((error) => {
++          if (entries.get(key) === pending) {
++            entries.delete(key);
++          }
++          throw error;
++        });
+       entries.set(key, pending);
+     }
+ 
+diff --git a/benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs b/benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs
+index 3fb23bb..775058a 100644
+--- a/benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs
++++ b/benchmark/fixtures/T6-rejected-promise-cache/student-tests.mjs
+@@ -1,6 +1,76 @@
+ import assert from "node:assert/strict";
+ import test from "node:test";
+ 
+-test("replace this placeholder with incident regression tests", () => {
+-  assert.fail("Add at least three meaningful tests");
++import { ConfigOriginError, createConfigCache } from "./config-cache.mjs";
++
++const CONFIG = Object.freeze({ version: "v1", features: Object.freeze(["search"]) });
++
++test("all waiters share a failed load and the next read retries", async () => {
++  let calls = 0;
++  let rejectLoad;
++  const firstLoad = new Promise((resolve, reject) => {
++    rejectLoad = reject;
++  });
++  const cache = createConfigCache(async () => {
++    calls += 1;
++    return calls === 1 ? firstLoad : CONFIG;
++  });
++
++  const first = cache.getConfig("acme");
++  const second = cache.getConfig(" acme ");
++  const timeout = new ConfigOriginError("temporary timeout");
++  rejectLoad(timeout);
++
++  const failures = await Promise.allSettled([first, second]);
++  assert.deepEqual(failures.map(({ status }) => status), ["rejected", "rejected"]);
++  assert.equal(failures[0].reason, timeout);
++  assert.equal(failures[1].reason, timeout);
++  assert.equal(calls, 1);
++
++  assert.deepEqual(await cache.getConfig("acme"), CONFIG);
++  assert.equal(calls, 2);
++});
++
++test("a late failure does not delete a replacement created after clear", async () => {
++  let calls = 0;
++  let rejectFirstLoad;
++  const firstLoad = new Promise((resolve, reject) => {
++    rejectFirstLoad = reject;
++  });
++  const replacement = { version: "v2", features: ["billing"] };
++  const cache = createConfigCache(async () => {
++    calls += 1;
++    return calls === 1 ? firstLoad : replacement;
++  });
++
++  const staleRead = cache.getConfig("acme");
++  await Promise.resolve();
++  cache.clear("acme");
++  assert.deepEqual(await cache.getConfig("acme"), replacement);
++
++  rejectFirstLoad(new ConfigOriginError("late timeout"));
++  await assert.rejects(staleRead, ConfigOriginError);
++
++  assert.deepEqual(await cache.getConfig("acme"), replacement);
++  assert.equal(calls, 2);
++});
++
++test("invalid origin data is evicted without disturbing successful tenants", async () => {
++  const calls = new Map();
++  const cache = createConfigCache(async (tenantId) => {
++    const count = (calls.get(tenantId) ?? 0) + 1;
++    calls.set(tenantId, count);
++    if (tenantId === "beta" && count === 1) {
++      return { version: "bad", features: [42] };
++    }
++    return tenantId === "acme" ? CONFIG : { version: "v2", features: [] };
++  });
++
++  assert.deepEqual(await cache.getConfig("acme"), CONFIG);
++  await assert.rejects(cache.getConfig("beta"), /features must be an array of strings/);
++  assert.equal(cache.size(), 1);
++
++  assert.deepEqual(await cache.getConfig("acme"), CONFIG);
++  assert.deepEqual(await cache.getConfig("beta"), { version: "v2", features: [] });
++  assert.deepEqual(Object.fromEntries(calls), { acme: 1, beta: 2 });
+ });

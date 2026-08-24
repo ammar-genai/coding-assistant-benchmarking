@@ -22,33 +22,34 @@ async function render(pathname = "/") {
   );
 }
 
-test("server-renders the coding assistant study plan", async () => {
+test("server-renders the coding intelligence research showcase", async () => {
   const response = await render();
   assert.equal(response.status, 200);
   assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
 
   const html = await response.text();
-  assert.match(html, /<title>Coding Assistant Benchmark \| Plan and Results<\/title>/i);
-  assert.match(html, /Find the right/);
-  assert.match(html, /Evidence status/);
-  assert.match(html, /Through T7/);
+  assert.match(html, /<title>Coding Intelligence Field Study \| Assistants, Models, Orchestration<\/title>/i);
+  assert.match(html, /How coding assistants/);
+  assert.match(html, /The strongest setup is a portfolio, not a winner/);
+  assert.match(html, /Separate the product from the model/);
+  assert.match(html, /End-to-end study flow/);
+  assert.match(html, /T5 internal workflow/);
+  assert.match(html, /Repeated for every counted observation/);
+  assert.match(html, /20 counted observations/);
   assert.match(html, /GPT-5\.6 Sol/);
-  assert.match(html, /Claude Opus 5/);
-  assert.match(html, /DeepSeek V4 Flash Cloud/);
-  assert.match(html, /See the findings/);
-  assert.match(html, /What the recorded runs actually showed/);
+  assert.match(html, /Claude Fable 5/);
+  assert.match(html, /Qwen3\.8-27B/);
+  assert.match(html, /Five models\. One neutral Pi harness/);
   assert.match(html, /3\.57×/);
-  assert.match(html, /OpenCode \+ Qwen3\.8-27B/);
-  assert.match(html, /T6 shared model/);
   assert.match(html, /55\.115 s/);
-  assert.match(html, /One skill and MCP server worked across all three/);
-  assert.match(html, /\$1\.7485/);
-  assert.match(html, /Open the synthetic trade-capture mock/);
-  assert.match(html, /property="og:image" content="http:\/\/localhost\/og\.png"/i);
+  assert.match(html, /Frontier judgment at the top/);
+  assert.match(html, /Evidence before impressions/);
+  assert.match(html, /Observed account decrease/);
+  assert.match(html, /Enter the research lab/);
+  assert.match(html, /The evidence became working software/);
+  assert.match(html, /property="og:image" content="http:\/\/localhost:3000\/og\.png"/i);
   assert.match(html, /name="twitter:card" content="summary_large_image"/i);
-  assert.match(html, /Primary sources used for this plan/);
-  assert.doesNotMatch(html, /codex-preview/);
-  assert.doesNotMatch(html, /react-loading-skeleton/);
+  assert.match(html, /Read the research paper/);
   assert.doesNotMatch(html, /class="tc-shell"/);
 });
 
@@ -81,4 +82,17 @@ test("server-renders the synthetic trade capture workspace", async () => {
   assert.match(html, /aria-pressed="true"/);
   assert.match(html, /id="tc-ticket-title" tabindex="-1"/);
   assert.match(html, /id="tc-review-title" tabindex="-1"/);
+});
+
+test("server-renders the research application lab", async () => {
+  const response = await render("/lab");
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
+  const html = await response.text();
+
+  assert.match(html, /The work behind/);
+  assert.match(html, /Trade Capture Workspace/);
+  assert.match(html, /Neutral Pi Harness/);
+  assert.match(html, /Read-only Audit MCP/);
+  assert.match(html, /A five-step audience demo/);
 });

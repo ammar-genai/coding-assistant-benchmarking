@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T04-12-52.088Z_opencode_T1-repo-map",
+  "task": {
+    "id": "T1-repo-map",
+    "version": "1.0.0"
+  },
+  "assistant": "opencode",
+  "assistant_version": "1.18.21",
+  "model": "openrouter/qwen/qwen3.8-27b",
+  "access_path": "api",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-F03MdX/checkout",
+    "git_commit": "9352b4ad9c4e4f043f77c86dd6a2d52f139e09df",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "80a78377fc3d68564306811a74ea22c8d5d30c3aeeb3f3a4f95c85b33c6d12a3",
+  "command": [
+    "opencode",
+    "run",
+    "--pure",
+    "--format",
+    "json",
+    "--agent",
+    "plan",
+    "--dir",
+    "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-F03MdX/checkout",
+    "--model",
+    "openrouter/qwen/qwen3.8-27b",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-23T04:12:52.148Z",
+  "settings": {
+    "task_mode": "read-only",
+    "max_wall_time_seconds": 600,
+    "max_human_interventions": 0
+  }
+}

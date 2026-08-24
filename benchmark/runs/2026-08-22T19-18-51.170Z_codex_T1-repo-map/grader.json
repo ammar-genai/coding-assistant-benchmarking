@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-22T19-18-51.170Z_codex_T1-repo-map",
+  "grading_status": "complete",
+  "acceptance_status": "pass",
+  "score": 95,
+  "maximum_score": 100,
+  "comparison_eligible": true,
+  "criteria": [
+    { "id": "architecture", "score": 24, "maximum": 25, "note": "Clear purpose, current stack, directory responsibilities, and explicit identification of unused scaffolding." },
+    { "id": "request-flow", "score": 19, "maximum": 20, "note": "Accurate five-step SSR, hydration, localStorage, and no-database flow with line references." },
+    { "id": "repository-evidence", "score": 24, "maximum": 25, "note": "Important claims are grounded in inspected files and distinguish what was not executed." },
+    { "id": "risks", "score": 14, "maximum": 15, "note": "Exactly three useful evidence-based risks, including the important page/contract drift risk." },
+    { "id": "change-plan", "score": 9, "maximum": 10, "note": "A precise derived-state plan that correctly handles the limits of SSR testing for localStorage state." },
+    { "id": "scope-and-format", "score": 5, "maximum": 5, "note": "Exact sections, concise response, no forbidden action, and zero workspace changes." }
+  ],
+  "automatic_checks": {
+    "workspace_unchanged": true,
+    "required_sections_present": true,
+    "under_word_limit": true,
+    "forbidden_action_observed": false,
+    "isolated_worktree": true
+  },
+  "summary": "Accepted and comparison eligible. Codex with DeepSeek produced the strongest evidence-to-risk linkage and the most technically precise UI change plan in the valid block so far."
+}

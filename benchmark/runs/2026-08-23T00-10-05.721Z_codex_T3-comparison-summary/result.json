@@ -1,0 +1,28 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T00-10-05.721Z_codex_T3-comparison-summary",
+  "status": "complete",
+  "acceptance_status": "pass",
+  "started_at": "2026-08-23T00:10:05.758Z",
+  "finished_at": "2026-08-23T00:11:52.610Z",
+  "elapsed_ms": 106852,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "workspace_changed": true,
+  "changed_paths": [
+    "benchmark/fixtures/T3-comparison-summary/render-comparison-table.mjs",
+    "benchmark/fixtures/T3-comparison-summary/student-tests.mjs",
+    "benchmark/fixtures/T3-comparison-summary/summarize-assistants.mjs"
+  ],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "verification.json"
+  },
+  "notes": []
+}

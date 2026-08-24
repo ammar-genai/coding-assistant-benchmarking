@@ -1,0 +1,26 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-22T22-57-43.182Z_opencode_T2-filter-valid-runs",
+  "status": "complete",
+  "acceptance_status": "pass",
+  "started_at": "2026-08-22T22:57:43.226Z",
+  "finished_at": "2026-08-22T22:57:50.298Z",
+  "elapsed_ms": 7072,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "workspace_changed": true,
+  "changed_paths": [
+    "benchmark/fixtures/T2-run-filter/select-comparison-runs.mjs"
+  ],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "verification.json"
+  },
+  "notes": []
+}

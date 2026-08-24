@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T19-23-23.578Z_opencode_T6-rejected-promise-cache",
+  "task": {
+    "id": "T6-rejected-promise-cache",
+    "version": "1.0.0"
+  },
+  "assistant": "opencode",
+  "assistant_version": "1.18.21",
+  "model": "ollama/kimi-k2.7-code:cloud",
+  "access_path": "ollama-cloud",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-nnFPSx/checkout",
+    "git_commit": "75a958ed96ccda1ee1c6d78bebe101ff28e01718",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "9717e7ec3248b0901eb2ad8f3eeaa701e323342da75c7b1e01753fd9ae24e3a1",
+  "command": [
+    "opencode",
+    "run",
+    "--pure",
+    "--format",
+    "json",
+    "--agent",
+    "build",
+    "--dir",
+    "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-nnFPSx/checkout",
+    "--model",
+    "ollama/kimi-k2.7-code:cloud",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-23T19:23:23.655Z",
+  "settings": {
+    "task_mode": "workspace-write",
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0
+  }
+}

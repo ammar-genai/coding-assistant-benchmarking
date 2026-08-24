@@ -1,0 +1,10 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-22T19-14-36.289Z_claude_T1-repo-map",
+  "grading_status": "invalidated",
+  "acceptance_status": "invalid",
+  "score": null,
+  "maximum_score": 100,
+  "comparison_eligible": false,
+  "summary": "The assistant could see ignored evidence directories from prior runs in the shared checkout and used them in its analysis. The answer is excluded from comparison even though the process completed without workspace changes."
+}

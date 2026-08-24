@@ -1,0 +1,38 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T00-05-21.334Z_opencode_T3-comparison-summary",
+  "task": {
+    "id": "T3-comparison-summary",
+    "version": "1.0.1"
+  },
+  "assistant": "opencode",
+  "assistant_version": "1.18.21",
+  "model": "ollama/deepseek-v4-flash:cloud",
+  "access_path": "ollama-cloud",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-JC0Zat/checkout",
+    "git_commit": "71d5f53d35d70d3c875de7b4b6e7a195d6a9797f",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "1707370f23c17ecf0829b8571a2960b57652426c4b299e0d0c7aa8368405fc78",
+  "command": [
+    "opencode",
+    "run",
+    "--pure",
+    "--format",
+    "json",
+    "--agent",
+    "build",
+    "--dir",
+    "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-JC0Zat/checkout",
+    "--model",
+    "ollama/deepseek-v4-flash:cloud",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-23T00:05:21.372Z",
+  "settings": {
+    "task_mode": "workspace-write",
+    "max_wall_time_seconds": 900,
+    "max_human_interventions": 0
+  }
+}

@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-22T19-19-46.768Z_claude_T1-repo-map",
+  "grading_status": "complete",
+  "acceptance_status": "pass",
+  "score": 92,
+  "maximum_score": 100,
+  "comparison_eligible": true,
+  "criteria": [
+    { "id": "architecture", "score": 24, "maximum": 25, "note": "Accurate explanation of the study site, benchmark harness, build/deploy path, and empty database scaffold." },
+    { "id": "request-flow", "score": 19, "maximum": 20, "note": "Concise and accurate Worker, SSR, hydration, localStorage, and headless-test flow." },
+    { "id": "repository-evidence", "score": 23, "maximum": 25, "note": "Strong path and line evidence; the statement that automated coverage tests an OpenCode preview path is not established by the repository tests." },
+    { "id": "risks", "score": 13, "maximum": 15, "note": "Three relevant risks with evidence and inference, including temporal model drift and machine-dependent adapters." },
+    { "id": "change-plan", "score": 8, "maximum": 10, "note": "Well scoped, but it leaves the state source ambiguous: a localStorage-derived true-only badge would not satisfy the proposed unconditional SSR assertion." },
+    { "id": "scope-and-format", "score": 5, "maximum": 5, "note": "Exact sections, concise response, no forbidden action, and zero workspace changes." }
+  ],
+  "automatic_checks": {
+    "workspace_unchanged": true,
+    "required_sections_present": true,
+    "under_word_limit": true,
+    "forbidden_action_observed": false,
+    "isolated_worktree": true
+  },
+  "summary": "Accepted and comparison eligible. Claude Code with DeepSeek produced a compact, well-evidenced report, but its UI test plan was less precise than the Codex and OpenCode responses."
+}

@@ -1,0 +1,41 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-24T03-35-25.361Z_pi_T8-change-impact-analysis",
+  "task": {
+    "id": "T8-change-impact-analysis",
+    "version": "1.0.0"
+  },
+  "assistant": "pi",
+  "assistant_version": "0.84.2",
+  "model": "openrouter/openai/gpt-5.6-sol",
+  "access_path": "unknown",
+  "repository": {
+    "path": "/var/folders/cs/y_h_9x9j2hj316xhs3mvszd80000gn/T/coding-assistant-benchmark-Ly8d1N/checkout",
+    "git_commit": "a36716140a0fb331c4f37584448d44b0937f936e",
+    "dirty_at_start": false
+  },
+  "prompt_sha256": "52509fc55a8152ae169b7a9cc0952725e2a3bf247c145ff2a799ffd15c71c217",
+  "command": [
+    "pi",
+    "--print",
+    "--mode",
+    "json",
+    "--no-session",
+    "--no-extensions",
+    "--no-skills",
+    "--no-prompt-templates",
+    "--no-themes",
+    "--approve",
+    "--tools",
+    "read,grep,find,ls",
+    "--model",
+    "openrouter/openai/gpt-5.6-sol",
+    "<prompt.md>"
+  ],
+  "started_at": "2026-08-24T03:35:25.506Z",
+  "settings": {
+    "task_mode": "read-only",
+    "max_wall_time_seconds": 600,
+    "max_human_interventions": 0
+  }
+}

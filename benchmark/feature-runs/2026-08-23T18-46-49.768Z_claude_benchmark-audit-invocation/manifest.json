@@ -1,0 +1,16 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T18-46-49.768Z_claude_benchmark-audit-invocation",
+  "feature": "benchmark-audit-invocation",
+  "assistant": "claude",
+  "assistant_version": "2.1.241 (Claude Code)",
+  "model": "claude-opus-5",
+  "access_path": "subscription",
+  "git_commit": "8c940aee4fdbb7d07b1b7d31b59dcb34fe4c3084",
+  "prompt_sha256": "5b84ef31a99f2ccb2d2dedc467b1962884f4e774a97d096d98dd544a5b4a81e4",
+  "target_run_id": "2026-08-23T18-22-22.767Z_codex_T6-rejected-promise-cache",
+  "target_task_id": "T6-rejected-promise-cache",
+  "max_wall_time_seconds": 600,
+  "max_human_interventions": 0,
+  "started_at": "2026-08-23T18:46:49.768Z"
+}

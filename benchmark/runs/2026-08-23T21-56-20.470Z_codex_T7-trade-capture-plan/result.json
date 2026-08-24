@@ -1,0 +1,24 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T21-56-20.470Z_codex_T7-trade-capture-plan",
+  "status": "complete",
+  "acceptance_status": "pending",
+  "started_at": "2026-08-23T21:56:20.562Z",
+  "finished_at": "2026-08-23T21:59:44.235Z",
+  "elapsed_ms": 203673,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "workspace_changed": false,
+  "changed_paths": [],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json",
+    "patch": "changes.patch",
+    "verification": "verification.json"
+  },
+  "notes": []
+}

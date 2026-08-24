@@ -1,0 +1,11 @@
+{
+  "changed_paths": [
+    "benchmark/fixtures/T3-comparison-summary/render-comparison-table.mjs",
+    "benchmark/fixtures/T3-comparison-summary/student-tests.mjs",
+    "benchmark/fixtures/T3-comparison-summary/summarize-assistants.mjs",
+    "tsconfig.tsbuildinfo"
+  ],
+  "out_of_scope_paths": [
+    "tsconfig.tsbuildinfo"
+  ]
+}

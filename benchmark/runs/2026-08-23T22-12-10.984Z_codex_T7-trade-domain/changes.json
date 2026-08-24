@@ -1,0 +1,12 @@
+{
+  "changed_paths": [
+    "app/trade-capture/domain/lifecycle.ts",
+    "app/trade-capture/domain/seed.ts",
+    "app/trade-capture/domain/validation.ts",
+    "tests/trade-domain.test.mjs",
+    "tsconfig.tsbuildinfo"
+  ],
+  "out_of_scope_paths": [
+    "tsconfig.tsbuildinfo"
+  ]
+}

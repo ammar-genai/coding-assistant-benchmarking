@@ -1,0 +1,25 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T13-14-49.762Z_opencode_T2-filter-valid-runs",
+  "grading_status": "complete",
+  "acceptance_status": "pass",
+  "score": 100,
+  "maximum_score": 100,
+  "comparison_eligible": true,
+  "criteria": [
+    { "id": "visible-tests", "score": 25, "maximum": 25, "note": "Both committed tests passed." },
+    { "id": "hidden-tests", "score": 30, "maximum": 30, "note": "All five private edge-case and contract tests passed." },
+    { "id": "root-cause", "score": 15, "maximum": 15, "note": "Correctly explains that OR accepted a run satisfying any one rule instead of requiring all rules." },
+    { "id": "scope-control", "score": 15, "maximum": 15, "note": "Changed exactly the one allowed implementation file." },
+    { "id": "implementation-quality", "score": 10, "maximum": 10, "note": "The minimal OR-to-AND fix preserves order, object identity, and input immutability." },
+    { "id": "final-report", "score": 5, "maximum": 5, "note": "Clearly states the cause, change, and visible verification result." }
+  ],
+  "automatic_checks": {
+    "visible_tests_passed": true,
+    "private_tests_passed": true,
+    "only_allowed_paths_changed": true,
+    "forbidden_action_observed": false,
+    "isolated_worktree": true
+  },
+  "summary": "Accepted and comparison eligible. OpenCode with Qwen3.8-27B produced the exact minimal fix, passed every check, and stayed within scope."
+}

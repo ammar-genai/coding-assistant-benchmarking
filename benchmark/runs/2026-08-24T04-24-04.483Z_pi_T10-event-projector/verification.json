@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "id": "visible-1",
+      "kind": "visible",
+      "command": "node --test benchmark/fixtures/T10-event-projector/event-projector.test.mjs benchmark/fixtures/T10-event-projector/student-tests.mjs",
+      "elapsed_ms": 138,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ serializes concurrent events for one trade (1.229792ms)\n✔ a persistence rejection does not commit state or poison later work (0.275667ms)\n✔ unrelated trades are not blocked by a pending persistence call (1.2365ms)\n✔ a rejected persistence call neither commits nor poisons queued work (0.296583ms)\n✔ stale events are ignored while gaps and post-cancellation versions reject (0.167334ms)\n✔ invalid first events and malformed payloads reject without persistence (0.1195ms)\n✔ amendments retain a complete valid state (0.613583ms)\n✔ input, callback, result, and snapshot mutations cannot alter internal state (0.108667ms)\nℹ tests 8\nℹ suites 0\nℹ pass 8\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 63.49625\n",
+      "stderr": ""
+    },
+    {
+      "id": "private-1",
+      "kind": "private",
+      "command": "[private suite: T10-event-projector]",
+      "elapsed_ms": 113,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ different trades are not serialized behind each other (1.20275ms)\n✔ duplicate or stale versions are ignored without persistence (0.101125ms)\n✔ version gaps and invalid first events are rejected (0.279709ms)\n✔ cancelled trades are terminal (0.140167ms)\n✔ snapshots and callback values cannot mutate committed state (0.31925ms)\n✔ requires meaningful tests and a completed incident report (2.358375ms)\nℹ tests 6\nℹ suites 0\nℹ pass 6\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 62.408333\n",
+      "stderr": ""
+    }
+  ],
+  "infrastructure_errors": []
+}

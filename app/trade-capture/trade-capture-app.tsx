@@ -1,6 +1,6 @@
 "use client";
 
-import { useReducer } from "react";
+import { useReducer, type CSSProperties } from "react";
 import { DeskInsights } from "./components/desk-insights.tsx";
 import { TradeBlotter } from "./components/trade-blotter.tsx";
 import { TradeReview } from "./components/trade-review.tsx";
@@ -8,6 +8,8 @@ import { TradeTicket } from "./components/trade-ticket.tsx";
 import type { LifecycleContext } from "./domain/types.ts";
 import { INITIAL_STATE, tradeCaptureReducer } from "./state/reducer.ts";
 import { selectDeskSummary, selectSelectedTrade, selectVisibleTrades } from "./state/selectors.ts";
+
+const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? "";
 
 function lifecycleContext(kind: "TRADE" | "EVENT"): LifecycleContext {
   const token = typeof crypto !== "undefined" && typeof crypto.randomUUID === "function"
@@ -32,7 +34,10 @@ export function TradeCaptureApp() {
 
   return (
     <main className="tc-shell">
-      <header className="tc-hero">
+      <header
+        className="tc-hero"
+        style={{ "--tc-hero-image": `url("${basePath}/trade-capture-structure.png")` } as CSSProperties}
+      >
         <div className="tc-hero-copy">
           <p className="tc-eyebrow">Securitized products · operations lab</p>
           <h1>Capture the trade.<br />See the desk.</h1>

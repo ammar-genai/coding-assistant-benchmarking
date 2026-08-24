@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-23T18-46-16.129Z_codex_benchmark-audit-invocation",
+  "status": "complete",
+  "acceptance_status": "pass",
+  "started_at": "2026-08-23T18:46:16.129Z",
+  "finished_at": "2026-08-23T18:46:36.891Z",
+  "elapsed_ms": 20762,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "automatic_checks": {
+    "process_complete": true,
+    "workspace_unchanged": true,
+    "get_task_contract_once": true,
+    "summarize_run_once": true,
+    "no_unexpected_tools": true,
+    "four_required_headings": true
+  },
+  "tool_calls": [
+    "get_task_contract",
+    "summarize_run"
+  ],
+  "required_tool_call_counts": {
+    "get_task_contract": 1,
+    "summarize_run": 1
+  },
+  "unexpected_tool_calls": [],
+  "final_response": "## Verdict\n\nPass.\n\n## Evidence\n\nBaseline commit: `303270e525acb8f9b189303ef52c4c08cbb0d946`.\n\n- Prompt matches manifest: `true`\n- Prompt matches current task: `true`\n- Changed paths: `INCIDENT.md`, `config-cache.mjs`, and `student-tests.mjs` within the task fixture\n- Out-of-scope paths: none\n- Visible verification: 1/1 passed; no failures or timeouts\n- Private verification: 1/1 passed; no failures or timeouts\n- Infrastructure errors: none\n- Artifacts present: `manifest.json`, `result.json`, `changes.json`, `verification.json`, `changes.patch`, `stdout.log`, `stderr.log`, and `prompt.md`\n\n## Telemetry\n\n- Assistant: `codex`\n- Model: `gpt-5.6-sol`\n- Access path: `subscription`\n- Elapsed time: 129,209 ms (129.209 seconds)\n\nComparable token and metered-cost totals are not supplied by these MCP results.\n\n## Limitations\n\nRaw prompts, transcripts, patches, logs, private tests, and file contents were not inspected. The summarized evidence supports acceptance and scope compliance, but cannot independently establish the exact implementation quality, detailed test coverage, incident-analysis accuracy, or a rubric score.",
+  "required_headings_present": [
+    "Verdict",
+    "Evidence",
+    "Telemetry",
+    "Limitations"
+  ],
+  "usage": {
+    "input_tokens": 44534,
+    "cached_input_tokens": 26112,
+    "cache_write_input_tokens": 0,
+    "output_tokens": 781,
+    "reasoning_output_tokens": 317
+  },
+  "subscription_cli_telemetry_usd": null
+}

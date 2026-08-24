@@ -1,0 +1,15 @@
+diff --git a/benchmark/fixtures/T2-run-filter/select-comparison-runs.mjs b/benchmark/fixtures/T2-run-filter/select-comparison-runs.mjs
+index e04bf18..41ad652 100644
+--- a/benchmark/fixtures/T2-run-filter/select-comparison-runs.mjs
++++ b/benchmark/fixtures/T2-run-filter/select-comparison-runs.mjs
+@@ -10,8 +10,8 @@ export function selectComparisonRuns(runs) {
+ 
+   return runs.filter(
+     (run) =>
+-      run.status === "complete" ||
+-      run.acceptance_status === "pass" ||
++      run.status === "complete" &&
++      run.acceptance_status === "pass" &&
+       run.comparison_eligible !== false,
+   );
+ }

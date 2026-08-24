@@ -1,0 +1,79 @@
+{
+  "status": "complete",
+  "elapsed_ms": 160346,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "changed_paths_during_stage": [],
+  "final_text": "I ran the visible suite and read every changed file. Ad-hoc `node -e` probing was denied by the permission mode, so boundary checks not covered by the suites (length limits, empty-value query strings) were verified by reading the code rather than by execution.\n\n## Verification\n\n`node --test review-queue.test.mjs student-tests.mjs` → **9 pass, 0 fail, 0 skipped, 0 todo**.\n\n## File scope\n\nClean. Only the five permitted files are modified, `review-queue.test.mjs` is untouched (`git diff --name-only` on it is empty), and there are no untracked files anywhere in the tree.\n\n## Correctness\n\n**Store** (`review-store.mjs:38`) — `now` defaults correctly and a non-function throws `TypeError`; the returned timestamp is checked for non-empty string *before* `reviews.set`, so a bad clock on an update leaves the prior review intact (student-tests asserts this at `student-tests.mjs:74`). `save` calls the clock exactly once, preserves `createdAt` on update, and returns `{ created, review }`. The comparator at `review-store.mjs:22` is a correct total order: descending `updatedAt`, ascending `runId` on tie.\n\n**API** (`review-api.mjs`) — the `runId` regex, decision set, reviewer 2–40, and note ≤240/required-for-reject-and-needs-work rules all match the contract, with trimming applied before validation and storage. All problems accumulate into one 400. The note-required check keys off `trimmed.decision`, so an invalid decision doesn't produce a spurious note error. Summary is computed from the unfiltered `store.list()` and the filter is applied only to `reviews` (`review-api.mjs:108`), exactly as specified. Trailing-slash normalization routes `/api/reviews/` to the collection rather than a detail lookup for an empty id — a good call. Absolute URLs parse via the `http://localhost` base, and the `try/catch` around `new URL` plus the method/url type guards keep bad input on the `invalid_request` path instead of throwing.\n\n**Data isolation** — solid at both layers. `copyReview` is applied on `save`, `get`, and every `list` element, and `list` builds a fresh array, so API response bodies are copies-of-copies; mutating `body.review` or `body.reviews` cannot reach stored state. `respond` builds a fresh `headers` literal per call, so the 405 `allow` header cannot leak into a later response — asserted at `student-tests.mjs:175`. `save` also projects only the four known fields into the stored object, so extra input keys never persist.\n\n**HTML safety** — `escapeHtml` covers `& < > \" '`, and every dynamic value (message, all four summary values, all five review columns) flows through it. Crucially, no caller data lands in an attribute context at all; all interpolation is into text nodes, so the escape set is sufficient. Non-object rows and non-array `reviews` are defended at `review-page.mjs:39` and `:58`. Structure meets the spec: one `h1`, a `main` landmark, four labeled controls, `role=\"status\" aria-live=\"polite\"`, table caption plus `th scope=\"col\"`, and the `No reviews yet.` empty state.\n\n**Tests** — five substantive cases, no skips/todos/placeholder assertions. They add real coverage beyond the frozen suite: caller-input mutation after save, copy semantics of returned arrays, atomic failure on a bad clock, sorted unknown-field reporting, 405 `allow` non-leakage, exact response key ordering, and an injection case with hostile markup in message, summary, and review fields.\n\n**Documentation** — README covers all three routes, the validation and error contract, the `allow` headers, and states plainly that the store is process-local and resets on restart. It is consistent with the implemented behavior.\n\n## Findings (all minor)\n\n- `review-api.mjs:69` requires all four fields to be present as strings, so an `approve` POST that *omits* `note` is rejected rather than defaulting to an empty note. The spec's \"it may be empty for approve\" is ambiguous between \"may be `\"\"`\" and \"may be absent\"; the strict reading is defensible and is documented in the README, but it is the least forgiving choice.\n- `review-api.mjs:52` maps a missing or non-object `body` to `validation_failed` with a `body` field error rather than `invalid_request`. Reasonable, since the spec scopes `invalid_request` to the request object and URL, but it is a judgment call on an underspecified case.\n- `review-api.mjs:122` treats `?decision=` (present but empty) as an invalid decision and returns 400 instead of ignoring an empty filter.\n- `student-tests.mjs:109` asserts the exact human-readable string `\"Unknown fields: alpha, zeta\"`. The contract specifies that unknown names be sorted, not the message format, so this couples the test to an implementation detail and will break on any rewording.\n\nNothing here is a correctness, isolation, or injection defect. I make no claim about behavior under any private test suite.\n\n{\"verdict\":\"pass\",\"findings\":[{\"severity\":\"low\",\"file\":\"benchmark/fixtures/T5-review-queue/review-api.mjs\",\"issue\":\"All four body fields must be present as strings, so an approve POST that omits note is rejected instead of defaulting to an empty note; the spec's 'may be empty for approve' is ambiguous between empty-string and absent.\"},{\"severity\":\"low\",\"file\":\"benchmark/fixtures/T5-review-queue/review-api.mjs\",\"issue\":\"A missing or non-object request body returns validation_failed with a 'body' field error rather than invalid_request; defensible but an underspecified judgment call.\"},{\"severity\":\"low\",\"file\":\"benchmark/fixtures/T5-review-queue/review-api.mjs\",\"issue\":\"An empty decision query value (?decision=) is treated as an invalid decision and returns 400 rather than being ignored as an absent filter.\"},{\"severity\":\"low\",\"file\":\"benchmark/fixtures/T5-review-queue/student-tests.mjs\",\"issue\":\"Asserts the exact error message string 'Unknown fields: alpha, zeta', coupling the test to a message format the contract does not specify (it requires only sorted unknown names).\"}],\"visible_verification\":\"pass\"}",
+  "usage": {
+    "input_tokens": 18,
+    "cache_creation_input_tokens": 30967,
+    "cache_read_input_tokens": 177064,
+    "output_tokens": 11729,
+    "output_tokens_details": {
+      "thinking_tokens": 6722
+    },
+    "server_tool_use": {
+      "web_search_requests": 0,
+      "web_fetch_requests": 0
+    },
+    "service_tier": "standard",
+    "cache_creation": {
+      "ephemeral_1h_input_tokens": 30967,
+      "ephemeral_5m_input_tokens": 0
+    },
+    "inference_geo": "not_available",
+    "iterations": [
+      {
+        "input_tokens": 2,
+        "output_tokens": 2682,
+        "cache_read_input_tokens": 31953,
+        "cache_creation_input_tokens": 2890,
+        "cache_creation": {
+          "ephemeral_5m_input_tokens": 0,
+          "ephemeral_1h_input_tokens": 2890
+        },
+        "type": "message"
+      }
+    ],
+    "speed": "standard"
+  },
+  "model_usage": {
+    "claude-haiku-4-5-20251001": {
+      "inputTokens": 2409,
+      "outputTokens": 15,
+      "cacheReadInputTokens": 0,
+      "cacheCreationInputTokens": 0,
+      "webSearchRequests": 0,
+      "costUSD": 0.002484,
+      "contextWindow": 200000,
+      "maxOutputTokens": 32000,
+      "canonicalModel": "claude-haiku-4-5",
+      "provider": "firstParty"
+    },
+    "claude-opus-5": {
+      "inputTokens": 18,
+      "outputTokens": 11729,
+      "cacheReadInputTokens": 177064,
+      "cacheCreationInputTokens": 30967,
+      "webSearchRequests": 0,
+      "costUSD": 0.691517,
+      "contextWindow": 1000000,
+      "maxOutputTokens": 64000,
+      "canonicalModel": "claude-opus-5",
+      "provider": "firstParty"
+    }
+  },
+  "reported_cost_usd": 0.694001,
+  "permission_denials": [
+    {
+      "tool_name": "Bash",
+      "tool_use_id": "toolu_01Wqq5rSLNWT5NbBrjc1wog9",
+      "tool_input": {
+        "command": "node --input-type=module -e '\nimport { createReviewStore } from \"./benchmark/fixtures/T5-review-queue/review-store.mjs\";\nimport { createReviewApi } from \"./benchmark/fixtures/T5-review-queue/review-api.mjs\";\nconst s = createReviewStore({ now: () => \"2026-01-01T00:00:00.000Z\" });\nconst h = createReviewApi(s);\nconst p = (b) => h({ method: \"POST\", url: \"/api/reviews\", body: b });\nconst ok = { runId: \"run-abc\", decision: \"approve\", reviewer: \"Ada\", note: \"\" };\n\nconsole.log(\"runId boundary run-ab:\", p({...ok, runId:\"run-ab\"}).status, \"run-abc:\", p({...ok,runId:\"run-abc\"}).status);\nconsole.log(\"64+ runId:\", p({...ok, runId: \"run-\" + \"a\".repeat(64)}).status, \"63:\", p({...ok, runId:\"run-\"+\"a\".repeat(63)}).status);\nconsole.log(\"note 240:\", p({...ok, decision:\"reject\", note:\"x\".repeat(240)}).status, \"241:\", p({...ok, decision:\"reject\", note:\"x\".repeat(241)}).status);\nconsole.log(\"reviewer 1/2/40/41:\", p({...ok,reviewer:\"A\"}).status, p({...ok,reviewer:\"Ad\"}).status, p({...ok,reviewer:\"a\".repeat(40)}).status, p({...ok,reviewer:\"a\".repeat(41)}).status);\n\n// response isolation from store\nconst r = p(ok);\nr.body.review.reviewer = \"HACKED\";\nconsole.log(\"store isolation after mutating response:\", s.get(\"run-abc\").reviewer);\nconst g = h({ method:\"GET\", url:\"/api/reviews\" });\ng.body.reviews.push({ runId:\"injected\" }); g.body.summary.total = 99;\nconsole.log(\"after mutating GET body:\", s.list().length, h({method:\"GET\",url:\"/api/reviews\"}).body.summary);\n\n// header isolation\nconst a405 = h({ method:\"DELETE\", url:\"/api/reviews\" });\nconsole.log(\"405 headers:\", JSON.stringify(a405.headers), \"keys:\", Object.keys(a405));\nconsole.log(\"empty decision query:\", JSON.stringify(h({method:\"GET\",url:\"/api/reviews?decision=\"}).body));\nconsole.log(\"trailing slash collection:\", h({method:\"GET\",url:\"/api/reviews/\"}).status);\nconsole.log(\"bad url:\", JSON.stringify(h({method:\"GET\",url:\"http://\"}).body));\nconsole.log(\"no url:\", JSON.stringify(h({method:\"GET\"}).body));\nconsole.log(\"proto key:\", JSON.stringify(p({...ok, __proto__: 1}).body));\n'\n",
+        "description": "Probe API boundary and isolation edge cases"
+      }
+    }
+  ]
+}

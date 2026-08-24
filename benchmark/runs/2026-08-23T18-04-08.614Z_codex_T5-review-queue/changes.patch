@@ -1,0 +1,460 @@
+diff --git a/benchmark/fixtures/T5-review-queue/README.md b/benchmark/fixtures/T5-review-queue/README.md
+index bb59cf2..9aa0d55 100644
+--- a/benchmark/fixtures/T5-review-queue/README.md
++++ b/benchmark/fixtures/T5-review-queue/README.md
+@@ -1,3 +1,40 @@
+ # Run review queue fixture
+ 
+-TODO: document the completed feature, API behavior, and operating limits.
++This dependency-free fixture records one current review per benchmark run and
++renders the queue as server-generated HTML. Saving the same `runId` updates its
++review while preserving the original creation timestamp.
++
++## API routes
++
++- `POST /api/reviews` creates or updates a review. It returns `201` for a new
++  run and `200` for an update.
++- `GET /api/reviews` returns all reviews plus an unfiltered summary. Add
++  `?decision=approve`, `?decision=reject`, or `?decision=needs-work` to filter
++  the returned review list without changing the summary.
++- `GET /api/reviews/:runId` returns one review, or `review_not_found` with
++  status `404` when no review exists for that run.
++
++POST bodies accept only the string fields `runId`, `decision`, `reviewer`, and
++`note`. Values are trimmed. Run IDs use the form `run-...`; decisions are
++`approve`, `reject`, or `needs-work`; reviewer names contain 2–40 characters;
++and notes contain at most 240 characters. A note is required for rejection and
++needs-work decisions but may be empty for approval.
++
++Invalid input returns status `400` with `validation_failed` and a `fields`
++object containing all detected problems. Unknown body fields are reported in
++sorted order and invalid data is not saved. Malformed requests return
++`invalid_request`; unsupported methods on known routes return
++`method_not_allowed` with an `allow` header; and unknown routes return
++`not_found`. All responses use JSON-style bodies and declare JSON UTF-8 content.
++
++## Operating limit
++
++The store is in memory and is not durable. All reviews reset whenever the
++process restarts; use persistent storage before relying on this fixture for
++production records.
++
++Run the complete fixture tests with:
++
++```sh
++node --test review-queue.test.mjs student-tests.mjs
++```
+diff --git a/benchmark/fixtures/T5-review-queue/review-api.mjs b/benchmark/fixtures/T5-review-queue/review-api.mjs
+index 9c13861..68ad0c1 100644
+--- a/benchmark/fixtures/T5-review-queue/review-api.mjs
++++ b/benchmark/fixtures/T5-review-queue/review-api.mjs
+@@ -1,3 +1,153 @@
+-export function createReviewApi() {
+-  throw new Error("TODO: implement the review API");
++const CONTENT_TYPE = "application/json; charset=utf-8";
++const REVIEW_FIELDS = ["runId", "decision", "reviewer", "note"];
++const DECISIONS = new Set(["approve", "reject", "needs-work"]);
++const RUN_ID_PATTERN = /^run-[a-z0-9][a-z0-9-]{2,63}$/;
++
++function response(status, body, headers = {}) {
++  return {
++    status,
++    headers: { "content-type": CONTENT_TYPE, ...headers },
++    body,
++  };
++}
++
++function validationFailed(fields) {
++  return response(400, { error: "validation_failed", fields });
++}
++
++function validateReview(body) {
++  if (body === null || typeof body !== "object" || Array.isArray(body)) {
++    return { values: null, fields: { body: "Must be an object." } };
++  }
++
++  const fields = {};
++  const unknown = Object.keys(body)
++    .filter((field) => !REVIEW_FIELDS.includes(field))
++    .sort();
++  if (unknown.length > 0) {
++    fields.body = `Unknown fields: ${unknown.join(", ")}.`;
++  }
++
++  const values = {};
++  for (const field of REVIEW_FIELDS) {
++    if (typeof body[field] !== "string") {
++      fields[field] = "Must be a string.";
++    } else {
++      values[field] = body[field].trim();
++    }
++  }
++
++  if (typeof values.runId === "string" && !RUN_ID_PATTERN.test(values.runId)) {
++    fields.runId = "Must be a valid run ID.";
++  }
++  if (typeof values.decision === "string" && !DECISIONS.has(values.decision)) {
++    fields.decision = "Must be approve, reject, or needs-work.";
++  }
++  if (
++    typeof values.reviewer === "string" &&
++    (values.reviewer.length < 2 || values.reviewer.length > 40)
++  ) {
++    fields.reviewer = "Must contain 2 through 40 characters.";
++  }
++  if (typeof values.note === "string") {
++    if (values.note.length > 240) {
++      fields.note = "Must contain at most 240 characters.";
++    } else if (
++      (values.decision === "reject" || values.decision === "needs-work") &&
++      values.note.length === 0
++    ) {
++      fields.note = "Required for reject and needs-work decisions.";
++    }
++  }
++
++  return { values, fields };
++}
++
++function summaryFor(reviews) {
++  const summary = { total: reviews.length, approve: 0, reject: 0, "needs-work": 0 };
++  for (const review of reviews) {
++    if (DECISIONS.has(review.decision)) {
++      summary[review.decision] += 1;
++    }
++  }
++  return summary;
++}
++
++export function createReviewApi(store) {
++  if (
++    store === null ||
++    typeof store !== "object" ||
++    typeof store.save !== "function" ||
++    typeof store.get !== "function" ||
++    typeof store.list !== "function"
++  ) {
++    throw new TypeError("store must provide save, get, and list functions");
++  }
++
++  return function handleReviewRequest(request) {
++    if (
++      request === null ||
++      typeof request !== "object" ||
++      Array.isArray(request) ||
++      typeof request.method !== "string" ||
++      request.method.length === 0 ||
++      typeof request.url !== "string" ||
++      request.url.length === 0
++    ) {
++      return response(400, { error: "invalid_request" });
++    }
++
++    let url;
++    try {
++      url = new URL(request.url, "http://review-queue.local");
++    } catch {
++      return response(400, { error: "invalid_request" });
++    }
++
++    const method = request.method.toUpperCase();
++    if (url.pathname === "/api/reviews") {
++      if (method === "POST") {
++        const { values, fields } = validateReview(request.body);
++        if (Object.keys(fields).length > 0) {
++          return validationFailed(fields);
++        }
++        const saved = store.save(values);
++        return response(saved.created ? 201 : 200, { review: saved.review });
++      }
++
++      if (method === "GET") {
++        const decision = url.searchParams.get("decision");
++        if (decision !== null && !DECISIONS.has(decision)) {
++          return validationFailed({ decision: "Must be approve, reject, or needs-work." });
++        }
++        const allReviews = store.list();
++        return response(200, {
++          reviews: decision === null ? allReviews : store.list({ decision }),
++          summary: summaryFor(allReviews),
++        });
++      }
++
++      return response(405, { error: "method_not_allowed" }, { allow: "GET, POST" });
++    }
++
++    const detailMatch = url.pathname.match(/^\/api\/reviews\/([^/]+)$/);
++    if (detailMatch) {
++      if (method !== "GET") {
++        return response(405, { error: "method_not_allowed" }, { allow: "GET" });
++      }
++
++      let runId;
++      try {
++        runId = decodeURIComponent(detailMatch[1]);
++      } catch {
++        return response(400, { error: "invalid_request" });
++      }
++      const review = store.get(runId);
++      return review === null
++        ? response(404, { error: "review_not_found" })
++        : response(200, { review });
++    }
++
++    return response(404, { error: "not_found" });
++  };
+ }
+diff --git a/benchmark/fixtures/T5-review-queue/review-page.mjs b/benchmark/fixtures/T5-review-queue/review-page.mjs
+index 558c95a..fefc871 100644
+--- a/benchmark/fixtures/T5-review-queue/review-page.mjs
++++ b/benchmark/fixtures/T5-review-queue/review-page.mjs
+@@ -1,3 +1,100 @@
+-export function renderReviewPage() {
+-  return "<h1>TODO: build the run review queue</h1>";
++function escapeHtml(value) {
++  return String(value)
++    .replaceAll("&", "&amp;")
++    .replaceAll("<", "&lt;")
++    .replaceAll(">", "&gt;")
++    .replaceAll('"', "&quot;")
++    .replaceAll("'", "&#39;");
++}
++
++function reviewRows(reviews) {
++  if (reviews.length === 0) {
++    return '<tr><td colspan="5">No reviews yet.</td></tr>';
++  }
++
++  return reviews
++    .map(
++      (review) => `        <tr>
++          <td>${escapeHtml(review.runId)}</td>
++          <td>${escapeHtml(review.decision)}</td>
++          <td>${escapeHtml(review.reviewer)}</td>
++          <td>${escapeHtml(review.note)}</td>
++          <td>${escapeHtml(review.updatedAt)}</td>
++        </tr>`,
++    )
++    .join("\n");
++}
++
++export function renderReviewPage({ reviews, summary, message = "" }) {
++  return `<!doctype html>
++<html lang="en">
++<head>
++  <meta charset="utf-8">
++  <meta name="viewport" content="width=device-width, initial-scale=1">
++  <title>Run review queue</title>
++</head>
++<body>
++  <main>
++    <h1>Run review queue</h1>
++    <p>Record a decision for each benchmark run and review the current queue.</p>
++
++    <section aria-label="Review summary">
++      <dl>
++        <div><dt>Total</dt><dd>${escapeHtml(summary.total)}</dd></div>
++        <div><dt>Approved</dt><dd>${escapeHtml(summary.approve)}</dd></div>
++        <div><dt>Rejected</dt><dd>${escapeHtml(summary.reject)}</dd></div>
++        <div><dt>Needs work</dt><dd>${escapeHtml(summary["needs-work"])}</dd></div>
++      </dl>
++    </section>
++
++    <section aria-labelledby="review-form-heading">
++      <h2 id="review-form-heading">Add or update a review</h2>
++      <form method="post" action="/api/reviews">
++        <div>
++          <label for="run-id">Run ID</label>
++          <input id="run-id" name="runId" required>
++        </div>
++        <div>
++          <label for="decision">Decision</label>
++          <select id="decision" name="decision" required>
++            <option value="approve">Approve</option>
++            <option value="reject">Reject</option>
++            <option value="needs-work">Needs work</option>
++          </select>
++        </div>
++        <div>
++          <label for="reviewer">Reviewer</label>
++          <input id="reviewer" name="reviewer" minlength="2" maxlength="40" required>
++        </div>
++        <div>
++          <label for="note">Note</label>
++          <textarea id="note" name="note" maxlength="240" aria-describedby="note-help"></textarea>
++          <p id="note-help">A note is required for reject and needs-work decisions.</p>
++        </div>
++        <button type="submit">Save review</button>
++      </form>
++      <p role="status" aria-live="polite">${escapeHtml(message)}</p>
++    </section>
++
++    <section aria-labelledby="saved-reviews-heading">
++      <h2 id="saved-reviews-heading">Reviews</h2>
++      <table>
++        <caption>Saved run reviews</caption>
++        <thead>
++          <tr>
++            <th scope="col">Run ID</th>
++            <th scope="col">Decision</th>
++            <th scope="col">Reviewer</th>
++            <th scope="col">Note</th>
++            <th scope="col">Updated</th>
++          </tr>
++        </thead>
++        <tbody>
++${reviewRows(reviews)}
++        </tbody>
++      </table>
++    </section>
++  </main>
++</body>
++</html>`;
+ }
+diff --git a/benchmark/fixtures/T5-review-queue/review-store.mjs b/benchmark/fixtures/T5-review-queue/review-store.mjs
+index 1138160..b694cbf 100644
+--- a/benchmark/fixtures/T5-review-queue/review-store.mjs
++++ b/benchmark/fixtures/T5-review-queue/review-store.mjs
+@@ -1,3 +1,60 @@
+-export function createReviewStore() {
+-  throw new Error("TODO: implement the review store");
++const REVIEW_FIELDS = ["runId", "decision", "reviewer", "note"];
++
++function copyReview(review) {
++  return { ...review };
++}
++
++export function createReviewStore({ now = () => new Date().toISOString() } = {}) {
++  if (typeof now !== "function") {
++    throw new TypeError("now must be a function");
++  }
++
++  const reviews = new Map();
++
++  function save(review) {
++    if (review === null || typeof review !== "object" || Array.isArray(review)) {
++      throw new TypeError("review must be an object");
++    }
++
++    for (const field of REVIEW_FIELDS) {
++      if (typeof review[field] !== "string") {
++        throw new TypeError(`${field} must be a string`);
++      }
++    }
++
++    const timestamp = now();
++    if (typeof timestamp !== "string" || timestamp.length === 0) {
++      throw new TypeError("now must return a non-empty string");
++    }
++
++    const current = reviews.get(review.runId);
++    const stored = {
++      runId: review.runId,
++      decision: review.decision,
++      reviewer: review.reviewer,
++      note: review.note,
++      createdAt: current?.createdAt ?? timestamp,
++      updatedAt: timestamp,
++    };
++
++    reviews.set(stored.runId, stored);
++    return { created: current === undefined, review: copyReview(stored) };
++  }
++
++  function get(runId) {
++    const review = reviews.get(runId);
++    return review === undefined ? null : copyReview(review);
++  }
++
++  function list({ decision } = {}) {
++    return [...reviews.values()]
++      .filter((review) => decision === undefined || review.decision === decision)
++      .sort((left, right) => {
++        const byUpdatedAt = right.updatedAt.localeCompare(left.updatedAt);
++        return byUpdatedAt || left.runId.localeCompare(right.runId);
++      })
++      .map(copyReview);
++  }
++
++  return { save, get, list };
+ }
+diff --git a/benchmark/fixtures/T5-review-queue/student-tests.mjs b/benchmark/fixtures/T5-review-queue/student-tests.mjs
+index 6330f62..4a992a3 100644
+--- a/benchmark/fixtures/T5-review-queue/student-tests.mjs
++++ b/benchmark/fixtures/T5-review-queue/student-tests.mjs
+@@ -1,2 +1,73 @@
+-// Add at least three meaningful node:test cases for the feature contract.
+-// Do not copy or modify the committed review-queue.test.mjs suite.
++import assert from "node:assert/strict";
++import test from "node:test";
++
++import { createReviewApi } from "./review-api.mjs";
++import { renderReviewPage } from "./review-page.mjs";
++import { createReviewStore } from "./review-store.mjs";
++
++test("store results are sorted and cannot mutate stored reviews", () => {
++  const timestamps = ["2026-08-23T10:00:00.000Z", "2026-08-23T11:00:00.000Z"];
++  const store = createReviewStore({ now: () => timestamps.shift() });
++  store.save({ runId: "run-zed", decision: "approve", reviewer: "Ada", note: "" });
++  const saved = store.save({ runId: "run-alpha", decision: "reject", reviewer: "Lin", note: "Broken" });
++
++  saved.review.decision = "approve";
++  const listed = store.list();
++  listed[0].note = "changed";
++  listed.push({});
++
++  assert.deepEqual(store.list().map(({ runId }) => runId), ["run-alpha", "run-zed"]);
++  assert.equal(store.get("run-alpha").decision, "reject");
++  assert.equal(store.get("run-alpha").note, "Broken");
++});
++
++test("API reports sorted unknown fields and does not persist invalid input", () => {
++  const store = createReviewStore();
++  const handle = createReviewApi(store);
++  const result = handle({
++    method: "POST",
++    url: "/api/reviews",
++    body: {
++      runId: "run-alpha",
++      decision: "approve",
++      reviewer: "Ada",
++      note: "",
++      zeta: true,
++      alpha: true,
++    },
++  });
++
++  assert.equal(result.status, 400);
++  assert.equal(result.body.error, "validation_failed");
++  assert.match(result.body.fields.body, /alpha, zeta/);
++  assert.deepEqual(store.list(), []);
++});
++
++test("API summaries ignore a list filter and recognized routes advertise methods", () => {
++  const store = createReviewStore({ now: () => "2026-08-23T12:00:00.000Z" });
++  store.save({ runId: "run-one", decision: "approve", reviewer: "Ada", note: "" });
++  store.save({ runId: "run-two", decision: "reject", reviewer: "Lin", note: "Why" });
++  const handle = createReviewApi(store);
++
++  const filtered = handle({ method: "GET", url: "/api/reviews?decision=approve" });
++  const disallowed = handle({ method: "DELETE", url: "/api/reviews/run-one" });
++
++  assert.equal(filtered.body.reviews.length, 1);
++  assert.deepEqual(filtered.body.summary, { total: 2, approve: 1, reject: 1, "needs-work": 0 });
++  assert.equal(disallowed.status, 405);
++  assert.equal(disallowed.headers.allow, "GET");
++});
++
++test("page escapes every dynamic output location", () => {
++  const attack = '<img src=x onerror="alert(1)">';
++  const html = renderReviewPage({
++    reviews: [
++      { runId: attack, decision: attack, reviewer: attack, note: attack, updatedAt: attack },
++    ],
++    summary: { total: attack, approve: attack, reject: attack, "needs-work": attack },
++    message: attack,
++  });
++
++  assert.doesNotMatch(html, /<img/);
++  assert.equal(html.match(/&lt;img/g)?.length, 10);
++});

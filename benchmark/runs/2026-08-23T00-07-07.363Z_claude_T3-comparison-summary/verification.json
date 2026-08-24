@@ -1,0 +1,27 @@
+{
+  "results": [
+    {
+      "id": "visible-1",
+      "kind": "visible",
+      "command": "node --test benchmark/fixtures/T3-comparison-summary/comparison-summary.test.mjs benchmark/fixtures/T3-comparison-summary/student-tests.mjs",
+      "elapsed_ms": 155,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ summarizes eligible runs by assistant in stable order (1.425833ms)\n✔ breaks a best-score tie with elapsed time (0.09475ms)\n✔ renders the exact Markdown table format (0.111625ms)\n✔ renders an explicit empty state below the table header (0.040958ms)\n✔ summarizeAssistants: case-sensitive grouping, run_id tie-break, and even median (1.4905ms)\n✔ summarizeAssistants: invalid eligible data throws, ineligible data is ignored (0.225333ms)\n✔ renderComparisonTable: preserves order, escapes pipes, formats seconds (0.119333ms)\n✔ renderComparisonTable: rejects invalid summary fields (0.079125ms)\nℹ tests 8\nℹ suites 0\nℹ pass 8\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 75.811166\n",
+      "stderr": ""
+    },
+    {
+      "id": "private-1",
+      "kind": "private",
+      "command": "[private suite: T3-comparison-summary]",
+      "elapsed_ms": 122,
+      "exit_code": 0,
+      "signal": null,
+      "timed_out": false,
+      "stdout": "✔ defaults a missing comparison_eligible field to eligible (1.269625ms)\n✔ filters before validating record fields (0.047334ms)\n✔ rejects invalid eligible records and invalid top-level inputs (0.194583ms)\n✔ uses numeric medians for odd and even run counts (0.109542ms)\n✔ uses run_id as the final best-run tie breaker (0.147083ms)\n✔ sorts assistant names by normal JavaScript string comparison (0.1275ms)\n✔ does not mutate frozen input data (0.067584ms)\n✔ renders escaping, decimal seconds, and the exact empty state (0.109458ms)\n✔ validates supplied summary records (0.090417ms)\n✔ requires at least two real assistant-authored tests (2.554792ms)\nℹ tests 10\nℹ suites 0\nℹ pass 10\nℹ fail 0\nℹ cancelled 0\nℹ skipped 0\nℹ todo 0\nℹ duration_ms 69.129458\n",
+      "stderr": ""
+    }
+  ],
+  "infrastructure_errors": []
+}

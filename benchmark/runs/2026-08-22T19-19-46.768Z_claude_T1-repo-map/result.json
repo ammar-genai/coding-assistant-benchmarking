@@ -1,0 +1,22 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-22T19-19-46.768Z_claude_T1-repo-map",
+  "status": "complete",
+  "acceptance_status": "pass",
+  "started_at": "2026-08-22T19:19:46.801Z",
+  "finished_at": "2026-08-22T19:21:02.379Z",
+  "elapsed_ms": 75578,
+  "exit_code": 0,
+  "signal": null,
+  "timed_out": false,
+  "workspace_changed": false,
+  "changed_paths": [],
+  "artifacts": {
+    "manifest": "manifest.json",
+    "prompt": "prompt.md",
+    "stdout": "stdout.log",
+    "stderr": "stderr.log",
+    "changes": "changes.json"
+  },
+  "notes": []
+}

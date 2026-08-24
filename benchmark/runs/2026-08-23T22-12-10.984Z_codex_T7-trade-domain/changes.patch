@@ -1,0 +1,329 @@
+diff --git a/app/trade-capture/domain/lifecycle.ts b/app/trade-capture/domain/lifecycle.ts
+index b18705e..476e494 100644
+--- a/app/trade-capture/domain/lifecycle.ts
++++ b/app/trade-capture/domain/lifecycle.ts
+@@ -1,44 +1,73 @@
+-import type { LifecycleContext, Trade, TradeDraft } from "./types.ts";
++import { calculateEconomics } from "./calculations.ts";
++import type { AuditAction, LifecycleContext, Trade, TradeDraft } from "./types.ts";
++import { validateTrade } from "./validation.ts";
+ 
+-function scaffold(): never {
+-  throw new Error("Terra domain worker has not implemented lifecycle behavior");
++function audit(context: LifecycleContext, action: AuditAction, detail: string) {
++  return { id: `${context.id}-${action}`, at: context.at, action, detail };
++}
++
++function record(
++  existing: Trade | null,
++  draft: TradeDraft,
++  context: LifecycleContext,
++  status: Trade["status"],
++  action: AuditAction,
++  exceptions = validateTrade(draft),
++): Trade {
++  const identity = existing?.internalTradeId ?? context.id;
++  const history = existing ? [...existing.auditEvents, audit(context, "updated", "Synthetic trade updated.")] : [audit(context, "created", "Synthetic trade created.")];
++  const originalFace = draft.originalFace ?? 0;
++  const factor = draft.factor ?? 0;
++  const price = draft.price ?? 0;
++  return {
++    ...draft,
++    internalTradeId: identity,
++    status,
++    allocations: draft.allocations.map((allocation) => ({ ...allocation, currentFace: allocation.currentFace ?? 0 })),
++    economics: calculateEconomics(originalFace, factor, price, draft.side),
++    exceptions: [...exceptions],
++    auditEvents: [...history, audit(context, action, `Synthetic trade ${action}.`)],
++    synthetic: true,
++  };
+ }
+ 
+ export function saveDraft(
+-  _existing: Trade | null,
+-  _draft: TradeDraft,
+-  _context: LifecycleContext,
++  existing: Trade | null,
++  draft: TradeDraft,
++  context: LifecycleContext,
+ ): Trade {
+-  void _existing;
+-  void _draft;
+-  void _context;
+-  return scaffold();
++  return record(existing, draft, context, "draft", "draft-saved");
+ }
+ 
+ export function validateTradeRecord(
+-  _existing: Trade | null,
+-  _draft: TradeDraft,
+-  _context: LifecycleContext,
++  existing: Trade | null,
++  draft: TradeDraft,
++  context: LifecycleContext,
+ ): Trade {
+-  void _existing;
+-  void _draft;
+-  void _context;
+-  return scaffold();
++  return record(existing, draft, context, "validated", "validated");
+ }
+ 
+ export function bookTrade(
+-  _existing: Trade | null,
+-  _draft: TradeDraft,
+-  _context: LifecycleContext,
++  existing: Trade | null,
++  draft: TradeDraft,
++  context: LifecycleContext,
+ ): Trade {
+-  void _existing;
+-  void _draft;
+-  void _context;
+-  return scaffold();
++  const exceptions = validateTrade(draft);
++  if (exceptions.some((item) => item.severity === "error")) {
++    throw new Error("Cannot book a trade with validation errors.");
++  }
++  return record(existing, draft, context, "booked", "booked", exceptions);
+ }
+ 
+-export function cancelTrade(_trade: Trade, _context: LifecycleContext): Trade {
+-  void _trade;
+-  void _context;
+-  return scaffold();
++export function cancelTrade(trade: Trade, context: LifecycleContext): Trade {
++  if (trade.status !== "booked") {
++    throw new Error("Only booked trades can be cancelled.");
++  }
++  return {
++    ...trade,
++    status: "cancelled",
++    allocations: trade.allocations.map((allocation) => ({ ...allocation })),
++    exceptions: [...trade.exceptions],
++    auditEvents: [...trade.auditEvents, audit(context, "cancelled", "Synthetic trade cancelled.")],
++  };
+ }
+diff --git a/app/trade-capture/domain/seed.ts b/app/trade-capture/domain/seed.ts
+index 7b23e0d..7dbb073 100644
+--- a/app/trade-capture/domain/seed.ts
++++ b/app/trade-capture/domain/seed.ts
+@@ -1,3 +1,5 @@
++import { calculateEconomics } from "./calculations.ts";
++import { validateTrade } from "./validation.ts";
+ import type { Trade, TradeDraft } from "./types.ts";
+ 
+ export const EMPTY_TRADE_DRAFT: Readonly<TradeDraft> = Object.freeze({
+@@ -31,4 +33,75 @@ export const EMPTY_TRADE_DRAFT: Readonly<TradeDraft> = Object.freeze({
+   note: "",
+ });
+ 
+-export const SEED_TRADES: readonly Trade[] = [];
++function seedDraft(overrides: Partial<TradeDraft>): TradeDraft {
++  return {
++    ...EMPTY_TRADE_DRAFT,
++    clientTradeId: "SYNTH-CLIENT-01",
++    executionTimestamp: "2026-08-23T14:05:00.000Z",
++    tradeDate: "2026-08-23",
++    settlementDate: "2026-08-25",
++    securityId: "SYNTH0001",
++    issuerDeal: "Fictional Harbor Trust",
++    trancheClass: "A1",
++    counterparty: "Demo Counterparty Alpha",
++    book: "Mock Structured Credit",
++    trader: "Sample Trader One",
++    originalFace: 1_000_000,
++    factor: 0.95,
++    price: 99.25,
++    coupon: 4.5,
++    spreadBps: 120,
++    agency: "Mock Agency",
++    collateralType: "Synthetic collateral",
++    rating: "AAA",
++    ...overrides,
++  };
++}
++
++function makeSeed(
++  id: string,
++  status: Trade["status"],
++  draft: TradeDraft,
++  actions: Trade["auditEvents"],
++): Trade {
++  const economics = calculateEconomics(draft.originalFace ?? 0, draft.factor ?? 0, draft.price ?? 0, draft.side);
++  return {
++    ...draft,
++    internalTradeId: id,
++    status,
++    allocations: draft.allocations.map((allocation) => ({ ...allocation, currentFace: allocation.currentFace ?? 0 })),
++    economics,
++    exceptions: validateTrade(draft),
++    auditEvents: actions,
++    synthetic: true,
++  };
++}
++
++function events(id: string, at: string, status: Trade["status"]): Trade["auditEvents"] {
++  const result: Trade["auditEvents"] = [
++    { id: `${id}-created`, at, action: "created", detail: "Synthetic seed trade created." },
++  ];
++  if (status === "draft") return result;
++  result.push({ id: `${id}-validated`, at, action: "validated", detail: "Synthetic seed trade validated." });
++  if (status === "validated") return result;
++  result.push({ id: `${id}-booked`, at, action: "booked", detail: "Synthetic seed trade booked." });
++  if (status === "cancelled") result.push({ id: `${id}-cancelled`, at, action: "cancelled", detail: "Synthetic seed trade cancelled." });
++  return result;
++}
++
++function deepFreeze<T>(value: T): T {
++  if (value && typeof value === "object") {
++    Object.freeze(value);
++    for (const child of Object.values(value as Record<string, unknown>)) deepFreeze(child);
++  }
++  return value;
++}
++
++export const SEED_TRADES: readonly Trade[] = deepFreeze([
++  makeSeed("SYNTH-TRADE-001", "booked", seedDraft({ productType: "agency-rmbs", allocations: [{ id: "alloc-1", label: "Mock Account North", currentFace: 950_000 }] }), events("SYNTH-TRADE-001", "2026-08-23T14:05:00.000Z", "booked")),
++  makeSeed("SYNTH-TRADE-002", "booked", seedDraft({ productType: "non-agency-rmbs", side: "sell", securityId: "SYNTH0002", issuerDeal: "Fictional Maple Mortgage", counterparty: "Demo Counterparty Beta", book: "Mock Credit Opportunities", trader: "Sample Trader Two", factor: 0.82, price: 101.1, agency: "" }), events("SYNTH-TRADE-002", "2026-08-23T14:10:00.000Z", "booked")),
++  makeSeed("SYNTH-TRADE-003", "cancelled", seedDraft({ productType: "cmbs", securityId: "SYNTH0003", issuerDeal: "Fictional Meridian CMBS", counterparty: "Demo Counterparty Gamma", book: "Mock Real Estate Credit", trader: "Sample Trader Three", factor: 0.76, price: 98.4, modifier: "weighted-average-price", agency: "" }), events("SYNTH-TRADE-003", "2026-08-23T14:15:00.000Z", "cancelled")),
++  makeSeed("SYNTH-TRADE-004", "validated", seedDraft({ productType: "abs", side: "sell", securityId: "SYNTH0004", issuerDeal: "Fictional Aurora ABS", counterparty: "Demo Counterparty Delta", book: "Mock Consumer ABS", trader: "Sample Trader Four", factor: 0.91, price: 100.2, modifier: "weighted-average-price", agency: "" }), events("SYNTH-TRADE-004", "2026-08-23T14:20:00.000Z", "validated")),
++  makeSeed("SYNTH-TRADE-005", "draft", seedDraft({ productType: "clo", securityId: "SYNTH0005", issuerDeal: "Fictional Summit CLO", counterparty: "Demo Counterparty Epsilon", book: "Mock Loan Credit", trader: "Sample Trader Five", factor: 0.88, price: 97.75, agency: "", clientTradeId: "" }), events("SYNTH-TRADE-005", "2026-08-23T14:25:00.000Z", "draft")),
++  makeSeed("SYNTH-TRADE-006", "booked", seedDraft({ productType: "tba-mbs", side: "sell", securityId: "SYNTH0006", issuerDeal: "Fictional TBA Program", counterparty: "Demo Counterparty Zeta", book: "Mock Agency Desk", trader: "Sample Trader Six", factor: 1, price: 102.35, modifier: "dollar-roll", poolNumber: "", agency: "Mock Agency Two" }), events("SYNTH-TRADE-006", "2026-08-23T14:30:00.000Z", "booked")),
++]);
+diff --git a/app/trade-capture/domain/validation.ts b/app/trade-capture/domain/validation.ts
+index 347cfe3..821efa4 100644
+--- a/app/trade-capture/domain/validation.ts
++++ b/app/trade-capture/domain/validation.ts
+@@ -1,6 +1,69 @@
+-import type { TradeDraft, TradeException } from "./types.ts";
++import type { ExceptionCode, TradeDraft, TradeException } from "./types.ts";
++import { withinOneCent } from "./calculations.ts";
+ 
+-export function validateTrade(_draft: TradeDraft): TradeException[] {
+-  void _draft;
+-  return [];
++function exception(
++  code: ExceptionCode,
++  field: keyof TradeDraft,
++  message: string,
++  severity: TradeException["severity"] = "error",
++): TradeException {
++  return { code, field, message, severity };
++}
++
++function hasText(value: string): boolean {
++  return value.trim().length > 0;
++}
++
++export function validateTrade(draft: TradeDraft): TradeException[] {
++  const exceptions: TradeException[] = [];
++
++  if (!hasText(draft.securityId)) {
++    exceptions.push(exception("required-security-id", "securityId", "Security identifier is required."));
++  } else if (!/^[A-Z0-9]{9}$/.test(draft.securityId)) {
++    exceptions.push(exception("invalid-security-id", "securityId", "Security identifier must be nine uppercase letters or digits."));
++  }
++  if (!hasText(draft.counterparty)) exceptions.push(exception("required-counterparty", "counterparty", "Counterparty is required."));
++  if (!hasText(draft.book)) exceptions.push(exception("required-book", "book", "Book is required."));
++  if (!hasText(draft.trader)) exceptions.push(exception("required-trader", "trader", "Trader is required."));
++  if (!hasText(draft.clientTradeId)) {
++    exceptions.push(exception("missing-client-trade-id", "clientTradeId", "Client trade ID is missing.", "warning"));
++  }
++
++  const invalidOriginalFace = !Number.isFinite(draft.originalFace) || draft.originalFace === null || draft.originalFace <= 0;
++  const invalidFactor = !Number.isFinite(draft.factor) || draft.factor === null || draft.factor <= 0 || draft.factor > 1;
++  const invalidPrice = !Number.isFinite(draft.price) || draft.price === null || draft.price <= 0 || draft.price > 250;
++  if (invalidOriginalFace) exceptions.push(exception("invalid-original-face", "originalFace", "Original face must be greater than zero."));
++  if (invalidFactor) exceptions.push(exception("invalid-factor", "factor", "Factor must be greater than zero and no more than one."));
++  if (invalidPrice) exceptions.push(exception("invalid-price", "price", "Price must be greater than zero and no more than 250."));
++
++  if (draft.tradeDate && draft.settlementDate && draft.settlementDate < draft.tradeDate) {
++    exceptions.push(exception("settlement-before-trade", "settlementDate", "Settlement date cannot precede trade date."));
++  }
++  if ((draft.productType === "agency-rmbs" || draft.productType === "tba-mbs") && !hasText(draft.agency)) {
++    exceptions.push(exception("required-agency", "agency", "Agency is required for this product."));
++  }
++  if (draft.modifier === "specified-pool" && !hasText(draft.poolNumber)) {
++    exceptions.push(exception("required-pool", "poolNumber", "Pool number is required for specified-pool trades."));
++  }
++  if ((draft.modifier === "dollar-roll" || draft.modifier === "stipulation") && draft.productType !== "tba-mbs") {
++    exceptions.push(exception("invalid-modifier-for-product", "modifier", "This modifier is valid only for TBA MBS."));
++  }
++  if (draft.modifier === "weighted-average-price" && draft.productType !== "abs" && draft.productType !== "cmbs") {
++    exceptions.push(exception("invalid-modifier-for-product", "modifier", "Weighted-average-price is valid only for ABS or CMBS."));
++  }
++
++  if (draft.allocations.length > 0) {
++    const invalidAllocation = draft.allocations.some((allocation) =>
++      allocation.currentFace === null || !Number.isFinite(allocation.currentFace) || allocation.currentFace < 0,
++    );
++    const currentFace = typeof draft.originalFace === "number" && typeof draft.factor === "number"
++      ? draft.originalFace * draft.factor
++      : null;
++    const total = draft.allocations.reduce((sum, allocation) => sum + (allocation.currentFace ?? 0), 0);
++    if (invalidAllocation || currentFace === null || !withinOneCent(total, currentFace)) {
++      exceptions.push(exception("allocation-mismatch", "allocations", "Allocations must total current face within one cent."));
++    }
++  }
++
++  return exceptions;
+ }
+diff --git a/tests/trade-domain.test.mjs b/tests/trade-domain.test.mjs
+index b5f29c1..6283245 100644
+--- a/tests/trade-domain.test.mjs
++++ b/tests/trade-domain.test.mjs
+@@ -6,6 +6,9 @@ import {
+   summarizeDesk,
+   withinOneCent,
+ } from "../app/trade-capture/domain/calculations.ts";
++import { cancelTrade, bookTrade, saveDraft, validateTradeRecord } from "../app/trade-capture/domain/lifecycle.ts";
++import { EMPTY_TRADE_DRAFT, SEED_TRADES } from "../app/trade-capture/domain/seed.ts";
++import { validateTrade } from "../app/trade-capture/domain/validation.ts";
+ 
+ test("calculates current face, principal, and signed exposure", () => {
+   assert.deepEqual(calculateEconomics(1_000_000, 0.8, 99.5, "buy"), {
+@@ -32,3 +35,43 @@ test("summarizes an empty desk", () => {
+     grossPrincipal: 0,
+   });
+ });
++
++function validDraft(overrides = {}) {
++  return { ...EMPTY_TRADE_DRAFT, securityId: "SYNTH1234", counterparty: "Demo Counterparty", book: "Mock Book", trader: "Sample Trader", agency: "Mock Agency", originalFace: 100, factor: 0.5, price: 100, ...overrides };
++}
++
++test("validates required fields, product rules, and rounded allocation boundaries", () => {
++  const invalid = validDraft({ securityId: "bad", settlementDate: "2026-08-22", agency: "", modifier: "specified-pool", poolNumber: "", allocations: [{ id: "a", label: "A", currentFace: 50.011 }] });
++  assert.deepEqual(validateTrade(invalid).map((item) => item.code), ["invalid-security-id", "missing-client-trade-id", "settlement-before-trade", "required-agency", "required-pool"]);
++  assert.equal(validateTrade(validDraft({ allocations: [{ id: "a", label: "A", currentFace: 50.02 }] })).at(-1)?.code, "allocation-mismatch");
++  assert.equal(validateTrade(validDraft({ allocations: [{ id: "a", label: "A", currentFace: 50.01 }] })).some((item) => item.code === "allocation-mismatch"), false);
++  assert.equal(validateTrade(validDraft({ productType: "clo", modifier: "dollar-roll" })).some((item) => item.code === "invalid-modifier-for-product"), true);
++});
++
++test("lifecycle actions are immutable, deterministic, and enforce transitions", () => {
++  const draft = validDraft();
++  const saved = saveDraft(null, draft, { id: "NEW-1", at: "2026-08-23T15:00:00.000Z" });
++  assert.equal(saved.internalTradeId, "NEW-1");
++  assert.deepEqual(saved.auditEvents.map((event) => event.action), ["created", "draft-saved"]);
++  const validated = validateTradeRecord(saved, { ...draft, internalTradeId: "IGNORED" }, { id: "EVENT-2", at: "2026-08-23T15:01:00.000Z" });
++  assert.equal(validated.internalTradeId, "NEW-1");
++  assert.deepEqual(validated.auditEvents.map((event) => event.action), ["created", "draft-saved", "updated", "validated"]);
++  const booked = bookTrade(validated, draft, { id: "EVENT-3", at: "2026-08-23T15:02:00.000Z" });
++  const cancelled = cancelTrade(booked, { id: "EVENT-4", at: "2026-08-23T15:03:00.000Z" });
++  assert.equal(booked.status, "booked");
++  assert.equal(cancelled.status, "cancelled");
++  assert.equal(booked.status, "booked");
++  assert.throws(() => bookTrade(null, validDraft({ price: 0 }), { id: "BAD", at: "2026-08-23T15:04:00.000Z" }));
++  assert.throws(() => cancelTrade(saved, { id: "NO", at: "2026-08-23T15:05:00.000Z" }));
++});
++
++test("seed trades are immutable, synthetic, complete, and excluded when cancelled", () => {
++  assert.equal(SEED_TRADES.length, 6);
++  assert.equal(new Set(SEED_TRADES.map((trade) => trade.productType)).size, 6);
++  assert.equal(Object.isFrozen(SEED_TRADES[0]), true);
++  const summary = summarizeDesk(SEED_TRADES);
++  assert.equal(summary.activeTradeCount, 5);
++  assert.equal(summary.bookedTradeCount, 3);
++  assert.equal(summary.exceptionCount, 0);
++  assert.ok(summary.sellExposure < 0);
++});
