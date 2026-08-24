@@ -113,3 +113,38 @@ frontier implementation rather than Kimi output.
 
 Combined T7 OpenRouter spend is `$0.3720082`, leaving `$3.6279918` of the
 approved ceiling unused. No further paid run is required for this build.
+
+## Codex frontier integration
+
+Kimi produced no patch, so Codex implemented the six files assigned to that
+worker: the reducer, selectors, application composition, blotter, selected-trade
+review, and scoped visual system. These files are counted as frontier
+implementation, not as Kimi output. Codex also added public state/workspace
+tests, expanded the rendered-page checks, and connected the workspace suite to
+the standard test command.
+
+The completed mock supports deterministic local lifecycle transitions, live
+validation, save/validate/book/edit/cancel/reset actions, filter/search/sort,
+desk totals that exclude cancelled trades, accessible ticket/blotter/review
+interactions, and synthetic audit history. It remains a local mock: no real
+trade data, external booking, pricing, settlement, authentication, or
+regulatory workflow was added.
+
+One supporting visual asset was created with the built-in image generator and
+saved as `public/trade-capture-structure.png`. The prompt requested a wide,
+text-free institutional abstraction of mortgage pools, bond tranches, and
+layered cash flows in navy and teal with restrained amber risk markers. The
+asset is decorative and the product remains usable without it.
+
+Integration verification passed:
+
+- `npm run typecheck`
+- `npm run lint`
+- `npm test` (production build plus 11 public behavior/render checks)
+- `npm run benchmark:validate`
+- `git diff --check`
+
+The four private Kimi workspace checks also pass against the integrated source.
+Visible browser QA could not be completed because the Codex in-app browser
+returned an invalid tab binding even after a fresh-tab recovery attempt. This
+is recorded as an unverified presentation-layer gap, not as a product pass.

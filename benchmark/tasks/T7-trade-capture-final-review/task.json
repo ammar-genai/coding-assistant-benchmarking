@@ -1,0 +1,39 @@
+{
+  "schema_version": "1.0",
+  "id": "T7-trade-capture-final-review",
+  "version": "1.0.0",
+  "title": "Independently review the completed trade capture mock",
+  "type": "analysis",
+  "mode": "read-only",
+  "prompt_path": "prompt.md",
+  "allowed_paths": ["**/*"],
+  "forbidden_actions": [
+    "Edit, create, rename, or delete files",
+    "Install dependencies or use the network",
+    "Change Git state",
+    "Start an external service",
+    "Read benchmark/private or benchmark/runs"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "read-only",
+      "description": "The workspace snapshot is unchanged after the run."
+    },
+    {
+      "id": "product-contract",
+      "description": "The review checks the completed source against the frozen product and architecture contracts."
+    },
+    {
+      "id": "functional-risk",
+      "description": "The review identifies concrete correctness, state, accessibility, and maintainability risks with file evidence."
+    },
+    {
+      "id": "bounded-verdict",
+      "description": "The response provides a clear accept, accept-with-findings, or reject verdict without unsupported production-readiness claims."
+    }
+  ],
+  "limits": {
+    "max_wall_time_seconds": 900,
+    "max_human_interventions": 0
+  }
+}

@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "block_id": "T7-distributed-trade-capture-2026-08-23",
-  "status": "execution-in-progress",
+  "status": "final-review-pending",
   "purpose": "Build a realistic local securitized-product trade capture mock while measuring frontier planning and review, bounded mid-level and open-model implementation, integration repair, elapsed time, token telemetry, and metered cost.",
   "product": {
     "brief": "benchmark/projects/T7-securitized-trade-capture/PRODUCT.md",
@@ -95,7 +95,8 @@
       "model": "claude-opus-5",
       "access_path": "subscription",
       "mode": "read-only",
-      "ownership": "review completed source and visible evidence without private checks"
+      "ownership": "review completed source and visible evidence without private checks",
+      "task": "T7-trade-capture-final-review"
     }
   ],
   "stage_results": [
@@ -192,6 +193,25 @@
         "The worker reached the 30-minute wall-time limit and was terminated with SIGTERM.",
         "It read contracts and source and produced a detailed implementation plan, but never invoked a write tool and changed no files.",
         "The run is preserved and will not be rerun; Codex integration must implement the missing workspace and count all six files as frontier work."
+      ]
+    },
+    {
+      "stage": "integration",
+      "run_id": null,
+      "status": "complete",
+      "acceptance": "pass-local-verification",
+      "execution": "Codex host session",
+      "access_path": "subscription",
+      "elapsed_ms": null,
+      "metered_cost_usd": null,
+      "frontier_implementation_files": 6,
+      "worker_patch_repairs": 0,
+      "notes": [
+        "Because Kimi timed out before writing, Codex implemented all six Kimi-owned workspace files; this is frontier implementation, not a repair attributed to Kimi.",
+        "The Terra, Sonnet, and Qwen worker blobs were integrated without source repair.",
+        "Codex added public integration tests, connected them to the standard test command, and added one generated decorative product visual.",
+        "Typecheck, lint, production build, 11 public tests, four private workspace checks, benchmark contract validation, and git diff checks passed.",
+        "Visible browser QA remains unverified because the in-app browser returned an invalid tab binding after the documented recovery sequence."
       ]
     }
   ],

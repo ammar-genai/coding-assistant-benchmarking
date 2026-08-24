@@ -63,4 +63,13 @@ test("server-renders the synthetic trade capture workspace", async () => {
   assert.match(html, /role="status"/);
   assert.match(html, /Today(?:&#x27;|')s synthetic securitized-product trades/);
   assert.match(html, /Trade review/);
+  assert.match(html, /Active trades/);
+  assert.match(html, /Gross principal/);
+  assert.match(html, /tc-field-securityId/);
+  assert.match(html, /<fieldset/);
+  assert.match(html, /All products/);
+  assert.match(html, /All statuses/);
+  assert.match(html, /Largest current face/);
+  assert.match(html, /SYNTH-TRADE-001/);
+  assert.match(html, /Audit history/);
 });
