@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0",
+  "task": "T8-change-impact-analysis",
+  "task_version": "1.0.0",
+  "rubric_total": 100,
+  "method": {
+    "graded_once": true,
+    "model_identity_blinded_during_scoring": true,
+    "scope_check": "All five runs changed zero files.",
+    "word_count_method": "Whitespace-delimited tokens in the saved final response."
+  },
+  "grades": [
+    {
+      "model": "openrouter/openai/gpt-5.6-sol",
+      "run_id": "2026-08-24T03-35-25.361Z_pi_T8-change-impact-analysis",
+      "word_count": 891,
+      "score": 100,
+      "breakdown": {
+        "current-flow": 20,
+        "required-changes": 25,
+        "failure-replay": 25,
+        "verification": 20,
+        "scope-format": 10
+      },
+      "deductions": []
+    },
+    {
+      "model": "openrouter/anthropic/claude-fable-5",
+      "run_id": "2026-08-24T03-39-44.223Z_pi_T8-change-impact-analysis",
+      "word_count": 1002,
+      "score": 99,
+      "breakdown": {
+        "current-flow": 20,
+        "required-changes": 25,
+        "failure-replay": 25,
+        "verification": 20,
+        "scope-format": 9
+      },
+      "deductions": [
+        "The memo measured 1,002 words, slightly above the below-1,000 requirement."
+      ]
+    },
+    {
+      "model": "openrouter/z-ai/glm-5.2",
+      "run_id": "2026-08-24T03-36-03.310Z_pi_T8-change-impact-analysis",
+      "word_count": 915,
+      "score": 100,
+      "breakdown": {
+        "current-flow": 20,
+        "required-changes": 25,
+        "failure-replay": 25,
+        "verification": 20,
+        "scope-format": 10
+      },
+      "deductions": []
+    },
+    {
+      "model": "openrouter/qwen/qwen3.8-27b",
+      "run_id": "2026-08-24T03-34-54.264Z_pi_T8-change-impact-analysis",
+      "word_count": 1046,
+      "score": 94,
+      "breakdown": {
+        "current-flow": 20,
+        "required-changes": 25,
+        "failure-replay": 22,
+        "verification": 20,
+        "scope-format": 7
+      },
+      "deductions": [
+        "The memo measured 1,046 words, above the below-1,000 requirement.",
+        "One replay-risk statement treated unsupported correction input as if the current router already performed missing-target rejection."
+      ]
+    },
+    {
+      "model": "openrouter/moonshotai/kimi-k3",
+      "run_id": "2026-08-24T03-38-47.567Z_pi_T8-change-impact-analysis",
+      "word_count": 943,
+      "score": 100,
+      "breakdown": {
+        "current-flow": 20,
+        "required-changes": 25,
+        "failure-replay": 25,
+        "verification": 20,
+        "scope-format": 10
+      },
+      "deductions": []
+    }
+  ]
+}

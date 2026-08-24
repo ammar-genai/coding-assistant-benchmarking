@@ -1,0 +1,36 @@
+{
+  "schema_version": "1.0",
+  "run_id": "2026-08-24T03-44-32.075Z_pi_T9-capacity-allocation",
+  "model": "openrouter/moonshotai/kimi-k3",
+  "counted_run": {
+    "status": "timeout",
+    "acceptance_status": "not-graded",
+    "elapsed_ms": 1037803,
+    "frozen_timeout_ms": 900000,
+    "changed_paths_within_scope": true
+  },
+  "post_timeout_patch_audit": {
+    "changes_patch_sha256": "91bed74795deb5c380f2f96de6b355e53e8b1d41381a899f219de9dcb2667786",
+    "baseline_git_commit": "a36716140a0fb331c4f37584448d44b0937f936e",
+    "visible_tests": {
+      "passed": 8,
+      "failed": 0
+    },
+    "private_tests": {
+      "passed": 5,
+      "failed": 0
+    },
+    "rubric_score": 95,
+    "score_breakdown": {
+      "visible-tests": 20,
+      "private-tests": 35,
+      "allocation-contract": 20,
+      "scope-quality": 15,
+      "tests-report": 5
+    },
+    "deductions": [
+      "No final response was produced before termination, so the verification-report portion of the rubric was not satisfied."
+    ]
+  },
+  "interpretation": "The saved patch was technically strong, but the counted observation remains a failed timeout. The post-timeout score is diagnostic only and is excluded from the strict weighted score."
+}
