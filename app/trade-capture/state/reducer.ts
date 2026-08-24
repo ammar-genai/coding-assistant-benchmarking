@@ -15,6 +15,7 @@ export interface TradeCaptureState {
   trades: readonly Trade[];
   draft: TradeDraft;
   exceptions: readonly TradeException[];
+  validationVisible: boolean;
   editingTradeId: string | null;
   selectedTradeId: string | null;
   product: ProductType | "all";
@@ -79,18 +80,20 @@ function existingTrade(state: TradeCaptureState): Trade | null {
   return state.trades.find((trade) => trade.internalTradeId === state.editingTradeId) ?? null;
 }
 
-function storeTrade(state: TradeCaptureState, trade: Trade): TradeCaptureState {
+function storeTrade(state: TradeCaptureState, trade: Trade, clearTicket: boolean): TradeCaptureState {
   const exists = state.trades.some((item) => item.internalTradeId === trade.internalTradeId);
   const trades = exists
     ? state.trades.map((item) => item.internalTradeId === trade.internalTradeId ? trade : item)
     : [...state.trades, trade];
+  const draft = clearTicket ? emptyDraft() : draftFromTrade(trade);
 
   return {
     ...state,
     trades,
-    draft: emptyDraft(),
-    exceptions: [],
-    editingTradeId: null,
+    draft,
+    exceptions: validateTrade(draft),
+    validationVisible: !clearTicket,
+    editingTradeId: clearTicket ? null : trade.internalTradeId,
     selectedTradeId: trade.internalTradeId,
   };
 }
@@ -101,6 +104,7 @@ export const INITIAL_STATE: TradeCaptureState = {
   trades: SEED_TRADES,
   draft: initialDraft,
   exceptions: validateTrade(initialDraft),
+  validationVisible: false,
   editingTradeId: null,
   selectedTradeId: SEED_TRADES[0]?.internalTradeId ?? null,
   product: "all",
@@ -112,17 +116,28 @@ export const INITIAL_STATE: TradeCaptureState = {
 export function tradeCaptureReducer(state: TradeCaptureState, action: TradeCaptureAction): TradeCaptureState {
   switch (action.type) {
     case "draft-changed":
-      return { ...state, draft: action.draft, exceptions: validateTrade(action.draft) };
+      return { ...state, draft: action.draft, exceptions: validateTrade(action.draft), validationVisible: true };
     case "reset": {
       const draft = emptyDraft();
-      return { ...state, draft, exceptions: validateTrade(draft), editingTradeId: null };
+      return {
+        ...state,
+        draft,
+        exceptions: validateTrade(draft),
+        validationVisible: false,
+        editingTradeId: null,
+      };
     }
     case "save-draft":
-      return storeTrade(state, saveDraft(existingTrade(state), state.draft, action.context));
-    case "validate":
-      return storeTrade(state, validateTradeRecord(existingTrade(state), state.draft, action.context));
+      return storeTrade(state, saveDraft(existingTrade(state), state.draft, action.context), false);
+    case "validate": {
+      const exceptions = validateTrade(state.draft);
+      if (exceptions.some((item) => item.severity === "error")) {
+        return { ...state, exceptions, validationVisible: true };
+      }
+      return storeTrade(state, validateTradeRecord(existingTrade(state), state.draft, action.context), false);
+    }
     case "book":
-      return storeTrade(state, bookTrade(existingTrade(state), state.draft, action.context));
+      return storeTrade(state, bookTrade(existingTrade(state), state.draft, action.context), true);
     case "edit": {
       const trade = state.trades.find((item) => item.internalTradeId === action.id);
       if (!trade || trade.status === "cancelled") return state;
@@ -131,6 +146,7 @@ export function tradeCaptureReducer(state: TradeCaptureState, action: TradeCaptu
         ...state,
         draft,
         exceptions: validateTrade(draft),
+        validationVisible: true,
         editingTradeId: trade.internalTradeId,
         selectedTradeId: trade.internalTradeId,
       };

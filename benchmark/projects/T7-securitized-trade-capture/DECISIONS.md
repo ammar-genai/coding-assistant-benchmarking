@@ -16,3 +16,17 @@
   and Kimi implementation stages on 2026-08-23. Stop before any call that could
   take cumulative T7 OpenRouter spend above that amount.
 - Do not publish or deploy without a separate user request.
+
+## 2026-08-24 — independent-review repairs
+
+- Preserve the Opus `ACCEPT WITH FINDINGS` review without rerunning it.
+- Treat the booked-to-draft regression and Validate-clears-ticket behavior as
+  real high-severity findings and repair them in the frontier integration.
+- Keep the frozen ability to load a booked record into the ticket, but make all
+  mutation actions read-only there; cancellation remains available in review.
+- Add required date codes even though the original exception list was frozen,
+  because the product contract already made both dates required. Version the
+  implementation contract to 1.0.1 and record the correction.
+- Hide pristine field errors until ticket interaction while continuing to
+  compute validation and disable Book from the first render.
+- Do not spend more OpenRouter credit or rerun any failed worker or reviewer.

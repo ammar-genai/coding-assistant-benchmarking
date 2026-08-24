@@ -31,7 +31,7 @@ test("server-renders the coding assistant study plan", async () => {
   assert.match(html, /<title>Coding Assistant Benchmark \| Plan and Results<\/title>/i);
   assert.match(html, /Find the right/);
   assert.match(html, /Evidence status/);
-  assert.match(html, /Through T6/);
+  assert.match(html, /Through T7/);
   assert.match(html, /GPT-5\.6 Sol/);
   assert.match(html, /Claude Opus 5/);
   assert.match(html, /DeepSeek V4 Flash Cloud/);
@@ -42,7 +42,8 @@ test("server-renders the coding assistant study plan", async () => {
   assert.match(html, /T6 shared model/);
   assert.match(html, /55\.115 s/);
   assert.match(html, /One skill and MCP server worked across all three/);
-  assert.match(html, /\$1\.3765/);
+  assert.match(html, /\$1\.7485/);
+  assert.match(html, /Open the synthetic trade-capture mock/);
   assert.match(html, /property="og:image" content="http:\/\/localhost\/og\.png"/i);
   assert.match(html, /name="twitter:card" content="summary_large_image"/i);
   assert.match(html, /Primary sources used for this plan/);
@@ -61,6 +62,10 @@ test("server-renders the synthetic trade capture workspace", async () => {
   assert.match(html, /Synthetic demo data only/);
   assert.match(html, /Trade ticket/);
   assert.match(html, /role="status"/);
+  assert.match(html, /Ticket ready for input/);
+  assert.match(html, /<button[^>]*disabled=""[^>]*>Book trade<\/button>/);
+  assert.match(html, /Complete required fields and resolve validation errors before booking/);
+  assert.doesNotMatch(html, /aria-invalid="true"/);
   assert.match(html, /Today(?:&#x27;|')s synthetic securitized-product trades/);
   assert.match(html, /Trade review/);
   assert.match(html, /Active trades/);
@@ -72,4 +77,8 @@ test("server-renders the synthetic trade capture workspace", async () => {
   assert.match(html, /Largest current face/);
   assert.match(html, /SYNTH-TRADE-001/);
   assert.match(html, /Audit history/);
+  assert.match(html, /role="region" aria-label="Trade blotter table" tabindex="0"/);
+  assert.match(html, /aria-pressed="true"/);
+  assert.match(html, /id="tc-ticket-title" tabindex="-1"/);
+  assert.match(html, /id="tc-review-title" tabindex="-1"/);
 });

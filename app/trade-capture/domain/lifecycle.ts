@@ -34,15 +34,31 @@ function record(
   };
 }
 
+function assertEditable(existing: Trade | null): void {
+  if (existing?.status === "booked" || existing?.status === "cancelled") {
+    throw new Error("Booked and cancelled trades are immutable in this mock.");
+  }
+}
+
 export function saveDraft(existing: Trade | null, draft: TradeDraft, context: LifecycleContext): Trade {
+  assertEditable(existing);
+  if (existing?.status === "validated") {
+    throw new Error("Validated trades cannot return to draft.");
+  }
   return record(existing, draft, context, "draft", "draft-saved");
 }
 
 export function validateTradeRecord(existing: Trade | null, draft: TradeDraft, context: LifecycleContext): Trade {
-  return record(existing, draft, context, "validated", "validated");
+  assertEditable(existing);
+  const exceptions = validateTrade(draft);
+  if (exceptions.some((item) => item.severity === "error")) {
+    throw new Error("Cannot validate a trade with validation errors.");
+  }
+  return record(existing, draft, context, "validated", "validated", exceptions);
 }
 
 export function bookTrade(existing: Trade | null, draft: TradeDraft, context: LifecycleContext): Trade {
+  assertEditable(existing);
   const exceptions = validateTrade(draft);
   if (exceptions.some((item) => item.severity === "error")) {
     throw new Error("Cannot book a trade with validation errors.");

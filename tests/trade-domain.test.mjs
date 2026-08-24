@@ -67,6 +67,12 @@ test("validates required fields, product rules, and rounded allocation boundarie
   assert.equal(validateTrade(validDraft({ allocations: [{ id: "a", label: "A", currentFace: 50.02 }] })).at(-1)?.code, "allocation-mismatch");
   assert.equal(validateTrade(validDraft({ allocations: [{ id: "a", label: "A", currentFace: 50.01 }] })).some((item) => item.code === "allocation-mismatch"), false);
   assert.equal(validateTrade(validDraft({ productType: "clo", modifier: "dollar-roll" })).some((item) => item.code === "invalid-modifier-for-product"), true);
+  assert.deepEqual(
+    validateTrade(validDraft({ tradeDate: "", settlementDate: "" }))
+      .filter((item) => item.field === "tradeDate" || item.field === "settlementDate")
+      .map((item) => item.code),
+    ["required-trade-date", "required-settlement-date"],
+  );
 });
 
 test("lifecycle actions are immutable, deterministic, and enforce transitions", () => {
@@ -87,7 +93,12 @@ test("lifecycle actions are immutable, deterministic, and enforce transitions", 
   assert.equal(cancelled.status, "cancelled");
   assert.equal(booked.status, "booked");
   assert.throws(() => bookTrade(null, validDraft({ price: 0 }), { id: "BAD", at: "2026-08-23T15:04:00.000Z" }));
+  assert.throws(() => validateTradeRecord(null, validDraft({ tradeDate: "" }), { id: "BAD-DATE", at: "2026-08-23T15:04:30.000Z" }));
+  assert.throws(() => saveDraft(booked, draft, { id: "NO-REGRESSION", at: "2026-08-23T15:04:40.000Z" }));
+  assert.throws(() => validateTradeRecord(booked, draft, { id: "NO-REVALIDATE", at: "2026-08-23T15:04:50.000Z" }));
   assert.throws(() => cancelTrade(saved, { id: "NO", at: "2026-08-23T15:05:00.000Z" }));
+
+  assert.throws(() => saveDraft(validated, { ...draft, note: "Synthetic correction" }, { id: "EVENT-5", at: "2026-08-23T15:06:00.000Z" }));
 });
 
 test("seed trades are immutable, synthetic, complete, and excluded when cancelled", () => {

@@ -24,7 +24,7 @@ const assistantCards = [
     role: "Open-model worker",
     mark: "OC",
     summary:
-      "Worth keeping as a strong secondary tool. Its provider flexibility is real, and Kimi delivered accepted work without frontier repair.",
+      "Worth keeping as a strong secondary tool. Its provider flexibility is real: Qwen passed a bounded T7 task, while the broader Kimi task exposed a timeout risk.",
     test: "Provider switching, Ollama discovery, agents, skills, MCP, plugins, permissions, session handling, run/server modes.",
   },
   {
@@ -100,6 +100,34 @@ const resultRows = [
     score: "98",
     time: "93.662 s",
     note: "Accepted, with noisy Ollama adapter telemetry",
+  },
+  {
+    task: "T7 domain",
+    route: "Codex + GPT-5.6 Terra",
+    score: "Behavioral pass",
+    time: "161.146 s",
+    note: "Source passed; raw failure preserved a harness defect",
+  },
+  {
+    task: "T7 ticket",
+    route: "Claude Code + Sonnet 5",
+    score: "Behavioral pass",
+    time: "1,085.797 s",
+    note: "Source passed; raw failure preserved a grader defect",
+  },
+  {
+    task: "T7 insights",
+    route: "OpenCode + Qwen3.8-27B",
+    score: "Pass",
+    time: "181.703 s",
+    note: "Exact bounded patch; $0.1072 metered",
+  },
+  {
+    task: "T7 workspace",
+    route: "OpenCode + Kimi K3",
+    score: "Timeout",
+    time: "30 min cap",
+    note: "Planned but wrote no files; Codex supplied six-file fallback",
   },
 ];
 
@@ -544,8 +572,8 @@ export default function Home() {
           </nav>
           <div className="side-note">
             <p>Evidence status</p>
-            <strong>Through T6</strong>
-            <span>plus one distributed workflow</span>
+            <strong>Through T7</strong>
+            <span>including the trade-capture build</span>
           </div>
         </aside>
 
@@ -589,7 +617,7 @@ export default function Home() {
                 </div>
                 <div>
                   <dt>Open worker</dt>
-                  <dd>OpenCode + selected Kimi route</dd>
+                  <dd>OpenCode + task-tested model</dd>
                 </div>
               </dl>
             </div>
@@ -629,27 +657,27 @@ export default function Home() {
                 <span>Open-model route</span>
                 <h3>OpenCode</h3>
                 <p>
-                  A strong secondary tool, not a novelty. Kimi completed the T5
-                  implementation with zero Codex repair.
+                  A strong secondary tool, not a novelty. T7 showed both sides:
+                  Qwen passed its bounded task and Kimi timed out on the broad one.
                 </p>
               </article>
             </div>
 
             <div className="result-metrics" aria-label="Headline benchmark findings">
               <div>
-                <strong>3 × 100</strong>
-                <span>Sol, Opus, and Kimi K3 on corrected T4</span>
+                <strong>4 roles</strong>
+                <span>Sol plan, mixed workers, Codex integration, Opus review</span>
               </div>
               <div>
                 <strong>3.57×</strong>
                 <span>Distributed T5 latency versus solo Codex</span>
               </div>
               <div>
-                <strong>0 edits</strong>
-                <span>Frontier repairs needed for Kimi&apos;s T5 patch</span>
+                <strong>6 files</strong>
+                <span>Codex fallback after the T7 Kimi worker wrote nothing</span>
               </div>
               <div>
-                <strong>$1.3765</strong>
+                <strong>$1.7485</strong>
                 <span>Metered OpenRouter spend; subscriptions separate</span>
               </div>
             </div>
@@ -681,13 +709,14 @@ export default function Home() {
 
             <div className="evidence-summary-grid">
               <article>
-                <span>Distributed workflow</span>
-                <h3>Useful for review-heavy work, not every task.</h3>
+                <span>T7 distributed product</span>
+                <h3>The workflow worked, but the fallback mattered.</h3>
                 <p>
-                  Distributed T5 and solo Codex both scored 100. The multi-tool
-                  route took 536.704 seconds versus 150.206 seconds, but created a
-                  clearer plan challenge, ownership trail, and independent review.
+                  Qwen completed the bounded insights panel for $0.1072. Kimi
+                  timed out without writing the broader workspace, so Codex built
+                  the six-file fallback and Opus found two real workflow defects.
                 </p>
+                <a href="/trade-capture">Open the synthetic trade-capture mock</a>
               </article>
               <article>
                 <span>Portable extensions</span>
@@ -702,9 +731,9 @@ export default function Home() {
                 <span>Small-model lesson</span>
                 <h3>Model and harness both matter.</h3>
                 <p>
-                  Kimi K3 earned a full T4 result in OpenCode, while Qwen3.8-27B
-                  timed out. With Kimi K2.7 held fixed on T6, all three harnesses
-                  passed and OpenCode was fastest.
+                  Kimi K3 earned a full T4 result but timed out on broad T7 work.
+                  Qwen3.8-27B timed out on T4 yet passed a narrow T7 component.
+                  Match the assignment to the model; do not rank from one run.
                 </p>
               </article>
             </div>

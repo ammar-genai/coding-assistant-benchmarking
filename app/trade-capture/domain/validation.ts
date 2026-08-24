@@ -17,6 +17,12 @@ function hasText(value: string): boolean {
 export function validateTrade(draft: TradeDraft): TradeException[] {
   const exceptions: TradeException[] = [];
 
+  if (!hasText(draft.tradeDate)) {
+    exceptions.push(exception("required-trade-date", "tradeDate", "Trade date is required."));
+  }
+  if (!hasText(draft.settlementDate)) {
+    exceptions.push(exception("required-settlement-date", "settlementDate", "Settlement date is required."));
+  }
   if (!hasText(draft.securityId)) {
     exceptions.push(exception("required-security-id", "securityId", "Security identifier is required."));
   } else if (!/^[A-Z0-9]{9}$/.test(draft.securityId)) {

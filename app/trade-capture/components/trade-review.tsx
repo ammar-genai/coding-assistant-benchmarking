@@ -16,13 +16,17 @@ function formatEventTime(value: string): string {
   return Number.isNaN(date.getTime()) ? value : eventTime.format(date);
 }
 
+function focusAfterUpdate(id: string): void {
+  requestAnimationFrame(() => document.getElementById(id)?.focus());
+}
+
 export function TradeReview({ trade, onEditDraft, onCancel }: TradeReviewProps) {
   if (!trade) {
     return (
       <aside className="tc-panel tc-review" aria-labelledby="tc-review-title">
         <div className="tc-panel-heading">
           <p className="tc-eyebrow">Selected record</p>
-          <h2 id="tc-review-title">Trade review</h2>
+          <h2 id="tc-review-title" tabIndex={-1}>Trade review</h2>
         </div>
         <p className="tc-empty">Select a trade to inspect economics, exceptions, allocations, and audit history.</p>
       </aside>
@@ -37,7 +41,7 @@ export function TradeReview({ trade, onEditDraft, onCancel }: TradeReviewProps) 
       <div className="tc-panel-heading tc-review-heading">
         <div>
           <p className="tc-eyebrow">Selected record</p>
-          <h2 id="tc-review-title">Trade review</h2>
+          <h2 id="tc-review-title" tabIndex={-1}>Trade review</h2>
         </div>
         <span className={`tc-status tc-status-${trade.status}`}>{trade.status}</span>
       </div>
@@ -102,8 +106,14 @@ export function TradeReview({ trade, onEditDraft, onCancel }: TradeReviewProps) 
       </section>
 
       <div className="tc-review-actions">
-        <button type="button" disabled={!canEdit} onClick={() => onEditDraft(trade.internalTradeId)}>Edit in ticket</button>
-        <button className="tc-danger-action" type="button" disabled={!canCancel} onClick={() => onCancel(trade.internalTradeId)}>Cancel trade</button>
+        <button type="button" disabled={!canEdit} onClick={() => {
+          onEditDraft(trade.internalTradeId);
+          focusAfterUpdate("tc-ticket-title");
+        }}>Edit in ticket</button>
+        <button className="tc-danger-action" type="button" disabled={!canCancel} onClick={() => {
+          onCancel(trade.internalTradeId);
+          focusAfterUpdate("tc-review-title");
+        }}>Cancel trade</button>
       </div>
       {!canCancel ? <p className="tc-action-reason">Cancellation is available only for booked trades.</p> : null}
       {!canEdit ? <p className="tc-action-reason">Cancelled records are retained as read-only audit evidence.</p> : null}

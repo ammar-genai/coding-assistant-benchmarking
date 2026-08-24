@@ -24,6 +24,8 @@ export type AuditAction =
   | "cancelled";
 
 export const EXCEPTION_CODES = [
+  "required-trade-date",
+  "required-settlement-date",
   "required-security-id",
   "required-counterparty",
   "required-book",
@@ -133,6 +135,10 @@ export type TradeSort =
 export interface TradeTicketProps {
   draft: TradeDraft;
   exceptions: readonly TradeException[];
+  editingTradeId: string | null;
+  hasBlockingErrors: boolean;
+  isReadOnly: boolean;
+  isValidatedEdit: boolean;
   onChange(next: TradeDraft): void;
   onSaveDraft(): void;
   onValidate(): void;

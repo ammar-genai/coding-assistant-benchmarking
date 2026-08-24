@@ -22,8 +22,13 @@ function lifecycleContext(kind: "TRADE" | "EVENT"): LifecycleContext {
 export function TradeCaptureApp() {
   const [state, dispatch] = useReducer(tradeCaptureReducer, INITIAL_STATE);
   const visibleTrades = selectVisibleTrades(state);
-  const errorCount = state.exceptions.filter((item) => item.severity === "error").length;
-  const warningCount = state.exceptions.filter((item) => item.severity === "warning").length;
+  const visibleExceptions = state.validationVisible ? state.exceptions : [];
+  const errorCount = visibleExceptions.filter((item) => item.severity === "error").length;
+  const warningCount = visibleExceptions.filter((item) => item.severity === "warning").length;
+  const hasBlockingErrors = state.exceptions.some((item) => item.severity === "error");
+  const editingTrade = state.editingTradeId
+    ? state.trades.find((trade) => trade.internalTradeId === state.editingTradeId)
+    : null;
 
   return (
     <main className="tc-shell">
@@ -46,14 +51,20 @@ export function TradeCaptureApp() {
       <DeskInsights summary={selectDeskSummary(state)} />
 
       <div className={`tc-validation ${errorCount > 0 ? "tc-validation-error" : "tc-validation-ready"}`} role="status" aria-live="polite">
-        <strong>{errorCount > 0 ? "Ticket needs attention" : "Ticket can proceed"}</strong>
-        <span>{errorCount} {errorCount === 1 ? "error" : "errors"} · {warningCount} {warningCount === 1 ? "warning" : "warnings"}</span>
+        <strong>{!state.validationVisible ? "Ticket ready for input" : errorCount > 0 ? "Ticket needs attention" : "Ticket can proceed"}</strong>
+        <span>{!state.validationVisible
+          ? "Validation begins when you edit the ticket."
+          : `${errorCount} ${errorCount === 1 ? "error" : "errors"} · ${warningCount} ${warningCount === 1 ? "warning" : "warnings"}`}</span>
       </div>
 
       <div className="tc-workspace">
         <TradeTicket
           draft={state.draft}
-          exceptions={state.exceptions}
+          exceptions={visibleExceptions}
+          editingTradeId={state.editingTradeId}
+          hasBlockingErrors={hasBlockingErrors}
+          isReadOnly={editingTrade?.status === "booked" || editingTrade?.status === "cancelled"}
+          isValidatedEdit={editingTrade?.status === "validated"}
           onChange={(draft) => dispatch({ type: "draft-changed", draft })}
           onSaveDraft={() => dispatch({ type: "save-draft", context: lifecycleContext("TRADE") })}
           onValidate={() => dispatch({ type: "validate", context: lifecycleContext("TRADE") })}

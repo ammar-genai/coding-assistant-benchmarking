@@ -1,7 +1,7 @@
 {
   "schema_version": "1.0",
   "block_id": "T7-distributed-trade-capture-2026-08-23",
-  "status": "final-review-pending",
+  "status": "complete-with-browser-qa-gap",
   "purpose": "Build a realistic local securitized-product trade capture mock while measuring frontier planning and review, bounded mid-level and open-model implementation, integration repair, elapsed time, token telemetry, and metered cost.",
   "product": {
     "brief": "benchmark/projects/T7-securitized-trade-capture/PRODUCT.md",
@@ -106,7 +106,12 @@
       "status": "complete",
       "acceptance": "manual-pass-read-only",
       "elapsed_ms": 203673,
-      "access_path": "subscription"
+      "access_path": "subscription",
+      "input_tokens": 142102,
+      "cached_input_tokens": 112896,
+      "output_tokens": 8418,
+      "reasoning_output_tokens": 4404,
+      "metered_cost_usd": null
     },
     {
       "stage": "architecture-review",
@@ -114,7 +119,15 @@
       "status": "complete",
       "acceptance": "approve-with-required-changes",
       "elapsed_ms": 319008,
-      "access_path": "subscription"
+      "access_path": "subscription",
+      "input_tokens": 24,
+      "cache_creation_input_tokens": 50878,
+      "cache_read_input_tokens": 337789,
+      "output_tokens": 22085,
+      "thinking_tokens": 14437,
+      "subscription_cost_telemetry_usd": 1.2314075,
+      "metered_cost_usd": null,
+      "permission_denials": 0
     },
     {
       "stage": "domain-implementation",
@@ -210,11 +223,79 @@
         "Because Kimi timed out before writing, Codex implemented all six Kimi-owned workspace files; this is frontier implementation, not a repair attributed to Kimi.",
         "The Terra, Sonnet, and Qwen worker blobs were integrated without source repair.",
         "Codex added public integration tests, connected them to the standard test command, and added one generated decorative product visual.",
-        "Typecheck, lint, production build, 11 public tests, four private workspace checks, benchmark contract validation, and git diff checks passed.",
+        "Typecheck, lint, production build, 11 public tests, four private workspace checks, benchmark contract validation, and git diff checks passed before final review.",
         "Visible browser QA remains unverified because the in-app browser returned an invalid tab binding after the documented recovery sequence."
+      ]
+    },
+    {
+      "stage": "independent-final-review",
+      "run_id": "2026-08-24T01-01-26.172Z_claude_T7-trade-capture-final-review",
+      "status": "complete",
+      "acceptance": "accept-with-findings",
+      "elapsed_ms": 336766,
+      "access_path": "subscription",
+      "input_tokens": 34,
+      "cache_creation_input_tokens": 88176,
+      "cache_read_input_tokens": 804017,
+      "output_tokens": 25142,
+      "thinking_tokens": 12718,
+      "subscription_cost_telemetry_usd": 1.9140135,
+      "metered_cost_usd": null,
+      "permission_denials": 0,
+      "workspace_changed": false,
+      "findings": {
+        "high": 2,
+        "medium": 5,
+        "low": 4
+      },
+      "notes": [
+        "The reviewer did not run commands, use the network, read private checks or prior runs, or change files.",
+        "It accepted contract coverage but found real lifecycle-regression and Validate-to-Book workflow defects.",
+        "The review is preserved unchanged and was not rerun after repair."
       ]
     }
   ],
+  "post_review_repairs": {
+    "owner": "codex-frontier-integration",
+    "product_source_files_changed": 8,
+    "review_rerun": false,
+    "resolved": [
+      "booked-to-draft status regression",
+      "Validate clearing the ticket before Book",
+      "pristine ticket showing field errors",
+      "missing required trade and settlement date validation",
+      "missing focus movement after edit and cancel",
+      "editing identity not visible",
+      "public regression and accessibility assertion gaps",
+      "muted text contrast",
+      "Node type-stripping version mismatch"
+    ],
+    "deferred_or_accepted": [
+      "The blotter remains a labelled focusable horizontal-scroll region at 390 pixels, which the frozen product explicitly permits.",
+      "Visible browser QA remains unverified because the in-app browser session could not bind a valid tab."
+    ]
+  },
+  "final_verification": {
+    "status": "pass",
+    "commands": [
+      "npm run verify",
+      "BENCHMARK_TARGET_ROOT=$PWD node --test benchmark/private/T7-trade-workspace.test.mjs",
+      "git diff --check"
+    ],
+    "results": [
+      "TypeScript passed with no emit and no incremental artifact.",
+      "ESLint passed.",
+      "Production build passed for / and /trade-capture.",
+      "All 12 public product/render tests passed.",
+      "All four benchmark-audit MCP tests passed.",
+      "All four frozen T7 workspace checks passed after repair.",
+      "Benchmark contracts and JSON validation passed.",
+      "The final-review prompt hash matches the frozen task prompt and the read-only run changed no files."
+    ],
+    "unverified": [
+      "Visible browser interaction, console, focus paint, and 390-pixel layout because the in-app browser could not bind a valid tab."
+    ]
+  },
   "run_policy": {
     "max_human_interventions_per_stage": 0,
     "preserve_failures": true,

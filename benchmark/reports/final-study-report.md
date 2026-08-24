@@ -1,6 +1,6 @@
-# Coding assistant benchmark: pilot findings through T6
+# Coding assistant benchmark: pilot findings through T7
 
-Date: 2026-08-23
+Date: 2026-08-24
 
 Status: pilot conclusion; selective repeats remain optional
 
@@ -9,11 +9,12 @@ Status: pilot conclusion; selective repeats remain optional
 | Question | Current answer |
 |---|---|
 | Codex versus Claude Code | Use Codex as the default lead and integrator. Use Claude Code as the independent reviewer and alternate lead. Both produced excellent frontier-model work; Codex had the cleaner and faster T6 execution, while Claude repeatedly added useful review depth. |
-| Is OpenCode worth exploring? | **Yes: strong secondary tool.** It is the best model-routing harness in this study, delivered accepted complex work, and was fastest when Kimi K2.7 was held constant across all three assistants. |
-| Frontier versus open models | The best open routes were competitive on individual tasks. Kimi K3 matched both frontier products at 100 on T4, and Kimi K2.7 solved T6 through every harness. Qwen3.8-27B timed out on T4, so open-model quality is not interchangeable. |
-| Cost, tokens, and time | Metered OpenRouter spend was `$1.3764798`. Subscription cost was not exposed consistently. Token fields differed too much between clients for a fair single efficiency ranking. Time and accepted outcome are the dependable cross-product measures here. |
+| Is OpenCode worth exploring? | **Yes: strong secondary tool.** It remains the best model-routing harness in this study. T7 adds useful limits: Qwen passed a narrow component, while Kimi K3 timed out on a broad workspace without writing a file. |
+| Frontier versus open models | The best open routes were competitive on individual tasks. Kimi K3 matched both frontier products at 100 on T4, Kimi K2.7 solved T6 through every harness, and Qwen passed its bounded T7 role. Kimi's T7 timeout shows that open-model quality is not interchangeable or stable across task sizes. |
+| Cost, tokens, and time | Metered OpenRouter spend through T7 was `$1.7484880`. Subscription cost was not exposed consistently. Token fields differed too much between clients for a fair single efficiency ranking. Time and accepted outcome are the dependable cross-product measures here. |
 | Frontier planning plus cheaper implementation | It worked: Kimi implemented T5 with no frontier repair and passed every corrected private check. It was not faster on this task; the distributed route took 3.57 times the solo Codex time. |
 | Did the three-assistant workflow win? | It tied solo Codex at 100, but took 536.704 seconds versus 150.206 seconds. Its benefit was independent plan challenge, ownership, and an audit trail—not speed or a higher score. |
+| Did the larger distributed product work? | Yes, with frontier fallback. T7 produced the trade-capture mock, but Kimi wrote none of its six assigned files and Opus later found two real high-severity workflow defects. Clear attribution and review were more valuable than nominal delegation. |
 
 These are evidence-backed role recommendations, not a claim that one product or
 model wins every repository and task.
@@ -81,8 +82,9 @@ cache/token fields, and provider cost telemetry.
 It is not the primary tool yet because model reliability varied sharply,
 native browser automation was not comparable, and the study has one run per
 route rather than a reliability sample. Qwen3.8-27B's 20-minute T4 timeout is
-the clearest warning: a good harness cannot compensate for every model-task
-pairing.
+one warning; Kimi K3's 30-minute T7 timeout with no write is another. A good
+harness cannot compensate for every model-task pairing, but it does preserve
+the failure and its metered cost clearly.
 
 ## 3. Top proprietary and open-model quality
 
@@ -108,7 +110,10 @@ interface task, and the three products did not share the same model.
 - Kimi K3 delivered the complete T4 interface and the T5 cross-layer feature
   through OpenCode.
 - Qwen3.8-27B passed the small T2 worker task for `$0.0090234`, but was too slow
-  and incomplete on T4.
+  and incomplete on T4. It later passed the tightly bounded T7 insights
+  component in 181.703 seconds for `$0.1071646`.
+- Kimi K3 timed out on the broad T7 workspace after 1,800.260 seconds and
+  `$0.2648436`, despite its earlier accepted T4 and T5 results.
 - The local Qwen 8B model remains only a small side control on this 16 GB
   laptop; large local models were correctly excluded from the core study.
 
@@ -120,14 +125,15 @@ integration, or high-risk review.
 
 ### Metered spend
 
-- Cumulative OpenRouter spend: `$1.3764798`.
-- Approved ceiling: `$1.50`.
-- Remaining allowance: `$0.1235202`.
+- Cumulative OpenRouter spend through T7: `$1.7484880`.
+- T7's separately approved ceiling: `$4.00`.
+- T7 spend: `$0.3720082`; unused T7 headroom: `$3.6279918`.
 - Provider limits changed: no.
 - Anthropic usage credits enabled: no.
 
 No paid call was made for the frontier T6 block, shared-Kimi T6 block, portable
-extension pilot, or browser dashboard work.
+extension pilot, or browser dashboard work. T7 used paid OpenRouter only for
+the frozen Qwen and Kimi workers.
 
 ### Why token totals are not ranked directly
 
@@ -188,6 +194,35 @@ separate from implementation, and final review came from another vendor.
 
 The right conclusion is conditional, not promotional: distribute high-risk or
 review-heavy work; keep ordinary bounded work with one capable assistant.
+
+## 7. T7 distributed trade-capture product
+
+T7 exercised the intended full pattern on a realistic but synthetic
+securitized-product workflow:
+
+1. Codex/GPT-5.6 Sol produced the architecture plan.
+2. Claude Code/Opus challenged it before implementation.
+3. Codex/Terra implemented the domain; Claude Code/Sonnet implemented the
+   ticket; OpenCode/Qwen implemented desk insights.
+4. OpenCode/Kimi was assigned state, composition, review, blotter, and CSS, but
+   timed out after 30 minutes without writing a file.
+5. Codex implemented the six-file fallback and integrated the worker patches.
+6. Claude Code/Opus returned `ACCEPT WITH FINDINGS` and found two real high
+   defects: booked status could regress, and Validate broke the next Book step.
+7. Codex repaired the review findings and expanded the regression suite without
+   rerunning or rewriting the independent review.
+
+The project demonstrates both the value and the cost of distributed work.
+Qwen's narrow task passed for `$0.1071646`; Kimi's broad task cost `$0.2648436`
+and produced no patch. Opus's review justified its role because local checks
+had been green before it found the lifecycle defects. The correct lesson is to
+split cheaper-worker assignments more aggressively and keep a frontier model on
+integration and risk review.
+
+The completed mock is available at `/trade-capture`. It uses synthetic local
+state only. Browser QA remains explicitly unverified because the in-app browser
+could not bind a valid tab; this is a presentation evidence gap, not a claimed
+pass.
 
 ## Plugins, skills, MCP, and working together
 
@@ -263,3 +298,4 @@ adoption decision, and preregister it before execution.
 - Portable extension: `benchmark/reports/portable-extension-pilot.md`
 - Extension invocation and recovery: `benchmark/reports/benchmark-audit-invocation-pilot.md` and `benchmark/reports/benchmark-audit-claude-recovery.md`
 - Local HTML dashboard QA: `benchmark/reports/results-site-browser-qa.md`
+- T7 distributed trade capture: `benchmark/reports/T7-distributed-trade-capture.md`

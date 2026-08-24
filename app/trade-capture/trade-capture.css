@@ -7,7 +7,7 @@
   --tc-paper: #f4f1e9;
   --tc-card: #fffdf8;
   --tc-line: #d8d7cf;
-  --tc-muted: #68777b;
+  --tc-muted: #526267;
   --tc-red: #a83e34;
   --tc-red-soft: #f8e4df;
   --tc-amber: #a56805;
@@ -150,6 +150,12 @@
   font-size: clamp(24px, 2.5vw, 36px);
   font-weight: 500;
   letter-spacing: -0.035em;
+}
+
+.tc-panel-heading h2:focus-visible {
+  border-radius: 4px;
+  outline: 3px solid #55b9af;
+  outline-offset: 4px;
 }
 
 .tc-eyebrow {

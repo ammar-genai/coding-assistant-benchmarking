@@ -177,14 +177,16 @@ function TextAreaField({
 export function TradeTicket({
   draft,
   exceptions,
+  editingTradeId,
+  hasBlockingErrors,
+  isReadOnly,
+  isValidatedEdit,
   onChange,
   onSaveDraft,
   onValidate,
   onBook,
   onReset,
 }: TradeTicketProps) {
-  const hasBookingErrors = exceptions.some((item) => item.severity === "error");
-
   function update<Field extends keyof TradeDraft>(field: Field, value: TradeDraft[Field]) {
     onChange({ ...draft, [field]: value });
   }
@@ -192,8 +194,8 @@ export function TradeTicket({
   return (
     <section className="tc-panel tc-ticket" aria-labelledby="tc-ticket-title">
       <div className="tc-panel-heading">
-        <p className="tc-eyebrow">New trade</p>
-        <h2 id="tc-ticket-title">Trade ticket</h2>
+        <p className="tc-eyebrow">{editingTradeId ? `Editing ${editingTradeId}` : "New trade"}</p>
+        <h2 id="tc-ticket-title" tabIndex={-1}>Trade ticket</h2>
       </div>
 
       <fieldset className="tc-field-group">
@@ -397,12 +399,18 @@ export function TradeTicket({
       </fieldset>
 
       <div className="tc-ticket-actions">
-        <button type="button" onClick={onSaveDraft}>Save draft</button>
-        <button type="button" onClick={onValidate}>Validate</button>
-        <button type="button" disabled={hasBookingErrors} onClick={onBook}>Book trade</button>
+        <button type="button" disabled={isReadOnly || isValidatedEdit} onClick={onSaveDraft}>Save draft</button>
+        <button type="button" disabled={isReadOnly} onClick={onValidate}>Validate</button>
+        <button type="button" disabled={hasBlockingErrors || isReadOnly} onClick={onBook}>Book trade</button>
         <button type="button" onClick={onReset}>Reset</button>
       </div>
-      {hasBookingErrors ? <p className="tc-book-reason">Resolve validation errors before booking.</p> : null}
+      {isReadOnly
+        ? <p className="tc-book-reason">Booked and cancelled trades are read-only here. Reset the ticket to start a new trade; booked records can be cancelled from review.</p>
+        : isValidatedEdit
+          ? <p className="tc-book-reason">Validated trades cannot return to draft. Resolve any errors and validate changes again, or book the unchanged trade.</p>
+          : hasBlockingErrors
+            ? <p className="tc-book-reason">Complete required fields and resolve validation errors before booking.</p>
+            : null}
     </section>
   );
 }

@@ -148,3 +148,57 @@ The four private Kimi workspace checks also pass against the integrated source.
 Visible browser QA could not be completed because the Codex in-app browser
 returned an invalid tab binding even after a fresh-tab recovery attempt. This
 is recorded as an unverified presentation-layer gap, not as a product pass.
+
+## Claude Opus independent final review
+
+Run: `2026-08-24T01-01-26.172Z_claude_T7-trade-capture-final-review`
+
+Model/access: Claude Opus 5 through the Claude Code subscription, read-only.
+
+Elapsed: `336.766 seconds`. The run changed no files, used no network or shell
+commands, and had no permission denials.
+
+Claude telemetry reported 34 input tokens, 88,176 cache-creation input tokens,
+804,017 cache-read input tokens, 25,142 output tokens including 12,718 thinking
+tokens, and `$1.9140135` of subscription cost telemetry. It is not counted as
+metered API spend.
+
+The verdict is **ACCEPT WITH FINDINGS**. The raw review reports two high, five
+medium, and four low findings. The two high findings were valid: booked trades
+could regress to draft, and Validate cleared the ticket before Book. The review
+also correctly identified pristine error display, missing required-date checks,
+focus movement, hidden edit identity, test gaps, muted-text contrast, and the
+minimum Node version mismatch. It explicitly kept browser behavior and all raw
+run telemetry outside its verified claims.
+
+## Post-review frontier repairs
+
+Codex repaired the accepted findings without rerunning Opus:
+
+- lifecycle functions now reject mutations of booked/cancelled records and do
+  not write a validated status when errors exist;
+- Validate and Save keep the working ticket populated, while successful Book
+  clears it without announcing errors for a new untouched draft;
+- pristine field errors remain hidden until interaction, but Book is disabled
+  from the first render based on the full validation result;
+- booked records may still load under the frozen contract, but ticket mutation
+  controls become read-only and the active trade ID is visible;
+- validated records cannot be saved backward to draft; changes must be
+  revalidated before booking;
+- trade and settlement dates now have explicit required exceptions;
+- Edit and Cancel move focus to the appropriate heading after state updates;
+- regression coverage now includes illegal transitions, required dates,
+  Validate-to-Book, reset, edit guards, sort tie-breaking, and key rendered
+  accessibility attributes;
+- muted text contrast was increased, the Node minimum was corrected to 22.18,
+  and TypeScript now restricts test-imported syntax to erasable forms.
+
+The focused post-review gate passed typecheck, lint, the production build, all
+12 public tests, all four frozen workspace checks, and `git diff --check`.
+
+After the dashboard and reports were updated, `npm run verify` passed the full
+repository gate: typecheck, lint, production build, 12 product/render tests,
+four benchmark-audit MCP tests, and benchmark contract validation. The frozen
+workspace checks and `git diff --check` also passed. The final-review prompt
+hash matches its preregistered task prompt, and the review snapshot changed no
+files. Browser QA remains the only unverified gate.

@@ -1,6 +1,10 @@
 # Frozen distributed implementation contract
 
-Contract version: `1.0.0`
+Contract version: `1.0.1`
+
+Version 1.0.1 is a post-review correction. It adds the two date-required codes
+already required by `PRODUCT.md`, prevents status regression after booking, and
+keeps a validated ticket active for the next Book action.
 
 This file incorporates the required changes from the Sol plan and Opus review.
 Worker prompts may narrow it but may not contradict it.
@@ -17,7 +21,10 @@ Worker prompts may narrow it but may not contradict it.
 - Calculations and validation live only in the domain layer.
 - Lifecycle helpers preserve the internal ID and append audit history.
 - Booking revalidates and throws while any error exists.
+- Validation does not write a validated record while an error exists.
 - Cancellation throws unless the record is booked.
+- Booked and cancelled records cannot return to draft or validated status.
+- Validated records cannot return to draft; edits must be revalidated or booked.
 - Cancelled records remain visible but do not contribute to summary totals.
 - `signedExposure` uses gross principal: buys positive, sells negative.
 - Sell exposure stays negative in `DeskSummary`.
@@ -36,9 +43,11 @@ Worker prompts may narrow it but may not contradict it.
   `status-filtered`, `searched`, and `sorted`. Lifecycle actions receive a
   caller-created `{ id, at }` context so the reducer itself stays deterministic.
 - Editing loads the selected non-cancelled trade and preserves its ID/history.
+  A booked record loads read-only; reset starts a new mutable ticket.
 - Reset clears `editingTradeId` and restores the deterministic empty draft.
-- Validate writes a validated record. Book revalidates and writes a booked
-  record. Cancel preserves selection on the cancelled record.
+- Validate writes a validated record and leaves it active in the ticket for
+  booking. Book revalidates, writes a booked record, and clears the ticket.
+  Cancel preserves selection on the cancelled record.
 - Reducer and selectors have no React import and are independently testable.
 - Search covers internal ID, client trade ID, security ID, issuer/deal, and
   counterparty, case-insensitively.
@@ -60,7 +69,9 @@ Worker prompts may narrow it but may not contradict it.
 
 ## Stable exception ownership
 
-Exception codes are frozen in `domain/types.ts`. Cross-field failures attach to:
+Exception codes are stable in `domain/types.ts`. Version 1.0.1 added
+`required-trade-date` and `required-settlement-date` to satisfy the existing
+product requirement. Cross-field failures attach to:
 
 - settlement ordering → `settlementDate`;
 - modifier/product conflicts → `modifier`;
