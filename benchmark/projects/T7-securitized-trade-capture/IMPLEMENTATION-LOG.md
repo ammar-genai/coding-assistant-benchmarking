@@ -67,3 +67,9 @@ hidden assertion, while the automatic benchmark result remains failed.
 The harness now accepts an explicit baseline commit. Qwen and Kimi can therefore
 start independently from the frozen `47ef930` baseline even after accepted
 worker patches are committed to the integration branch.
+
+## OpenRouter authorization
+
+The user approved a `$4.00` combined OpenRouter ceiling for the Qwen and Kimi
+stages on 2026-08-23. Spend is checked after Qwen before Kimi begins. Prior T7
+OpenRouter spend was zero.

@@ -163,8 +163,8 @@
     "rerun_failed_worker": false,
     "worker_file_ownership_must_not_overlap": true,
     "frontier_repairs_must_be_counted": true,
-    "openrouter_project_ceiling_usd": null,
-    "openrouter_ceiling_status": "awaiting explicit user approval; recommended 4.00 USD",
+    "openrouter_project_ceiling_usd": 4.0,
+    "openrouter_ceiling_status": "approved by user on 2026-08-23",
     "paid_calls_before_approval": 0,
     "anthropic_usage_credits": false,
     "deploy": false

@@ -12,6 +12,7 @@
   intelligence and cost.
 - Use Sonnet 5, Qwen3.8-27B, and Kimi K3 for the other bounded implementation
   tasks.
-- Do not make paid OpenRouter calls until the user approves a fresh project
-  ceiling. Recommended ceiling: `$4.00` across Qwen and Kimi combined.
+- The user approved a fresh `$4.00` combined OpenRouter ceiling for the Qwen
+  and Kimi implementation stages on 2026-08-23. Stop before any call that could
+  take cumulative T7 OpenRouter spend above that amount.
 - Do not publish or deploy without a separate user request.
