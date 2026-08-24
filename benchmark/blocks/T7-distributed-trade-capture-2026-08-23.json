@@ -155,6 +155,24 @@
         "The private suite passed field coverage and ownership but failed a source regex that required the local name hasErrors. The implementation used hasBookingErrors with the required disabled-book behavior.",
         "The integrator reproduced the exact worker blob; no source repair was made."
       ]
+    },
+    {
+      "stage": "insights-implementation",
+      "run_id": "2026-08-24T00-17-57.308Z_opencode_T7-desk-insights",
+      "status": "complete",
+      "automatic_acceptance": "pass",
+      "elapsed_ms": 181703,
+      "access_path": "metered-api",
+      "input_tokens": 212749,
+      "output_tokens": 7355,
+      "reasoning_tokens": 0,
+      "metered_cost_usd": 0.1071646,
+      "permission_denials": 1,
+      "notes": [
+        "The worker changed only desk-insights.tsx; typecheck, lint, and all three private checks passed.",
+        "One exploratory ls command was denied by the frozen tool policy; the worker recovered with permitted read/glob tools.",
+        "The integrator reproduced the exact worker blob; no source repair was made."
+      ]
     }
   ],
   "run_policy": {
@@ -166,6 +184,8 @@
     "openrouter_project_ceiling_usd": 4.0,
     "openrouter_ceiling_status": "approved by user on 2026-08-23",
     "paid_calls_before_approval": 0,
+    "openrouter_spend_to_date_usd": 0.1071646,
+    "openrouter_remaining_ceiling_usd": 3.8928354,
     "anthropic_usage_credits": false,
     "deploy": false
   },

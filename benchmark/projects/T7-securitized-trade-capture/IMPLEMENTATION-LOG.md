@@ -73,3 +73,21 @@ worker patches are committed to the integration branch.
 The user approved a `$4.00` combined OpenRouter ceiling for the Qwen and Kimi
 stages on 2026-08-23. Spend is checked after Qwen before Kimi begins. Prior T7
 OpenRouter spend was zero.
+
+## Qwen insights worker
+
+Run: `2026-08-24T00-17-57.308Z_opencode_T7-desk-insights`
+
+Model/access: Qwen3.8-27B through OpenCode and OpenRouter.
+
+Elapsed: `181.703 seconds`.
+
+OpenCode telemetry reported 212,749 input tokens, 7,355 output tokens, no
+separately labelled reasoning tokens, and `$0.1071646` of metered OpenRouter
+spend. One exploratory `ls` was denied by the task policy; the worker recovered
+with permitted tools.
+
+The automatic result is **pass**. The worker changed only its owned insights
+component, and typecheck, lint, and all private checks passed. The integrator
+reproduced the exact worker blob (`c91f316…`) without repair. Remaining approved
+T7 OpenRouter headroom before Kimi is `$3.8928354`.
