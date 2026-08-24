@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "id": "T9-capacity-allocation",
+  "version": "1.0.0",
+  "title": "Implement deterministic desk-capacity allocation",
+  "type": "feature",
+  "mode": "workspace-write",
+  "prompt_path": "prompt.md",
+  "allowed_paths": [
+    "benchmark/fixtures/T9-capacity-allocation/allocation-engine.mjs",
+    "benchmark/fixtures/T9-capacity-allocation/student-tests.mjs"
+  ],
+  "forbidden_actions": [
+    "Edit committed tests, task definitions, harness files, or generated evidence",
+    "Install dependencies, use the network, commit, or start a service",
+    "Mutate the input array, request records, or capacity object"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "visible-tests",
+      "description": "Committed and assistant-authored tests pass.",
+      "command": "node --test benchmark/fixtures/T9-capacity-allocation/allocation-engine.test.mjs benchmark/fixtures/T9-capacity-allocation/student-tests.mjs"
+    },
+    {
+      "id": "private-tests",
+      "description": "Private validation, deterministic ordering, immutability, and test-quality checks pass."
+    },
+    {
+      "id": "allowed-scope",
+      "description": "Only the two allowed files change."
+    }
+  ],
+  "verification": {
+    "visible_commands": [
+      "node --test benchmark/fixtures/T9-capacity-allocation/allocation-engine.test.mjs benchmark/fixtures/T9-capacity-allocation/student-tests.mjs"
+    ],
+    "hidden_suite": "T9-capacity-allocation",
+    "hidden_sha256": "31c5b4ad22de22cb3de48a55e77ea42a1e109b8d10ca95af73a642fbf6311165"
+  },
+  "limits": {
+    "max_wall_time_seconds": 900,
+    "max_human_interventions": 0
+  }
+}

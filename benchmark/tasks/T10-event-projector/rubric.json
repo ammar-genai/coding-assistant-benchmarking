@@ -1,0 +1,32 @@
+{
+  "task_id": "T10-event-projector",
+  "task_version": "1.0.0",
+  "total_points": 100,
+  "criteria": [
+    {
+      "id": "visible-tests",
+      "points": 15,
+      "description": "All committed and assistant-authored visible tests pass."
+    },
+    {
+      "id": "private-tests",
+      "points": 35,
+      "description": "Private concurrency, recovery, version, terminal-state, isolation, and evidence checks pass."
+    },
+    {
+      "id": "concurrency-recovery",
+      "points": 20,
+      "description": "Per-trade serialization, cross-trade concurrency, commit-after-persist, and rejection recovery are correct."
+    },
+    {
+      "id": "event-contract",
+      "points": 15,
+      "description": "Event validation, exact version progression, stale handling, terminal cancellation, and mutation isolation are correct."
+    },
+    {
+      "id": "scope-evidence",
+      "points": 15,
+      "description": "Only allowed files change, at least four meaningful tests are added, and the incident report is complete and accurate."
+    }
+  ]
+}

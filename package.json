@@ -20,6 +20,7 @@
     "benchmark:workflow": "node scripts/benchmark-workflow-run.mjs",
     "benchmark:feature": "node scripts/benchmark-feature-run.mjs",
     "benchmark:mcp:test": "node --test benchmark/extensions/benchmark-audit/server.test.mjs",
+    "benchmark:phase2:validate": "node scripts/phase2-validate.mjs && node --test scripts/pi-telemetry.test.mjs",
     "db:generate": "drizzle-kit generate"
   },
   "dependencies": {

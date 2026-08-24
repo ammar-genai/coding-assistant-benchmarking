@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "id": "T10-event-projector",
+  "version": "1.0.0",
+  "title": "Repair a concurrent event projector",
+  "type": "incident",
+  "mode": "workspace-write",
+  "prompt_path": "prompt.md",
+  "allowed_paths": [
+    "benchmark/fixtures/T10-event-projector/event-projector.mjs",
+    "benchmark/fixtures/T10-event-projector/student-tests.mjs",
+    "benchmark/fixtures/T10-event-projector/INCIDENT.md"
+  ],
+  "forbidden_actions": [
+    "Edit the committed test, task definitions, harness files, or generated evidence",
+    "Install dependencies, use the network, add sleeps or retry loops, commit, or start a service",
+    "Serialize unrelated trades behind one global queue"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "visible-tests",
+      "description": "Committed incident tests and assistant-authored regression tests pass.",
+      "command": "node --test benchmark/fixtures/T10-event-projector/event-projector.test.mjs benchmark/fixtures/T10-event-projector/student-tests.mjs"
+    },
+    {
+      "id": "private-tests",
+      "description": "Private concurrency, recovery, version, cancellation, isolation, and evidence checks pass."
+    },
+    {
+      "id": "allowed-scope",
+      "description": "Only the three allowed files change."
+    }
+  ],
+  "verification": {
+    "visible_commands": [
+      "node --test benchmark/fixtures/T10-event-projector/event-projector.test.mjs benchmark/fixtures/T10-event-projector/student-tests.mjs"
+    ],
+    "hidden_suite": "T10-event-projector",
+    "hidden_sha256": "29d6f29676f1397c5bf708506bb8ca1f91d8d0d0a81c9ccfe86279bc004255b5"
+  },
+  "limits": {
+    "max_wall_time_seconds": 1200,
+    "max_human_interventions": 0
+  }
+}

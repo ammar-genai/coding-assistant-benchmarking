@@ -1,0 +1,32 @@
+{
+  "task_id": "T8-change-impact-analysis",
+  "task_version": "1.0.0",
+  "total_points": 100,
+  "criteria": [
+    {
+      "id": "current-flow",
+      "points": 20,
+      "description": "Accurately traces normalization, duplicate detection, save-before-publish behavior, and available store operations with file evidence."
+    },
+    {
+      "id": "required-changes",
+      "points": 25,
+      "description": "Identifies the minimal normalizer, store, router, and contract changes and preserves both audit history and one active contribution."
+    },
+    {
+      "id": "failure-replay",
+      "points": 25,
+      "description": "Explains at least four concrete risks, including save-before-publish inconsistency, replay idempotency, missing targets, trade mismatch, and partial failure."
+    },
+    {
+      "id": "verification",
+      "points": 20,
+      "description": "Proposes focused tests for all required cases without relying on implementation details."
+    },
+    {
+      "id": "scope-format",
+      "points": 10,
+      "description": "Makes no workspace change, stays under 1,000 words, uses all exact sections, and separates evidence from recommendations."
+    }
+  ]
+}

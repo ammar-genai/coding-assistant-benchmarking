@@ -1,0 +1,32 @@
+{
+  "task_id": "T9-capacity-allocation",
+  "task_version": "1.0.0",
+  "total_points": 100,
+  "criteria": [
+    {
+      "id": "visible-tests",
+      "points": 20,
+      "description": "All committed visible tests pass."
+    },
+    {
+      "id": "private-tests",
+      "points": 35,
+      "description": "Private validation, ordering, capacity, immutability, and student-test checks pass."
+    },
+    {
+      "id": "allocation-contract",
+      "points": 20,
+      "description": "Allocation is per desk, priority ordered, capacity bounded, and returned in original request order."
+    },
+    {
+      "id": "scope-quality",
+      "points": 15,
+      "description": "Only allowed files change and the implementation is small, readable, and mutation-safe."
+    },
+    {
+      "id": "tests-report",
+      "points": 10,
+      "description": "At least three meaningful student tests are added and the final response accurately reports verification."
+    }
+  ]
+}

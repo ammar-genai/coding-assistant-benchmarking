@@ -1,0 +1,45 @@
+{
+  "schema_version": "1.0",
+  "phase": "phase-2",
+  "status": "preregistered-draft",
+  "harness": {
+    "assistant": "pi",
+    "version": "0.84.2"
+  },
+  "models": {
+    "sol": "openrouter/openai/gpt-5.6-sol",
+    "fable": "openrouter/anthropic/claude-fable-5",
+    "fable_fallback": "openrouter/anthropic/claude-opus-5",
+    "kimi": "openrouter/moonshotai/kimi-k3",
+    "qwen": "openrouter/qwen/qwen3.8-27b",
+    "glm": "openrouter/z-ai/glm-5.2"
+  },
+  "blocks": [
+    {
+      "task": "T8-change-impact-analysis",
+      "observation": 1,
+      "order": ["qwen", "sol", "glm", "kimi", "fable"]
+    },
+    {
+      "task": "T9-capacity-allocation",
+      "observation": 1,
+      "order": ["sol", "glm", "kimi", "fable", "qwen"]
+    },
+    {
+      "task": "T10-event-projector",
+      "observation": 1,
+      "order": ["glm", "kimi", "fable", "qwen", "sol"]
+    },
+    {
+      "task": "T10-event-projector",
+      "observation": 2,
+      "order": ["kimi", "fable", "qwen", "sol", "glm"]
+    }
+  ],
+  "planned_counted_runs": 20,
+  "budget": {
+    "currency": "USD",
+    "approved_ceiling": 18,
+    "stop_starting_new_runs_at_recorded_spend": 16.5
+  }
+}

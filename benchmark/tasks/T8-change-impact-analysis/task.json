@@ -1,0 +1,31 @@
+{
+  "schema_version": "1.0",
+  "id": "T8-change-impact-analysis",
+  "version": "1.0.0",
+  "title": "Analyze corrected-event change impact",
+  "type": "analysis",
+  "mode": "read-only",
+  "prompt_path": "prompt.md",
+  "allowed_paths": [
+    "**/*"
+  ],
+  "forbidden_actions": [
+    "Edit, create, rename, or delete any file",
+    "Use the network, install dependencies, change Git state, or start a service",
+    "Claim to have inspected evidence that was not read"
+  ],
+  "acceptance_checks": [
+    {
+      "id": "manual-rubric",
+      "description": "The saved response is graded once against the frozen 100-point rubric."
+    },
+    {
+      "id": "read-only-scope",
+      "description": "The workspace remains unchanged."
+    }
+  ],
+  "limits": {
+    "max_wall_time_seconds": 600,
+    "max_human_interventions": 0
+  }
+}
