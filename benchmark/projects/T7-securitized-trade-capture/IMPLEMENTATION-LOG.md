@@ -91,3 +91,25 @@ The automatic result is **pass**. The worker changed only its owned insights
 component, and typecheck, lint, and all private checks passed. The integrator
 reproduced the exact worker blob (`c91f316…`) without repair. Remaining approved
 T7 OpenRouter headroom before Kimi is `$3.8928354`.
+
+## Kimi workspace worker
+
+Run: `2026-08-24T00-22-18.335Z_opencode_T7-trade-workspace`
+
+Model/access: Kimi K3 through OpenCode and OpenRouter.
+
+Elapsed: `1,800.260 seconds` (30-minute timeout).
+
+OpenCode telemetry reported 32,838 input tokens, 175,232 cache-read tokens,
+2,305 output tokens, 5,279 reasoning tokens, and `$0.2648436` of metered
+OpenRouter spend. Two exploratory shell calls were denied by the frozen tool
+policy.
+
+The run timed out and is **not graded**. It read 24 files, inspected the
+contracts, and produced a detailed implementation plan, but it never called a
+write tool and changed no files. It will not be rerun. Codex integration must
+implement all six missing workspace-owned files, and those files count as
+frontier implementation rather than Kimi output.
+
+Combined T7 OpenRouter spend is `$0.3720082`, leaving `$3.6279918` of the
+approved ceiling unused. No further paid run is required for this build.

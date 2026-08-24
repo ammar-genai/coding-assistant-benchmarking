@@ -173,6 +173,26 @@
         "One exploratory ls command was denied by the frozen tool policy; the worker recovered with permitted read/glob tools.",
         "The integrator reproduced the exact worker blob; no source repair was made."
       ]
+    },
+    {
+      "stage": "application-implementation",
+      "run_id": "2026-08-24T00-22-18.335Z_opencode_T7-trade-workspace",
+      "status": "timeout",
+      "automatic_acceptance": "not-graded",
+      "elapsed_ms": 1800260,
+      "access_path": "metered-api",
+      "input_tokens": 32838,
+      "cache_read_tokens": 175232,
+      "output_tokens": 2305,
+      "reasoning_tokens": 5279,
+      "metered_cost_usd": 0.2648436,
+      "permission_denials": 2,
+      "changed_paths": [],
+      "notes": [
+        "The worker reached the 30-minute wall-time limit and was terminated with SIGTERM.",
+        "It read contracts and source and produced a detailed implementation plan, but never invoked a write tool and changed no files.",
+        "The run is preserved and will not be rerun; Codex integration must implement the missing workspace and count all six files as frontier work."
+      ]
     }
   ],
   "run_policy": {
@@ -184,8 +204,8 @@
     "openrouter_project_ceiling_usd": 4.0,
     "openrouter_ceiling_status": "approved by user on 2026-08-23",
     "paid_calls_before_approval": 0,
-    "openrouter_spend_to_date_usd": 0.1071646,
-    "openrouter_remaining_ceiling_usd": 3.8928354,
+    "openrouter_spend_to_date_usd": 0.3720082,
+    "openrouter_remaining_ceiling_usd": 3.6279918,
     "anthropic_usage_credits": false,
     "deploy": false
   },
