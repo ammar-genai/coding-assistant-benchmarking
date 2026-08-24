@@ -160,9 +160,137 @@ const tools = [
   ["Showcase", "Next-compatible app, Vinext build, synthetic trade workspace"],
 ];
 
+const githubRoot = "https://github.com/ammar-genai/coding-assistant-benchmarking";
+const githubFile = (path: string) => `${githubRoot}/blob/master/${path}`;
+const githubTree = (path: string) => `${githubRoot}/tree/master/${path}`;
+
+const taskReferences = [
+  {
+    id: "T1",
+    phase: "Phase 1 · Read-only analysis",
+    title: "Repository map",
+    summary: "Map the architecture, trace the request flow, identify risks, and plan one small change without touching the workspace.",
+    reference: "The study repository itself was the source material.",
+    links: [
+      ["Frozen prompt", githubFile("benchmark/tasks/T1-repo-map/prompt.md")],
+      ["Repository", githubRoot],
+      ["Rubric", githubFile("benchmark/tasks/T1-repo-map/rubric.json")],
+    ],
+  },
+  {
+    id: "T2",
+    phase: "Phase 1 · Small repair",
+    title: "Invalid-run filter",
+    summary: "Repair one eligibility predicate while preserving order, identity, immutability, and exact file scope.",
+    reference: "A seeded JavaScript filter with visible and private checks.",
+    links: [
+      ["Frozen prompt", githubFile("benchmark/tasks/T2-filter-valid-runs/prompt.md")],
+      ["Starter fixture", githubFile("benchmark/fixtures/T2-run-filter/select-comparison-runs.mjs")],
+      ["Rubric", githubFile("benchmark/tasks/T2-filter-valid-runs/rubric.json")],
+    ],
+  },
+  {
+    id: "T3",
+    phase: "Phase 1 · Multi-file feature",
+    title: "Comparison summary",
+    summary: "Aggregate assistant results, select the best run, calculate medians, render Markdown, and add meaningful tests.",
+    reference: "Synthetic run records and incomplete summary and renderer modules.",
+    links: [
+      ["Frozen prompt", githubFile("benchmark/tasks/T3-comparison-summary/prompt.md")],
+      ["Starter fixture", githubTree("benchmark/fixtures/T3-comparison-summary")],
+      ["Rubric", githubFile("benchmark/tasks/T3-comparison-summary/rubric.json")],
+    ],
+  },
+  {
+    id: "T4",
+    phase: "Phase 1 · Complex interface",
+    title: "Run explorer",
+    summary: "Build a responsive, accessible run explorer with filtering, sorting, summaries, safe rendering, and browser checks.",
+    reference: "A controlled HTML, CSS, and JavaScript interface fixture; v2 removed one accidental naming assertion.",
+    links: [
+      ["Frozen prompt", githubFile("benchmark/tasks/T4-run-explorer-v2/prompt.md")],
+      ["UI fixture", githubTree("benchmark/fixtures/T4-run-explorer")],
+      ["Correction note", githubFile("benchmark/reports/T4-v2-task-correction.md")],
+    ],
+  },
+  {
+    id: "T5",
+    phase: "Phase 1 · Distributed feature",
+    title: "Review queue",
+    summary: "Build an in-memory store, JSON API, safe HTML page, tests, and operating notes through a five-stage workflow and solo control.",
+    reference: "A five-file cross-layer fixture used to test frontier planning around an open-model worker.",
+    links: [
+      ["Frozen prompt", githubFile("benchmark/tasks/T5-review-queue/prompt.md")],
+      ["Starter fixture", githubTree("benchmark/fixtures/T5-review-queue")],
+      ["Workflow report", githubFile("benchmark/reports/T5-distributed-workflow-comparison.md")],
+    ],
+  },
+  {
+    id: "T6",
+    phase: "Phase 1 · Debugging incident",
+    title: "Rejected-Promise cache",
+    summary: "Diagnose a poisoned cache, preserve request coalescing, recover from failure, cover races, and write the incident report.",
+    reference: "Seeded cache and API code, committed tests, an incident log, and a deliberately misleading healthy-origin signal.",
+    links: [
+      ["Frozen prompt", githubFile("benchmark/tasks/T6-rejected-promise-cache/prompt.md")],
+      ["Incident fixture", githubTree("benchmark/fixtures/T6-rejected-promise-cache")],
+      ["Frontier report", githubFile("benchmark/reports/T6-top-frontier-comparison.md")],
+    ],
+  },
+  {
+    id: "T7",
+    phase: "Phase 1 · Distributed product",
+    title: "Securitized trade capture",
+    summary: "Plan, divide, build, integrate, independently review, and repair a realistic local trade-capture application.",
+    reference: "A synthetic product brief, frozen domain contract, worker ownership plan, and implementation log.",
+    links: [
+      ["Product brief", githubFile("benchmark/projects/T7-securitized-trade-capture/PRODUCT.md")],
+      ["Frozen contract", githubFile("benchmark/projects/T7-securitized-trade-capture/CONTRACT.md")],
+      ["Implementation log", githubFile("benchmark/projects/T7-securitized-trade-capture/IMPLEMENTATION-LOG.md")],
+    ],
+  },
+  {
+    id: "T8",
+    phase: "Phase 2 · Neutral Pi analysis",
+    title: "Corrected-event impact",
+    summary: "Trace an event pipeline and propose the smallest safe correction design, failure model, replay rules, and verification plan.",
+    reference: "A change request plus a synthetic normalizer, router, in-memory store, and visible test.",
+    links: [
+      ["Frozen prompt", githubFile("benchmark/tasks/T8-change-impact-analysis/prompt.md")],
+      ["Change request", githubFile("benchmark/fixtures/T8-change-impact/change-request.md")],
+      ["Event fixture", githubTree("benchmark/fixtures/T8-change-impact")],
+    ],
+  },
+  {
+    id: "T9",
+    phase: "Phase 2 · Neutral Pi implementation",
+    title: "Capacity allocation",
+    summary: "Validate requests and allocate independent desk capacity by priority, time, and ID without mutating inputs.",
+    reference: "A deliberately incorrect allocation engine with committed tests and an empty student-test file.",
+    links: [
+      ["Frozen prompt", githubFile("benchmark/tasks/T9-capacity-allocation/prompt.md")],
+      ["Starter engine", githubFile("benchmark/fixtures/T9-capacity-allocation/allocation-engine.mjs")],
+      ["Rubric", githubFile("benchmark/tasks/T9-capacity-allocation/rubric.json")],
+    ],
+  },
+  {
+    id: "T10",
+    phase: "Phase 2 · Neutral Pi incident",
+    title: "Concurrent event projector",
+    summary: "Replace one poisoned global queue with recoverable per-trade sequencing, exact versioning, safe persistence, and regression evidence.",
+    reference: "A broken event projector, two visible incident tests, an empty test file, and an incident-report template.",
+    links: [
+      ["Frozen prompt", githubFile("benchmark/tasks/T10-event-projector/prompt.md")],
+      ["Broken projector", githubFile("benchmark/fixtures/T10-event-projector/event-projector.mjs")],
+      ["Phase 2 protocol", githubFile("benchmark/phase-2/PROTOCOL.md")],
+    ],
+  },
+];
+
 const navItems = [
   ["story", "Study"],
   ["study-flow", "Flow"],
+  ["task-reference", "Tasks"],
   ["assistants", "Assistants"],
   ["phase-one", "Phase 1"],
   ["phase-two", "Phase 2"],
@@ -378,6 +506,56 @@ export default function Home() {
             <div><span>Cross-phase synthesis</span><h3>Frontier judgment at the top. Economical execution underneath.</h3></div>
             <div className="flow-synthesis-chain"><span>Sol plans</span><i>→</i><span>Qwen / GLM build</span><i>→</i><span>Claude challenges</span><i>→</i><span>Codex integrates</span></div>
             <div className="flow-output-list"><span>Research website</span><span>Research Lab</span><span>Trade-capture application</span><span>Research paper</span><span>Presentation deck</span></div>
+          </div>
+        </section>
+
+        <section className="task-reference-section" id="task-reference">
+          <div className="section-intro split-intro">
+            <div>
+              <p className="section-kicker">Evidence index / T1–T10</p>
+              <h2>Open the task behind every result.</h2>
+            </div>
+            <p>
+              Each entry separates the assignment from its source material. Start
+              with the frozen prompt, inspect the fixture or product contract, then
+              use the rubric or report to understand how the result was judged.
+            </p>
+          </div>
+
+          <div className="reference-key" aria-label="How to use the task references">
+            <div><span>01</span><strong>Prompt</strong><p>What every candidate was asked to do.</p></div>
+            <div><span>02</span><strong>Reference</strong><p>The code, incident, or product brief it received.</p></div>
+            <div><span>03</span><strong>Evidence</strong><p>The rubric, protocol, or final comparison report.</p></div>
+          </div>
+
+          <div className="task-reference-grid">
+            {taskReferences.map((task) => (
+              <article className={`task-reference-card ${task.id === "T7" ? "task-reference-featured" : ""}`} key={task.id}>
+                <header>
+                  <span>{task.id}</span>
+                  <small>{task.phase}</small>
+                </header>
+                <h3>{task.title}</h3>
+                <p>{task.summary}</p>
+                <div className="task-source">
+                  <span>Underlying reference</span>
+                  <p>{task.reference}</p>
+                </div>
+                <nav aria-label={`${task.id} evidence links`}>
+                  {task.links.map(([label, href]) => (
+                    <a href={href} key={label} target="_blank" rel="noreferrer">
+                      {label}<span aria-hidden="true">↗</span>
+                    </a>
+                  ))}
+                </nav>
+              </article>
+            ))}
+          </div>
+
+          <div className="reference-footer">
+            <div><span>Phase 1</span><strong>T1–T7</strong><p>Assistant products, shared models, frontier routes, and distributed development.</p></div>
+            <div><span>Phase 2</span><strong>T8–T10</strong><p>Five models held inside the same neutral Pi harness across 20 observations.</p></div>
+            <a href={`${githubRoot}/tree/master/benchmark/tasks`} target="_blank" rel="noreferrer">Browse every versioned task <span aria-hidden="true">→</span></a>
           </div>
         </section>
 

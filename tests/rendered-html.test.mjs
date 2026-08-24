@@ -36,6 +36,11 @@ test("server-renders the coding intelligence research showcase", async () => {
   assert.match(html, /T5 internal workflow/);
   assert.match(html, /Repeated for every counted observation/);
   assert.match(html, /20 counted observations/);
+  assert.match(html, /Open the task behind every result/);
+  assert.match(html, /Evidence index \/ T1–T10/);
+  assert.match(html, /Concurrent event projector/);
+  assert.match(html, /benchmark\/tasks\/T10-event-projector\/prompt\.md/);
+  assert.match(html, /Browse every versioned task/);
   assert.match(html, /GPT-5\.6 Sol/);
   assert.match(html, /Claude Fable 5/);
   assert.match(html, /Qwen3\.8-27B/);
