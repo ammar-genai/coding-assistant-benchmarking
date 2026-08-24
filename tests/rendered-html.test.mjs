@@ -41,6 +41,7 @@ test("server-renders the coding intelligence research showcase", async () => {
   assert.match(html, /Concurrent event projector/);
   assert.match(html, /benchmark\/tasks\/T10-event-projector\/prompt\.md/);
   assert.match(html, /Browse every versioned task/);
+  assert.doesNotMatch(html, /href="https:\/\/github\.com\/ammar-genai\/coding-assistant-benchmarking[^"]*" target="_blank"/);
   assert.match(html, /GPT-5\.6 Sol/);
   assert.match(html, /Claude Fable 5/);
   assert.match(html, /Qwen3\.8-27B/);

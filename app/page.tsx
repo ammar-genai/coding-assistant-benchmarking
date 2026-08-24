@@ -543,7 +543,7 @@ export default function Home() {
                 </div>
                 <nav aria-label={`${task.id} evidence links`}>
                   {task.links.map(([label, href]) => (
-                    <a href={href} key={label} target="_blank" rel="noreferrer">
+                    <a href={href} key={label}>
                       {label}<span aria-hidden="true">↗</span>
                     </a>
                   ))}
@@ -555,7 +555,7 @@ export default function Home() {
           <div className="reference-footer">
             <div><span>Phase 1</span><strong>T1–T7</strong><p>Assistant products, shared models, frontier routes, and distributed development.</p></div>
             <div><span>Phase 2</span><strong>T8–T10</strong><p>Five models held inside the same neutral Pi harness across 20 observations.</p></div>
-            <a href={`${githubRoot}/tree/master/benchmark/tasks`} target="_blank" rel="noreferrer">Browse every versioned task <span aria-hidden="true">→</span></a>
+            <a href={`${githubRoot}/tree/master/benchmark/tasks`}>Browse every versioned task <span aria-hidden="true">→</span></a>
           </div>
         </section>
 
