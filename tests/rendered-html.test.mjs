@@ -39,9 +39,9 @@ test("server-renders the coding intelligence research showcase", async () => {
   assert.match(html, /Open the task behind every result/);
   assert.match(html, /Evidence index \/ T1–T10/);
   assert.match(html, /Concurrent event projector/);
-  assert.match(html, /benchmark\/tasks\/T10-event-projector\/prompt\.md/);
-  assert.match(html, /Browse every versioned task/);
-  assert.doesNotMatch(html, /href="https:\/\/github\.com\/ammar-genai\/coding-assistant-benchmarking[^"]*" target="_blank"/);
+  assert.match(html, /href="\/tasks\/#t10"/);
+  assert.match(html, /Browse all public task briefs/);
+  assert.doesNotMatch(html, /href="https:\/\/github\.com\/ammar-genai\/coding-assistant-benchmarking/);
   assert.match(html, /GPT-5\.6 Sol/);
   assert.match(html, /Claude Fable 5/);
   assert.match(html, /Qwen3\.8-27B/);
@@ -57,6 +57,24 @@ test("server-renders the coding intelligence research showcase", async () => {
   assert.match(html, /name="twitter:card" content="summary_large_image"/i);
   assert.match(html, /Read the research paper/);
   assert.doesNotMatch(html, /class="tc-shell"/);
+});
+
+test("server-renders the self-contained public task briefs", async () => {
+  const response = await render("/tasks");
+  assert.equal(response.status, 200);
+  assert.match(response.headers.get("content-type") ?? "", /^text\/html\b/i);
+
+  const html = await response.text();
+  assert.match(html, /<title>T1–T10 Public Task Briefs \| Coding Intelligence Field Study<\/title>/i);
+  assert.match(html, /The work behind/);
+  assert.match(html, /every score/);
+  assert.match(html, /Map an unfamiliar repository/);
+  assert.match(html, /Securitized-product trade capture/);
+  assert.match(html, /Repair a concurrent event projector/);
+  assert.match(html, /Authoritative private source paths/);
+  assert.match(html, /benchmark\/tasks\/T10-event-projector\/prompt\.md/);
+  assert.match(html, /No hidden tests, raw transcripts, credentials, or private run evidence/);
+  assert.doesNotMatch(html, /href="https:\/\/github\.com\/ammar-genai\/coding-assistant-benchmarking/);
 });
 
 test("server-renders the synthetic trade capture workspace", async () => {
